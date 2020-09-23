@@ -20,6 +20,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import  com.example.organizeteam.AuthorizationSystem.Authorization;
+
+import static android.view.View.VISIBLE;
+
 /**
  * @author ofek gani
  * @version 1.0
@@ -27,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
  */
 public class MainActivity extends AppCompatActivity {
 
+    //xml Widgets
     EditText ed_name, ed_email, ed_password, ed_currentPassword;
     ProgressBar pb_singUp;
 
@@ -37,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     Intent connectIntent;
 
     private User user;
+    Authorization authorization;
 
     private static final String USER = "user";
 
@@ -45,54 +51,85 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate ( savedInstanceState );
         setContentView ( R.layout.activity_main );
 
+        //References
         ed_name = findViewById ( R.id.ed_Name );
         ed_email = findViewById ( R.id.ed_Email );
         ed_password = findViewById ( R.id.ed_Password );
         ed_currentPassword = findViewById ( R.id.ed_CurrentPassword );
-
         pb_singUp = findViewById ( R.id.pb_singUp );
+
+        authorization = new Authorization ();
+        connectIntent = new Intent ( MainActivity.this , TeamListActivity.class );
 
         database = FirebaseDatabase.getInstance ();
         mDatabase = database.getReference (USER);
         fba = FirebaseAuth.getInstance ();
 
-        connectIntent = new Intent ( MainActivity.this , TeamListActivity.class );
-
         checkUserConnected ();
-
     }
 
     /**
      * create a new user in firebase
-     * @param view
      * @param email user`s email.
      * @param password user`s password.
      */
-    private void createUser(final View view, final String email, String password) {
+    private void createUser(final String name ,final String email, String password) {
         fba.createUserWithEmailAndPassword ( email,password ).addOnCompleteListener ( new OnCompleteListener<AuthResult> () {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                //if creating a user is successful than, log in to the user.
+
+                pb_singUp.setVisibility ( View.GONE );
+
+                //if creating a user is successful than, send email verification .
                 if(task.isSuccessful ())
                 {
-                    Toast.makeText ( MainActivity.this,"User Created",Toast.LENGTH_SHORT ).show ();
+                    //send email verification and check if this task is successful.
+                    fba.getCurrentUser ().sendEmailVerification ().addOnCompleteListener ( new OnCompleteListener<Void> () {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful ())
+                            {
 
-                    //save user data in firebase
-                    String keyID = mDatabase.push ().getKey ();
-                    mDatabase.child ( keyID ).setValue ( user );
+                                ed_email.setText ( "" );
+                                ed_name.setText ( "" );
+                                ed_password.setText ( "" );
+                                ed_currentPassword.setText ( "" );
 
-                    //save the user`s email in intent, to get to this user data.
-                    connectIntent.putExtra ( "email",email );
-                    startActivity( connectIntent );
-                    finish ();
+                                //save user data in firebase
+                                user = new User ( name,email );
+
+                                String keyID = mDatabase.push ().getKey ();
+                                mDatabase.child ( keyID ).setValue ( user );
+
+                                //save the user`s email in intent, to get to this user data.
+                                Toast.makeText ( MainActivity.this,"Register successfully. Please check your email to verification. ",Toast.LENGTH_LONG ).show ();
+                                logIn ();
+                            }
+                            else
+                            {
+                                Toast.makeText ( MainActivity.this,""+task.getException ().getMessage (),Toast.LENGTH_LONG ).show ();
+                            }
+                        }
+                    } );
                 }
                 else
                 {
-                    Toast.makeText ( MainActivity.this,"Error ! " +task.getException ().getMessage (),Toast.LENGTH_SHORT ).show ();
-                    pb_singUp.setVisibility ( view.GONE );
+                    Toast.makeText ( MainActivity.this,"Error ! " +task.getException ().getMessage (),Toast.LENGTH_LONG ).show ();
                 }
             }
         } );
+    }
+
+    private void logIn() {
+        Intent logInIntent = new Intent ( MainActivity.this, LoginActivity.class );
+        startActivity ( logInIntent );
+        finish ();
+    }
+
+    private void logInToSystem(String email) {
+        connectIntent.putExtra ( "email", email );
+        startActivity ( connectIntent );
+        finish ();
     }
 
     /**
@@ -102,46 +139,8 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser currentUser = fba.getCurrentUser();
         if(fba.getCurrentUser () != null)
         {
-            connectIntent.putExtra ( "email",fba.getCurrentUser().getEmail () );
-            startActivity( connectIntent );
-            finish ();
+            logInToSystem (currentUser.getEmail () );
         }
-    }
-
-    /**
-     * this method use to check if user input is valid.
-     * @param name user`s name.
-     * @param email user`s email.
-     * @param password user`s password.
-     * @param currentPassword user`s current password.
-     */
-    private boolean isInputValid(String name, String email, String password, String currentPassword) {
-        if(TextUtils.isEmpty ( name ))
-        {
-            ed_name.setError ( "Name is Required." );
-            return false;
-        }
-        else if (name.length () >= 16)
-        {
-            ed_name.setError ( "Invalid name, minimum length: 16 letters" );
-            return false;
-        }
-        else if(TextUtils.isEmpty ( email ))
-        {
-            ed_email.setError ( "Email is Required." );
-            return false;
-        }
-        else if(TextUtils.isEmpty ( password ))
-        {
-            ed_password.setError ( "Password is Required." );
-            return false;
-        }
-        else if(!currentPassword.equals ( password ))
-        {
-            ed_currentPassword.setError ( "Your current password is incorrect." );
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -149,22 +148,21 @@ public class MainActivity extends AppCompatActivity {
      * @param view the view that was fired.
      */
     public void oc_singUp(final View view) {
-        //get information from edit text and put into string.
-        String name = ed_name.getText ().toString ().trim ();
-        String email = ed_email.getText ().toString ().trim ();
-        String password = ed_password.getText ().toString ().trim ();
-        String currentPassword = ed_currentPassword.getText ().toString ().trim ();
-
         //check if user input is valid.
-        if(isInputValid ( name, email, password, currentPassword ))
-        {
-            //show the progress bar
-            pb_singUp.setVisibility ( view.VISIBLE );
+        if(!authorization.isInputValid ( ed_name, ed_email, ed_password, ed_currentPassword ))
+            return;
 
-            //create user in firebase
-            user = new User ( name,email );
-            createUser ( view, email, password );
-        }
+        //get information from edit text and put into string.
+        String name = authorization.getInput ( ed_name );
+        String email = authorization.getInput ( ed_email );
+        String password = authorization.getInput ( ed_password );
+
+        //show the progress bar
+        pb_singUp.setVisibility ( VISIBLE );
+
+        //create user in firebase
+        createUser (name ,email, password );
+
     }
 
     /**
@@ -172,8 +170,6 @@ public class MainActivity extends AppCompatActivity {
      * @param view the view that was fired.
      */
     public void oc_alreadyAccount(View view) {
-        Intent logInIntent = new Intent ( MainActivity.this , LoginActivity.class );
-        startActivity ( logInIntent );
-        finish ();
+        logIn ();
     }
 }

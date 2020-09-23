@@ -11,11 +11,14 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.organizeteam.AuthorizationSystem.Authorization;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import  com.example.organizeteam.AuthorizationSystem.Authorization;
 
 /**
  * @author ofek gani
@@ -26,6 +29,8 @@ public class LoginActivity extends AppCompatActivity {
 
     EditText ed_email, ed_password;
     ProgressBar pb_singIn;
+
+    Authorization authorization;
 
     FirebaseAuth fba;
 
@@ -39,58 +44,54 @@ public class LoginActivity extends AppCompatActivity {
 
         pb_singIn = findViewById ( R.id.pb_singIn );
 
+        authorization = new Authorization ();
+
         fba = FirebaseAuth.getInstance ();
+
+        pb_singIn.setVisibility ( View.GONE );
     }
 
     /**
      * login to system.
-     * @param view
      * @param email user`s email.
      * @param password user`s password.
      */
-    private void login(final View view, String email, String password) {
+    private void login(String email, String password) {
         fba.signInWithEmailAndPassword ( email,password ).addOnCompleteListener ( new OnCompleteListener<AuthResult> () {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+
+                pb_singIn.setVisibility ( View.GONE );
+
                 if(task.isSuccessful ())
                 {
-                    Toast.makeText ( LoginActivity.this,"Logged in successfully",Toast.LENGTH_SHORT ).show ();
+                    if(fba.getCurrentUser ().isEmailVerified ())
+                    {
 
-                    //save the user`s email in intent, to get to this user data.
-                    FirebaseUser currentUser = fba.getCurrentUser();
-                    String userEmail = currentUser.getEmail();
+                        ed_email.setText ( "" );
+                        ed_password.setText ( "" );
 
-                    Intent loginIntent = new Intent ( LoginActivity.this , TeamListActivity.class );
-                    loginIntent.putExtra ("email", userEmail);
-                    startActivity( loginIntent );
-                    finish ();
+                        //save the user`s email in intent, to get to this user data.
+                        FirebaseUser currentUser = fba.getCurrentUser();
+                        String userEmail = currentUser.getEmail();
+
+                        Intent loginToSystem = new Intent ( LoginActivity.this , TeamListActivity.class );
+                        loginToSystem.putExtra ("email", userEmail);
+                        startActivity( loginToSystem );
+                        finish ();
+                    }
+                    else
+                    {
+                        Toast.makeText ( LoginActivity.this,"Email is not verified. Please verify your email address. ",Toast.LENGTH_SHORT ).show ();
+                    }
+
                 }
                 else
                 {
                     Toast.makeText ( LoginActivity.this,"Error ! " +task.getException ().getMessage (),Toast.LENGTH_SHORT ).show ();
-                    pb_singIn.setVisibility ( view.GONE );
                 }
             }
         } );
-    }
-
-    /**
-     * this method use to check if user input is valid.
-     * @param email user`s email.
-     * @param password user`s password.
-     */
-    private boolean isInputValid(String email, String password) {
-        if(TextUtils.isEmpty ( email ))
-        {
-            ed_email.setError ( "Email is Required." );
-            return false;
-        }
-        if(TextUtils.isEmpty ( password ))
-        {
-            ed_password.setError ( "Password is Required." );
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -98,19 +99,19 @@ public class LoginActivity extends AppCompatActivity {
      * @param view the view that was fired.
      */
     public void oc_singIn(final View view) {
-        //get information from edit text and put into string.
-        String email = ed_email.getText ().toString ().trim ();
-        String password = ed_password.getText ().toString ().trim ();
-
         //check if user input is valid.
-        if(isInputValid ( email, password ))
-        {
-            //show the progress bar
-            pb_singIn.setVisibility ( view.VISIBLE );
+        if(!authorization.isInputValid ( ed_email, ed_password ))
+            return;
 
-            //login to system.
-            login ( view, email, password );
-        }
+        //get information from edit text and put into string.
+        String email = authorization.getInput ( ed_email );
+        String password = authorization.getInput ( ed_password );
+
+        //show the progress bar
+        pb_singIn.setVisibility ( View.VISIBLE );
+
+        //login to system.
+        login (email, password );
     }
 
     public void oc_newAccount(View view) {
