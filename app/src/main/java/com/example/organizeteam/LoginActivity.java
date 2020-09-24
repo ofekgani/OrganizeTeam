@@ -4,8 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -17,8 +18,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import  com.example.organizeteam.AuthorizationSystem.Authorization;
 
 /**
  * @author ofek gani
@@ -39,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate ( savedInstanceState );
         setContentView ( R.layout.activity_login );
 
-        ed_email = findViewById ( R.id.ed_Email );
+        ed_email = findViewById ( R.id.ed_name );
         ed_password = findViewById ( R.id.ed_Password );
 
         pb_singIn = findViewById ( R.id.pb_singIn );
@@ -117,6 +116,8 @@ public class LoginActivity extends AppCompatActivity {
     public void oc_newAccount(View view) {
         Intent registerIntent = new Intent ( LoginActivity.this , MainActivity.class );
         startActivity ( registerIntent );
+        getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
+        overridePendingTransition ( R.anim.push_down_out,R.anim.push_down_in );
         finish ();
     }
 }

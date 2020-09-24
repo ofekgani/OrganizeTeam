@@ -4,12 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -52,10 +52,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView ( R.layout.activity_main );
 
         //References
-        ed_name = findViewById ( R.id.ed_Name );
-        ed_email = findViewById ( R.id.ed_Email );
-        ed_password = findViewById ( R.id.ed_Password );
-        ed_currentPassword = findViewById ( R.id.ed_CurrentPassword );
+        ed_name = findViewById ( R.id.ed_name );
+        ed_email = findViewById ( R.id.ed_email );
+        ed_password = findViewById ( R.id.ed_password );
+        ed_currentPassword = findViewById ( R.id.ed_currentPassword );
         pb_singUp = findViewById ( R.id.pb_singUp );
 
         authorization = new Authorization ();
@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         mDatabase = database.getReference (USER);
         fba = FirebaseAuth.getInstance ();
 
+        pb_singUp.setVisibility ( View.GONE );
         checkUserConnected ();
     }
 
@@ -171,5 +172,8 @@ public class MainActivity extends AppCompatActivity {
      */
     public void oc_alreadyAccount(View view) {
         logIn ();
+        getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
+        overridePendingTransition ( R.anim.push_up_in,R.anim.push_up_out );
+
     }
 }
