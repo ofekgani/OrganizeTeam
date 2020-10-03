@@ -1,24 +1,24 @@
 package com.example.organizeteam;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
+import com.example.organizeteam.AuthorizationSystem.UserInfo;
+import com.example.organizeteam.Core.ConstantNames;
 import java.util.ArrayList;
+
+import com.example.organizeteam.Core.ActivityTransition;
+import  com.example.organizeteam.AuthorizationSystem.Authorization;
+import com.squareup.picasso.Picasso;
 
 /**
  * @author ofek gani
@@ -28,48 +28,59 @@ import java.util.ArrayList;
 public class TeamListActivity extends AppCompatActivity {
 
     ListView listView;
-
     TextView tv_name, tv_email;
+    ImageView mv_logo;
+    
+    ActivityTransition activityTransition;
+    Authorization authorization;
+    UserInfo userInfo;
 
-    FirebaseDatabase fd;
-    DatabaseReference userRef;
-    private static final String USER = "user";
-    private String email;
+    Uri imageUri;
+    String email,name,userID,logo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate ( savedInstanceState );
         setContentView ( R.layout.activity_team_list );
 
-        Intent intent = getIntent();
-        email = intent.getStringExtra ( "email" );
-
+        //References
         listView = findViewById ( R.id.lv_teams );
-
         tv_name = findViewById ( R.id.tv_userName );
         tv_email = findViewById ( R.id.tv_userEmail );
+        mv_logo = findViewById ( R.id.mv_logo );
 
-        fd = FirebaseDatabase.getInstance ();
-        userRef =  fd.getReference (USER );
+        //allocating memory
+        activityTransition = new ActivityTransition ();
+        authorization = new Authorization ();
+        userInfo = new UserInfo ();
 
-        userRef.addValueEventListener ( new ValueEventListener () {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds : dataSnapshot.getChildren ())
-                {
-                    if(ds.child ( "email" ).getValue ().equals ( email )){
-                        tv_name.setText ( ds.child ( "fullName" ).getValue ().toString () );
-                        tv_email.setText ( ds.child ( "email" ).getValue ().toString () );
-                    }
-                }
-            }
+        Intent intent = getIntent (  );
+        email = activityTransition.getData (intent, ConstantNames.USER_EMAIL );
+        name = activityTransition.getData ( intent,ConstantNames.USER_NAME );
+        userID = activityTransition.getData ( intent,ConstantNames.USER_KEY_ID );
+        logo = activityTransition.getData ( intent,ConstantNames.USER_LOGO );
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+        tv_name.setText ( ""+name );
+        tv_email.setText ( ""+email );
+        
+        //load image from firebase
+        Picasso.get ().load(logo).into(mv_logo);
 
-            }
-        } );
+        createTeamList ();
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult ( requestCode, resultCode, data );
+
+        if(isImageResult ( requestCode, resultCode, data ))
+        {
+            setImage ( data );
+            uploadPicture();
+        }
+    }
+
+    private void createTeamList() {
         Team electroBunny =new Team ( "electro bunny", "the best team ever" );
         Team desertEagles = new Team ( "Desert Eagles", "the worst team ever" );
 
@@ -81,14 +92,34 @@ public class TeamListActivity extends AppCompatActivity {
         listView.setAdapter ( adapter );
     }
 
+    private void setImage(@Nullable Intent data) {
+        imageUri = data.getData ();
+        mv_logo.setImageURI ( imageUri );
+    }
+
+    private boolean isImageResult(int requestCode, int resultCode, @Nullable Intent data) {
+        return requestCode == 1 && resultCode==RESULT_OK && data != null && data.getData () != null;
+    }
+
+    private void uploadPicture()
+    {
+        userInfo.uploadPicture(imageUri,TeamListActivity.this,userID,email);
+    }
+
     /**
      * Called when a native click event is fired.
      * @param view the view that was fired.
      */
     public void oc_singOut(View view) {
         //sign out
-        FirebaseAuth.getInstance ().signOut ();
-        startActivity ( new Intent ( getApplicationContext (),LoginActivity.class ) );
-        finish ();
+        authorization.singOut ( TeamListActivity.this );
+    }
+
+    /**
+     * Called when a native click event is fired.
+     * @param view the view that was fired.
+     */
+    public void oc_chooseImage(View view) {
+        activityTransition.goToGallery (this);
     }
 }

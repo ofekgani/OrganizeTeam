@@ -9,11 +9,14 @@ public class User {
 
     private String fullName;
     private String email;
-    private String userID;
+    private String logo;
+    private String keyID;
 
-    public User(String fullName, String email) {
+    public User(String fullName, String email,String logo,String keyID) {
         this.fullName = fullName;
         this.email = email;
+        this.keyID = keyID;
+        this.logo = logo;
     }
 
     public String getFullName() {
@@ -32,12 +35,20 @@ public class User {
         this.email = email;
     }
 
-    public String getUserID() {
-        return userID;
+    public String getKeyID() {
+        return keyID;
     }
 
-    public void setUserID(String userID) {
-        this.userID = userID;
+    public void setKeyID(String keyID) {
+        this.keyID = keyID;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 
 }

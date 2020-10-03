@@ -2,12 +2,13 @@ package com.example.organizeteam.AuthorizationSystem;
 
 import android.app.ActivityOptions;
 import android.content.Context;
-import android.text.TextUtils;
-import android.view.View;
+
+import android.content.Intent;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.organizeteam.Core.ConstantNames;
 import com.example.organizeteam.LoginActivity;
 import com.example.organizeteam.MainActivity;
 import com.example.organizeteam.Resources.Loading;
@@ -32,29 +33,31 @@ import androidx.annotation.NonNull;
 public class Authorization {
 
     UserInput input = new UserInput ();
+    UserInfo userInfo = new UserInfo ();
     ActivityTransition activityTransition = new ActivityTransition ();
     Transformation transformation = new Transformation ();
     Loading progressBar = new Loading ();
 
-    private static final String USER = "user";
-
     /**
      * create a new user in firebase
-     * @param fba access to firebase auth to sing in to user.
      * @param context a activity that this function use.
      * @param edEmail user`s email.
      * @param edPassword user`s password.
      * @param edName user`s name.
      * @param pb Progress Bar resource.
      */
-     public void createUser(final FirebaseAuth fba, final Context context, final EditText edEmail, final EditText edPassword, final EditText edName , final ProgressBar pb) {
+     public void createUser(final Context context, final EditText edEmail, final EditText edPassword, final EditText edName , final ProgressBar pb) {
+
+         //get to firebase
+         final FirebaseAuth fba = FirebaseAuth.getInstance ();
+
+         //get user input
+         String password = input.getInput ( edPassword );
+         final String email = input.getInput ( edEmail );
+         final String name = input.getInput ( edName );
 
         //show the progress bar
          progressBar.setVisible ( pb,true );
-
-        String password = input.getInput ( edPassword );
-        final String email = input.getInput ( edEmail );
-        final String name = input.getInput ( edName );
 
         fba.createUserWithEmailAndPassword ( email,password ).addOnCompleteListener ( new OnCompleteListener<AuthResult> () {
             @Override
@@ -72,9 +75,10 @@ public class Authorization {
                             if (task.isSuccessful ())
                             {
                                 //save user data in firebase
-                                User user = new User ( name,email );
-                                DatabaseReference mDatabase = FirebaseDatabase.getInstance ().getReference (USER);
+
+                                DatabaseReference mDatabase = FirebaseDatabase.getInstance ().getReference ( ConstantNames.USER_PATH);
                                 String keyID = mDatabase.push ().getKey ();
+                                User user = new User ( name,email,"none",keyID);
                                 mDatabase.child ( keyID ).setValue ( user );
 
                                 //save the user`s email in intent, to get to this user data.
@@ -103,19 +107,22 @@ public class Authorization {
 
     /**
      * login to system.
-     * @param fba access to firebase auth to sing in to user.
      * @param context a activity that this function use.
      * @param edPassword user`s password.
      * @param edEmail user`s email.
      * @param pb Progress Bar resource.
      */
-    public void login(final FirebaseAuth fba, final Context context, EditText edEmail, EditText edPassword, final ProgressBar pb) {
+    public void login(final Context context, final EditText edEmail, EditText edPassword, final ProgressBar pb) {
+
+        //get to firebase
+        final FirebaseAuth fba = FirebaseAuth.getInstance ();
+
+        //get user input
+        String email = input.getInput ( edEmail );
+        String password = input.getInput ( edPassword );
 
         //show the progress bar
         progressBar.setVisible ( pb,true );
-
-        String email = input.getInput ( edEmail );
-        String password = input.getInput ( edPassword );
 
         fba.signInWithEmailAndPassword ( email , password ).addOnCompleteListener ( new OnCompleteListener<AuthResult> () {
             @Override
@@ -127,12 +134,12 @@ public class Authorization {
                 {
                     if(fba.getCurrentUser ().isEmailVerified ())
                     {
-                        //save the user`s email in intent, to get to this user data.
-                        String userEmail =  fba.getCurrentUser().getEmail();
-                        Map<String,Object> save = new HashMap<> ( );
-                        save.put ( "email",(String)userEmail);
-
-                        activityTransition.goTo ( context, TeamListActivity.class, true, save, null  );
+                        userInfo.getUserInformation ( new IUser () {
+                            @Override
+                            public void onDataRead(Map<String, Object> data) {
+                                activityTransition.goTo ( context,TeamListActivity.class,true,data, null );
+                            }
+                        } );
                     }
                     else
                     {
@@ -142,9 +149,15 @@ public class Authorization {
                 }
                 else
                 {
-                    Toast.makeText ( context,"Error ! " +task.getException ().getMessage (),Toast.LENGTH_SHORT ).show ();
+                    input.setError (edEmail, ""+task.getException () );
                 }
             }
         } );
+    }
+
+    public void singOut(Context context)
+    {
+        FirebaseAuth.getInstance ().signOut ();
+        activityTransition.goTo ( context , LoginActivity.class,true,null,null);
     }
 }

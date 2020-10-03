@@ -1,8 +1,11 @@
 package com.example.organizeteam.Core;
 
+import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+
+import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
 
 import java.util.Map;
 
@@ -34,5 +37,23 @@ public class ActivityTransition  extends AppCompatActivity {
             return;
 
         finish();
+    }
+
+    public void setData()
+    {
+
+    }
+
+    public String getData(Intent intent,String key)
+    {
+        return intent.getStringExtra ( key );
+    }
+
+    public void goToGallery(Activity activity)
+    {
+        Intent intent = new Intent (  );
+        intent.setType ( "image/*" );
+        intent.setAction ( Intent.ACTION_GET_CONTENT );
+        activity.startActivityForResult (intent,1);
     }
 }
