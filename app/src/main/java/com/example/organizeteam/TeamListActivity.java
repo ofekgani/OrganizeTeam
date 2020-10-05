@@ -152,8 +152,8 @@ public class TeamListActivity extends AppCompatActivity {
     }
 
     private void createTeamList() {
-        Team electroBunny =new Team ( "electro bunny", "the best team ever" );
-        Team desertEagles = new Team ( "Desert Eagles", "the worst team ever" );
+        Team electroBunny =new Team ( "electro bunny", "team number 1" );
+        Team desertEagles = new Team ( "Desert Eagles", "team number 2" );
 
         ArrayList<Team> teamList = new ArrayList<> (  );
         teamList.add ( electroBunny );
