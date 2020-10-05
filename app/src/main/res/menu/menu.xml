@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/btn_home"
+            android:icon="@drawable/home_icon"
+            android:title="Home"></item>
+        <item android:id="@+id/btn_list_team"
+        android:icon="@drawable/table_icon"
+        android:title="Your teams"></item>
+        <item android:id="@+id/btn_notifications"
+            android:icon="@drawable/bell_icon"
+            android:title="Notifications "></item>
+    </group>
+    <item
+        android:title="">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item android:id="@+id/btn_edit_projile"
+                    android:icon="@drawable/user_edit_icon"
+                    android:title="Edit profile "></item>
+                <item android:id="@+id/btn_settings"
+                    android:icon="@drawable/settings_icon"
+                    android:title="Settings"></item>
+                <item android:id="@+id/btn_help"
+                    android:icon="@drawable/help_icon"
+                    android:title="Help"></item>
+                <item android:id="@+id/btn_about"
+                    android:icon="@drawable/about_icon"
+                    android:title="About"></item>
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="">
+        <menu>
+            <item android:id="@+id/btn_signOut"
+                android:icon="@drawable/sign_out_icon"
+                android:title="Sign out"></item>
+        </menu>
+    </item>
+
+</menu>

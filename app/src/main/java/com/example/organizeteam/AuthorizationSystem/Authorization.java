@@ -3,13 +3,11 @@ package com.example.organizeteam.AuthorizationSystem;
 import android.app.ActivityOptions;
 import android.content.Context;
 
-import android.content.Intent;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.organizeteam.Core.ConstantNames;
-import com.example.organizeteam.LoginActivity;
 import com.example.organizeteam.MainActivity;
 import com.example.organizeteam.Resources.Loading;
 import com.example.organizeteam.Resources.Transformation;
@@ -25,7 +23,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 
-import java.util.HashMap;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
@@ -88,7 +85,7 @@ public class Authorization {
                                 ActivityOptions options = transformation.pushUp ( context );
 
                                 //start Activity
-                                activityTransition.goTo ( context, LoginActivity.class,true,null, options );
+                                activityTransition.goTo ( context, MainActivity.class,true,null, options );
                             }
                             else
                             {
@@ -158,6 +155,6 @@ public class Authorization {
     public void singOut(Context context)
     {
         FirebaseAuth.getInstance ().signOut ();
-        activityTransition.goTo ( context , LoginActivity.class,true,null,null);
+        activityTransition.goTo ( context , MainActivity.class,true,null,null);
     }
 }

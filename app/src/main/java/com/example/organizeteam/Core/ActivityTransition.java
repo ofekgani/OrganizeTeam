@@ -39,11 +39,6 @@ public class ActivityTransition  extends AppCompatActivity {
         finish();
     }
 
-    public void setData()
-    {
-
-    }
-
     public String getData(Intent intent,String key)
     {
         return intent.getStringExtra ( key );

@@ -1,11 +1,8 @@
 package com.example.organizeteam.Resources;
 
-import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
-import android.view.View;
 
-import com.example.organizeteam.MainActivity;
 import com.example.organizeteam.R;
 
 import androidx.appcompat.app.AppCompatActivity;
