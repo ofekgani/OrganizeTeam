@@ -1,4 +1,4 @@
-package com.example.organizeteam;
+package com.example.organizeteam.Resources;
 
 /**
  * @author ofek gani

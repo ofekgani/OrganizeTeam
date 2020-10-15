@@ -100,4 +100,9 @@ public class UserInput {
         }
         return true;
     }
+
+    public boolean isInputEmpty(EditText editText)
+    {
+        return TextUtils.isEmpty ( getInput ( editText ) );
+    }
 }

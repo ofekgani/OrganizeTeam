@@ -1,7 +1,7 @@
 package com.example.organizeteam.AuthorizationSystem;
 
+import android.app.Activity;
 import android.app.ActivityOptions;
-import android.content.Context;
 
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -12,7 +12,7 @@ import com.example.organizeteam.MainActivity;
 import com.example.organizeteam.Resources.Loading;
 import com.example.organizeteam.Resources.Transformation;
 import com.example.organizeteam.TeamListActivity;
-import com.example.organizeteam.User;
+import com.example.organizeteam.Resources.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -43,7 +43,7 @@ public class Authorization {
      * @param edName user`s name.
      * @param pb Progress Bar resource.
      */
-     public void createUser(final Context context, final EditText edEmail, final EditText edPassword, final EditText edName , final ProgressBar pb) {
+     public void createUser(final Activity context, final EditText edEmail, final EditText edPassword, final EditText edName , final ProgressBar pb) {
 
          //get to firebase
          final FirebaseAuth fba = FirebaseAuth.getInstance ();
@@ -72,11 +72,10 @@ public class Authorization {
                             if (task.isSuccessful ())
                             {
                                 //save user data in firebase
-
                                 DatabaseReference mDatabase = FirebaseDatabase.getInstance ().getReference ( ConstantNames.USER_PATH);
                                 String keyID = mDatabase.push ().getKey ();
                                 User user = new User ( name,email,"none",keyID);
-                                mDatabase.child ( keyID ).setValue ( user );
+                                userInfo.setObject ( ConstantNames.USER_PATH,keyID,user );
 
                                 //save the user`s email in intent, to get to this user data.
                                 Toast.makeText ( context,"Register successfully. Please check your email to verification. ",Toast.LENGTH_LONG ).show ();
@@ -109,7 +108,7 @@ public class Authorization {
      * @param edEmail user`s email.
      * @param pb Progress Bar resource.
      */
-    public void login(final Context context, final EditText edEmail, EditText edPassword, final ProgressBar pb) {
+    public void login(final Activity context, final EditText edEmail, EditText edPassword, final ProgressBar pb) {
 
         //get to firebase
         final FirebaseAuth fba = FirebaseAuth.getInstance ();
@@ -152,7 +151,11 @@ public class Authorization {
         } );
     }
 
-    public void singOut(Context context)
+    /**
+     * Sign out from the system.
+     * @param context The activity from which the user sign out.
+     */
+    public void singOut(Activity context)
     {
         FirebaseAuth.getInstance ().signOut ();
         activityTransition.goTo ( context , MainActivity.class,true,null,null);

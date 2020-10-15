@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.organizeteam.AuthorizationSystem.Authorization;
 import com.example.organizeteam.R;
@@ -19,9 +21,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 public class OpenMenu extends AppCompatActivity {
 
-    Authorization authorization = new Authorization ();
-
-    public void createMenu(final AppCompatActivity act, final DrawerLayout drawerLayout, NavigationView navigationView)
+    public void createMenu(final AppCompatActivity act, final DrawerLayout drawerLayout)
     {
         Toolbar toolbar = act.findViewById(R.id.toolbar);
         act.setSupportActionBar ( toolbar);
@@ -30,23 +30,36 @@ public class OpenMenu extends AppCompatActivity {
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle ( this,drawerLayout, toolbar, R.string.navigation_drawer_open,R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener ( toggle );
         toggle.syncState ();
-
-        navigationView.setNavigationItemSelectedListener ( new NavigationView.OnNavigationItemSelectedListener () {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId ())
-                {
-                    case R.id.btn_signOut:
-                        authorization.singOut ( act );
-                        break;
-                }
-                drawerLayout.closeDrawer ( GravityCompat.START );
-                return true;
-            }
-        } );
     }
 
-    public View getHeaderView(NavigationView navigationView) {
-        return navigationView.getHeaderView(0);
+    public void setCheckedItem(NavigationView navigationView, int id )
+    {
+        navigationView.setCheckedItem(id);
+    }
+
+    public Object getResource(NavigationView navigationView,int id)
+    {
+        return navigationView.getHeaderView(0).findViewById(id);
+    }
+
+    public void closeMenu(DrawerLayout drawerLayout)
+    {
+        drawerLayout.closeDrawer ( GravityCompat.START );
+    }
+
+    public boolean isMenuOpen(DrawerLayout drawerLayout)
+    {
+        return drawerLayout.isDrawerOpen ( GravityCompat.START );
+    }
+
+    public void toggleMenu(DrawerLayout drawerLayout) {
+        if(isMenuOpen ( drawerLayout ))
+        {
+            closeMenu ( drawerLayout );
+        }
+        else
+        {
+            super.onBackPressed ();
+        }
     }
 }

@@ -7,10 +7,9 @@
     android:weightSum="100">
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="0dp"
-        android:layout_height="90dp"
-        android:layout_weight="20"
+        android:id="@+id/mv_teamLogo1"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
         android:background="@drawable/massivemultiplayer"/>
 
     <LinearLayout

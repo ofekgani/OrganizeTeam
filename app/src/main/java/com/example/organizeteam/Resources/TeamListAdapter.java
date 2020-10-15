@@ -1,14 +1,16 @@
-package com.example.organizeteam;
+package com.example.organizeteam.Resources;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.organizeteam.R;
+
 import java.util.ArrayList;
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,11 +26,12 @@ public class TeamListAdapter extends ArrayAdapter<Team> {
     private Context mContext;
     private int mResource;
 
+    Image image = new Image ();
+
     public TeamListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Team> objects) {
         super ( context, resource, objects );
         mContext = context;
         mResource = resource;
-
     }
 
     @NonNull
@@ -36,14 +39,20 @@ public class TeamListAdapter extends ArrayAdapter<Team> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         String name = getItem ( position ).getName ();
         String description = getItem ( position ).getDescription ();
-
-        Team team = new Team ( name,description );
+        String logo = getItem ( position ).getLogo ();
 
         LayoutInflater inflater = LayoutInflater.from ( mContext );
         convertView = inflater.inflate ( mResource,parent,false );
 
-        TextView tv_name = (TextView)convertView.findViewById ( R.id.tv_nameTeam );
-        TextView tv_description = (TextView)convertView.findViewById ( R.id.tv_descriptionTeam );
+        TextView tv_name = convertView.findViewById ( R.id.tv_nameTeam );
+        TextView tv_description = convertView.findViewById ( R.id.tv_descriptionTeam );
+        ImageView mv_logo = convertView.findViewById ( R.id.mv_teamLogo1);
+
+        //if to the team has logo, set it to image view resource.
+        if(!logo.equals ( "" ))
+        {
+            image.setImageUri ( logo,mv_logo );
+        }
 
         tv_name.setText ( name );
         tv_description.setText (description);
