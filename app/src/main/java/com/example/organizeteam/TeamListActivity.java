@@ -19,6 +19,8 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -45,7 +47,7 @@ import com.google.android.material.navigation.NavigationView;
  * @version 1.0
  * @since 30-07-2020
  */
-public class TeamListActivity extends AppCompatActivity implements  NavigationView.OnNavigationItemSelectedListener{
+public class TeamListActivity extends AppCompatActivity implements  NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemClickListener {
 
     ListView listView;
     TextView tv_name;
@@ -194,6 +196,9 @@ public class TeamListActivity extends AppCompatActivity implements  NavigationVi
 
         teamList = new ArrayList<Team>();
 
+        listView.setOnItemClickListener ( this );
+        listView.setChoiceMode ( ListView.CHOICE_MODE_SINGLE );
+
         if(teams != null)
             teamList.addAll ( teams.values () );
 
@@ -232,5 +237,10 @@ public class TeamListActivity extends AppCompatActivity implements  NavigationVi
         {
             image.pickImageFromGallery(this);
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        activityTransition.goTo ( this,TeamPageActivty.class,false,null,null );
     }
 }
