@@ -1,17 +1,9 @@
-package com.example.organizeteam.AuthorizationSystem;
+package com.example.organizeteam.Core;
 
 import android.text.TextUtils;
 import android.widget.EditText;
 
-public class UserInput {
-    /**
-     * This function use to set error message  to user in editText
-     * @param editText the EditText reference you want to set error.
-     * @param errorText the text you want to set.
-     */
-    public void setError(EditText editText, String errorText) {
-        editText.setError ( ""+errorText );
-    }
+public class InputManagement {
 
     /**
      * This function use to get input from EditText.
@@ -21,6 +13,15 @@ public class UserInput {
     public String getInput(EditText editText)
     {
         return editText.getText ().toString ().trim ();
+    }
+
+    /**
+     * This function use to set error message  to user in editText
+     * @param editText the EditText reference you want to set error.
+     * @param errorText the text you want to set.
+     */
+    public void setError(EditText editText, String errorText) {
+        editText.setError ( ""+errorText );
     }
 
     /**
@@ -101,6 +102,11 @@ public class UserInput {
         return true;
     }
 
+    /**
+     * Check if the input in edit text is empty or not.
+     * @param editText editText reference that you want get from input.
+     * @return return true if the input empty, false if not.
+     */
     public boolean isInputEmpty(EditText editText)
     {
         return TextUtils.isEmpty ( getInput ( editText ) );

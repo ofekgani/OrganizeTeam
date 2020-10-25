@@ -9,18 +9,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
-import com.example.organizeteam.AuthorizationSystem.IUser;
-import com.example.organizeteam.AuthorizationSystem.UserInfo;
-import com.example.organizeteam.AuthorizationSystem.UserInput;
+import com.example.organizeteam.DataManagement.DataExtraction;
+import com.example.organizeteam.Core.InputManagement;
 
 import com.example.organizeteam.Resources.Loading;
-import com.google.firebase.auth.FirebaseAuth;
 
-import  com.example.organizeteam.AuthorizationSystem.Authorization;
+import  com.example.organizeteam.DataManagement.Authorization;
 import  com.example.organizeteam.Resources.Transformation;
 import  com.example.organizeteam.Core.ActivityTransition;
-
-import java.util.Map;
 
 /**
  * @author ofek gani
@@ -34,11 +30,11 @@ public class RegisterActivity extends AppCompatActivity {
     ProgressBar pb_singUp;
 
     Authorization authorization;
-    UserInput input;
+    InputManagement input;
     Transformation transformation;
     Loading progressBar;
     ActivityTransition activityTransition;
-    UserInfo userInfo;
+    DataExtraction dataExtraction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +52,9 @@ public class RegisterActivity extends AppCompatActivity {
         authorization = new Authorization ();
         transformation = new Transformation ();
         activityTransition = new ActivityTransition ();
-        input = new UserInput ();
+        input = new InputManagement ();
         progressBar = new Loading ( );
-        userInfo = new UserInfo ();
+        dataExtraction = new DataExtraction ();
 
         progressBar.setVisible ( pb_singUp,false );
     }

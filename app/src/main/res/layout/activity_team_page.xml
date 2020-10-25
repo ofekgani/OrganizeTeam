@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/team_background"
-    tools:context=".TeamPageActivty">
+    tools:context=".TeamPageActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
@@ -16,7 +16,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mv_logo3">
+        app:layout_constraintTop_toBottomOf="@+id/mv_mangerLogo">
 
         <ListView
             android:id="@+id/lv_users"
@@ -29,17 +29,17 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/tv_userName2"
+        android:id="@+id/tv_teamName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/nexa_bold"
         android:text="Team Name"
         android:textColor="@color/black"
-        android:textSize="36sp"
+        android:textSize="@dimen/welcome_description_text_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.632"
-        app:layout_constraintStart_toEndOf="@+id/mv_logo2"
+        app:layout_constraintStart_toEndOf="@+id/mv_teamLogo"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.064" />
 
@@ -57,11 +57,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mv_logo2"
+        app:layout_constraintTop_toBottomOf="@+id/mv_teamLogo"
         app:layout_constraintVertical_bias="0.049" />
 
     <TextView
-        android:id="@+id/tv_userName4"
+        android:id="@+id/tv_mangerName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="72dp"
@@ -69,31 +69,32 @@
         android:text="User Name"
         android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/mv_logo3"
+        app:layout_constraintBottom_toBottomOf="@+id/mv_mangerLogo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/mv_logo3"
-        app:layout_constraintStart_toStartOf="@+id/mv_logo3"
-        app:layout_constraintTop_toTopOf="@+id/mv_logo3"
+        app:layout_constraintStart_toEndOf="@+id/mv_mangerLogo"
+        app:layout_constraintStart_toStartOf="@+id/mv_mangerLogo"
+        app:layout_constraintTop_toTopOf="@+id/mv_mangerLogo"
         app:layout_constraintVertical_bias="0.547" />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/mv_logo2"
+        android:id="@+id/mv_teamLogo"
         android:layout_width="96dp"
         android:layout_height="96dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="24dp"
         android:src="@drawable/user_icon"
         app:civ_border_color="#FF000000"
-        app:civ_border_width="2dp"
+        app:civ_border_width="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.008"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.069" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/mv_logo3"
+        android:id="@+id/mv_mangerLogo"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginTop="24dp"
@@ -120,5 +121,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.976"
         android:backgroundTint="@color/lightBlue"
-        app:srcCompat="@drawable/plus" />
+        app:srcCompat="@drawable/plus"
+        android:onClick="oc_signOut"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

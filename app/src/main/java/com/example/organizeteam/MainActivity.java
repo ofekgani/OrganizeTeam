@@ -1,7 +1,6 @@
 package com.example.organizeteam;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.app.ActivityOptions;
 import android.os.Bundle;
@@ -9,16 +8,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
-import com.example.organizeteam.AuthorizationSystem.Authorization;
-import com.example.organizeteam.AuthorizationSystem.IUser;
-import com.example.organizeteam.AuthorizationSystem.UserInfo;
-import com.example.organizeteam.AuthorizationSystem.UserInput;
+import com.example.organizeteam.DataManagement.Authorization;
+import com.example.organizeteam.DataManagement.DataExtraction;
+import com.example.organizeteam.Core.InputManagement;
 import com.example.organizeteam.Resources.Loading;
 import  com.example.organizeteam.Resources.Transformation;
 import  com.example.organizeteam.Core.ActivityTransition;
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.Map;
 
 /**
  * @author ofek gani
@@ -31,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar pb_singIn;
 
     Authorization authorization;
-    UserInput input;
-    UserInfo userInfo;
+    InputManagement input;
+    DataExtraction dataExtraction;
     Transformation transformation;
     ActivityTransition activityTransition;
     Loading progressBar;
@@ -53,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
         authorization = new Authorization ();
         transformation = new Transformation ();
         activityTransition = new ActivityTransition ();
-        input = new UserInput ();
-        userInfo = new UserInfo ();
+        input = new InputManagement ();
+        dataExtraction = new DataExtraction ();
         progressBar = new Loading ( );
 
         progressBar.setVisible ( pb_singIn,false );
@@ -69,14 +65,7 @@ public class MainActivity extends AppCompatActivity {
         fba = FirebaseAuth.getInstance ();
         if(fba.getCurrentUser () != null)
         {
-            if(fba.getCurrentUser ().isEmailVerified ()) {
-                userInfo.getUserInformation ( new IUser () {
-                    @Override
-                    public void onDataRead(Map<String, Object> data) {
-                        activityTransition.goTo ( MainActivity.this, TeamListActivity.class, true, data, null );
-                    }
-                } );
-            }
+            authorization.connectUserToSystem ( fba,this );
         }
     }
 

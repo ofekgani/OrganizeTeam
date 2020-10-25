@@ -49,6 +49,14 @@ public class ActivityTransition  extends AppCompatActivity {
         from.finish();
     }
 
+    /**
+     * This function use to go to a new activity in order to return to the last activity with a result back.
+     * @param from The activity from which the user moves to a new activity.
+     * @param to The activity that user move on.
+     * @param request The request that you want to send to return result.
+     * @param values data to save into intent.
+     * @param anim Transform between activities.
+     */
     public void goToWithResult(Activity from, Class to,int request,Map<String,Object> values, ActivityOptions anim)
     {
         Intent intent = new Intent ( from,to );
@@ -71,11 +79,20 @@ public class ActivityTransition  extends AppCompatActivity {
         }
     }
 
+    /**
+     * This function use to close the activity.
+     * @param activity the activity that you want to close.
+     */
     public void back(Activity activity)
     {
         activity.finish ();
     }
 
+    /**
+     * This function use to close the activity with result.
+     * @param activity the activity that you want to close.
+     * @param values the values that you want to use when you call to the request.
+     */
     public void back(Activity activity, Map<String,Object> values)
     {
         Intent intent = new Intent (  );

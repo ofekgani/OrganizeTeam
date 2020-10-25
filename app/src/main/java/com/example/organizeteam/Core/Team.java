@@ -1,4 +1,4 @@
-package com.example.organizeteam.Resources;
+package com.example.organizeteam.Core;
 
 
 /**
@@ -11,14 +11,18 @@ public class Team implements java.io.Serializable
     private String name;
     private String description;
     private String logo;
+    private String hostID;
     private String keyID;
 
-    public Team(String name, String description, String logo, String keyID) {
+    public Team(String name, String description, String logo, String hostID, String keyID) {
         this.name = name;
         this.description = description;
         this.keyID = keyID;
+        this.hostID = hostID;
         this.logo = logo;
     }
+
+    public Team(){}
 
     public String getName() {
         return name;
@@ -50,5 +54,13 @@ public class Team implements java.io.Serializable
 
     public void setLogo(String logo) {
         this.logo = logo;
+    }
+
+    public String getHost() {
+        return hostID;
+    }
+
+    public void setHost(String hostID) {
+        this.hostID = hostID;
     }
 }

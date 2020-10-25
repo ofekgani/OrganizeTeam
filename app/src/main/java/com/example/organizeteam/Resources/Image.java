@@ -38,7 +38,7 @@ public class Image  extends AppCompatActivity {
      */
     public void setImageUri(String data, ImageView imageView)
     {
-        if(data == null) return;
+        if(data == null || data.equals ( "" )) return;
         Picasso.get ().load(data).into(imageView);
     }
 

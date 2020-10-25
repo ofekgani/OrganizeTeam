@@ -19,15 +19,14 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.organizeteam.AuthorizationSystem.IPicture;
-import com.example.organizeteam.AuthorizationSystem.UserInfo;
+import com.example.organizeteam.DataManagement.ISavable;
+import com.example.organizeteam.DataManagement.DataExtraction;
 import com.example.organizeteam.Core.ConstantNames;
 
 import java.util.ArrayList;
@@ -35,11 +34,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.example.organizeteam.Core.ActivityTransition;
-import  com.example.organizeteam.AuthorizationSystem.Authorization;
+import  com.example.organizeteam.DataManagement.Authorization;
 import com.example.organizeteam.Resources.Image;
 import com.example.organizeteam.Resources.OpenMenu;
-import com.example.organizeteam.Resources.Team;
+import com.example.organizeteam.Core.Team;
 import com.example.organizeteam.Resources.TeamListAdapter;
+import com.example.organizeteam.Core.User;
 import com.google.android.material.navigation.NavigationView;
 
 /**
@@ -57,7 +57,7 @@ public class TeamListActivity extends AppCompatActivity implements  NavigationVi
 
     ActivityTransition activityTransition;
     Authorization authorization;
-    UserInfo userInfo;
+    DataExtraction dataExtraction;
     OpenMenu openMenu;
     Image image;
 
@@ -67,6 +67,8 @@ public class TeamListActivity extends AppCompatActivity implements  NavigationVi
     String email,name,userID,logo;
 
     Map<String, Team> teams;
+    User user;
+
     ArrayList<Team> teamList;
     TeamListAdapter adapter;
 
@@ -88,7 +90,7 @@ public class TeamListActivity extends AppCompatActivity implements  NavigationVi
         //allocating memory
         activityTransition = new ActivityTransition ();
         authorization = new Authorization ();
-        userInfo = new UserInfo ();
+        dataExtraction = new DataExtraction ();
         openMenu = new OpenMenu ();
         image = new Image ();
 
@@ -99,11 +101,12 @@ public class TeamListActivity extends AppCompatActivity implements  NavigationVi
         TextView nav_name =(TextView) openMenu.getResource ( navigationView,R.id.nav_name );
 
         intent = getIntent (  );
-        email = activityTransition.getData (intent, ConstantNames.USER_EMAIL );
-        name = activityTransition.getData ( intent,ConstantNames.USER_NAME );
-        userID = activityTransition.getData ( intent,ConstantNames.USER_KEY_ID );
-        logo = activityTransition.getData ( intent,ConstantNames.USER_LOGO );
-        teams = (Map<String, Team>) intent.getSerializableExtra ( "userTeams" );
+        user = (User) intent.getSerializableExtra ( ConstantNames.USER);
+        email = user.getEmail ();
+        name = user.getFullName ();
+        userID = user.getKeyID ();
+        logo = user.getLogo ();
+        teamList = (ArrayList<Team>)intent.getSerializableExtra ( ConstantNames.TEAMS );
 
         nav_email.setText(""+email);
         nav_name.setText(""+name);
@@ -161,13 +164,7 @@ public class TeamListActivity extends AppCompatActivity implements  NavigationVi
         }
         else if(requestCode == TEAM_CREATE_CODE && resultCode == Activity.RESULT_OK)
         {
-            teams = (Map<String, Team>) data.getSerializableExtra ( ConstantNames.USER_TEAMS);
-            if(teams != null)
-            {
-                teamList.clear ();
-                teamList.addAll ( teams.values () );
-            }
-
+            teamList = (ArrayList<Team>)intent.getSerializableExtra ( ConstantNames.TEAMS );
             adapter.notifyDataSetChanged();
         }
     }
@@ -193,14 +190,8 @@ public class TeamListActivity extends AppCompatActivity implements  NavigationVi
     }
 
     private void createTeamList() {
-
-        teamList = new ArrayList<Team>();
-
         listView.setOnItemClickListener ( this );
         listView.setChoiceMode ( ListView.CHOICE_MODE_SINGLE );
-
-        if(teams != null)
-            teamList.addAll ( teams.values () );
 
         adapter = new TeamListAdapter(this,R.layout.team_adapter_view_layout,teamList);
         listView.setAdapter ( adapter );
@@ -208,9 +199,9 @@ public class TeamListActivity extends AppCompatActivity implements  NavigationVi
 
     private void uploadPicture(Uri image)
     {
-        userInfo.uploadPicture ( image, TeamListActivity.this, ConstantNames.USER_PATH, userID, email, intent, new IPicture () {
+        dataExtraction.uploadPicture ( image, TeamListActivity.this, ConstantNames.USER_PATH, userID, email, intent, new ISavable () {
             @Override
-            public void onUploadImage(String uri) {
+            public void onDataRead(Object uri) {
 
             }
         } );
@@ -241,6 +232,20 @@ public class TeamListActivity extends AppCompatActivity implements  NavigationVi
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        activityTransition.goTo ( this,TeamPageActivty.class,false,null,null );
+        final String teamName = teamList.get ( i ).getName ();
+        final String teamLogo = teamList.get ( i ).getLogo ();
+        String hostID = teamList.get ( i ).getHost ();
+
+        dataExtraction.getTeamInformation ( hostID, new ISavable () {
+            @Override
+            public void onDataRead(Object data) {
+                Map<String, Object> save = (Map<String, Object>)data;
+                save.put ( ConstantNames.TEAM_NAME,teamName );
+                save.put ( ConstantNames.TEAM_LOGO,teamLogo );
+                activityTransition.goTo ( TeamListActivity.this, TeamPageActivity.class,false,save,null );
+            }
+        } );
+
+
     }
 }

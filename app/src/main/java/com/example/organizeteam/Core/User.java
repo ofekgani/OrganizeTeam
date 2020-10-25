@@ -1,11 +1,11 @@
-package com.example.organizeteam.Resources;
+package com.example.organizeteam.Core;
 
 /**
  * @author ofek gani
  * @version 1.0
  * @since 30-07-2020
  */
-public class User {
+public class User implements java.io.Serializable{
 
     private String fullName;
     private String email;
@@ -18,6 +18,8 @@ public class User {
         this.keyID = keyID;
         this.logo = logo;
     }
+
+    public User() {}
 
     public String getFullName() {
         return fullName;

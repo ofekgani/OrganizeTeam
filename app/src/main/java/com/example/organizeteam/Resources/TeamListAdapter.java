@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.organizeteam.Core.Team;
 import com.example.organizeteam.R;
 
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class TeamListAdapter extends ArrayAdapter<Team> {
         ImageView mv_logo = convertView.findViewById ( R.id.mv_teamLogo1);
 
         //if to the team has logo, set it to image view resource.
-        if(!logo.equals ( "" ))
+        if( logo != null && !logo.equals ( "" ))
         {
             image.setImageUri ( logo,mv_logo );
         }

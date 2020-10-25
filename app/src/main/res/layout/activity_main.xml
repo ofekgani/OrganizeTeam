@@ -167,7 +167,7 @@
             android:fontFamily="@font/nexa_light"
             android:text="Create your own team"
             android:textColor="@color/black"
-            android:textSize="@dimen/description_text_size"
+            android:textSize="@dimen/welcome_description_text_size"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"

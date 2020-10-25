@@ -12,13 +12,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
-import com.example.organizeteam.AuthorizationSystem.IPicture;
-import com.example.organizeteam.AuthorizationSystem.UserInput;
+import com.example.organizeteam.DataManagement.ISavable;
+import com.example.organizeteam.Core.InputManagement;
 import com.example.organizeteam.Core.ActivityTransition;
-import com.example.organizeteam.AuthorizationSystem.UserInfo;
+import com.example.organizeteam.DataManagement.DataExtraction;
 import com.example.organizeteam.Core.ConstantNames;
 import com.example.organizeteam.Resources.Image;
-import com.example.organizeteam.Resources.Team;
+import com.example.organizeteam.Core.Team;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -40,14 +40,14 @@ public class CreateTeamActivity extends AppCompatActivity {
     ImageView mv_logo;
 
     ActivityTransition activityTransition = new ActivityTransition ();
-    UserInfo userInfo = new UserInfo ();
-    UserInput userInput = new UserInput ();
+    DataExtraction dataExtraction = new DataExtraction ();
+    InputManagement userInput = new InputManagement ();
     Image image = new Image ();
 
     Intent intent;
 
-    String userID;
     Map<String, Team> teams;
+    String userID;
     Uri imageUri, imageUriResultCrop;
 
     private static final int PERMISSION_CODE = 1001;
@@ -106,10 +106,10 @@ public class CreateTeamActivity extends AppCompatActivity {
 
     private void uploadPicture(Uri image,String where,final String id)
     {
-        userInfo.uploadPicture ( image, CreateTeamActivity.this, ConstantNames.TEAM_PATH, id, where, intent, new IPicture () {
+        dataExtraction.uploadPicture ( image, CreateTeamActivity.this, ConstantNames.TEAM_PATH, id, where, intent, new ISavable () {
             @Override
-            public void onUploadImage(String uri) {
-                saveAllData ( id, uri );
+            public void onDataRead(Object uri) {
+                saveAllData ( id, (String) uri );
             }
         } );
     }
@@ -126,7 +126,7 @@ public class CreateTeamActivity extends AppCompatActivity {
         String keyID = mDatabase.push ().getKey ();
 
         //Add the team to user`s teams.
-        userInfo.setNewData ( ConstantNames.USER_PATH,userID,ConstantNames.DATA_USER_TEAMS,keyID );
+        dataExtraction.setNewData ( ConstantNames.USER_PATH,userID,ConstantNames.DATA_USER_TEAMS,keyID );
 
         if(imageUriResultCrop != null)
         {
@@ -145,8 +145,8 @@ public class CreateTeamActivity extends AppCompatActivity {
         String description = userInput.getInput ( ed_description );
 
         //Save the new team into firebase
-        Team team = new Team ( name, description, logoUri, keyID );
-        userInfo.setObject ( ConstantNames.TEAM_PATH, keyID, team );
+        Team team = new Team ( name, description, logoUri, userID, keyID );
+        dataExtraction.setObject ( ConstantNames.TEAM_PATH, keyID, team );
 
         //Save user`s teams to team list activity.
         teams.put ( keyID, team );
