@@ -2,15 +2,21 @@ package com.example.organizeteam.Core;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.FragmentTransaction;
 import android.content.Context;
+import android.app.Fragment;
 import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
 
+import com.example.organizeteam.R;
 import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
 
 import java.io.Serializable;
 import java.util.Map;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 
 public class ActivityTransition  extends AppCompatActivity {
 
@@ -47,6 +53,30 @@ public class ActivityTransition  extends AppCompatActivity {
             return;
 
         from.finish();
+    }
+
+    public void goTo(Fragment to)
+    {
+        FragmentTransaction ft = getFragmentManager ().beginTransaction();
+        ft.replace( R.id.fragment_container, to);
+        ft.commit();
+
+        ft.addToBackStack(null);
+
+    }
+
+    public Bundle CreateBundle(Map<String,String> values)
+    {
+        Bundle bundle = new Bundle();
+        if(values != null)
+        {
+            for (Map.Entry value : values.entrySet ())
+            {
+                bundle.putString ( ""+value.getKey (),(String)value.getValue () );
+            }
+            return bundle;
+        }
+        return null;
     }
 
     /**

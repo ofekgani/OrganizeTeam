@@ -14,6 +14,7 @@ import com.example.organizeteam.Core.User;
 import com.example.organizeteam.MainActivity;
 import com.example.organizeteam.Resources.Loading;
 import com.example.organizeteam.Resources.Transformation;
+import com.example.organizeteam.SelectTeamActivity;
 import com.example.organizeteam.TeamListActivity;
 import com.example.organizeteam.TeamPageActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -51,7 +52,7 @@ public class Authorization {
                 ArrayList<Team> teamsSave = (ArrayList<Team>)stat;
                 data.put ( ConstantNames.TEAMS, teamsSave);
 
-                connect ( context,TeamListActivity.class, data );
+                connect ( context, SelectTeamActivity.class, data );
             }
         } );
     }

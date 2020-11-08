@@ -4,21 +4,27 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.organizeteam.Core.ActivityTransition;
 import com.example.organizeteam.Core.ConstantNames;
 import com.example.organizeteam.Core.Team;
 import com.example.organizeteam.Core.User;
+import com.example.organizeteam.MyService.Token;
 import com.example.organizeteam.Resources.Loading;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -69,8 +75,18 @@ public class DataExtraction
                     if(ds.child ( ConstantNames.DATA_USER_EMAIL ).getValue ().equals ( email )){
 
                         //put all user information into Map.
-                        User user = (User) getValue ( ds,User.class );
+                        final User user = (User) getValue ( ds,User.class );
                         userInfo.put ( ConstantNames.USER,user );
+
+                        //Update user`s token and put the token into Map.
+                        getToken ( new ISavable () {
+                            @Override
+                            public void onDataRead(Object save) {
+                                setNewData ( ConstantNames.TOKEN_PATH,user.getKeyID (),(String)save);
+                                Token token = new Token(user.getKeyID (),(String)save);
+                                userInfo.put ( ConstantNames.TOKEN,token);
+                            }
+                        } );
 
                         //Get user`s team.
                         String teamID = null;
@@ -244,6 +260,34 @@ public class DataExtraction
         });
     }
 
+    private void getToken(final ISavable iSavable) {
+        FirebaseInstanceId.getInstance ().getInstanceId ().addOnCompleteListener ( new OnCompleteListener<InstanceIdResult> () {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if (task.isSuccessful ()) {
+                    String token = task.getResult ().getToken ();
+                    iSavable.onDataRead ( token );
+                    Log.d ( "Token", token );
+                }
+            }
+        } );
+    }
+
+    public void getToken(final String userID,final ISavable iSavable)
+    {
+        final DatabaseReference mDatabase =  FirebaseDatabase.getInstance ().getReference (ConstantNames.TOKEN_PATH ).child ( userID );
+        mDatabase.addListenerForSingleValueEvent ( new ValueEventListener () {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                iSavable.onDataRead ( snapshot.getValue () );
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
     /**
      * Set new information into firebase by path, id and key.
      * @param path The path that we want to save the value.
@@ -268,6 +312,12 @@ public class DataExtraction
     {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance ().getReference ( path ).child ( id );
         mDatabase.child ( key ).push ().setValue ( value );
+    }
+
+    public void setNewData(String path,String key,String value)
+    {
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance ().getReference ( path );
+        mDatabase.child ( key ).setValue ( value );
     }
 
     /**
