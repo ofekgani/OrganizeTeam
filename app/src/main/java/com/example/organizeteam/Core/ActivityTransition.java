@@ -65,14 +65,14 @@ public class ActivityTransition  extends AppCompatActivity {
 
     }
 
-    public Bundle CreateBundle(Map<String,String> values)
+    public Bundle CreateBundle(Map<String,Object> values)
     {
         Bundle bundle = new Bundle();
         if(values != null)
         {
             for (Map.Entry value : values.entrySet ())
             {
-                bundle.putString ( ""+value.getKey (),(String)value.getValue () );
+                bundle.putSerializable ( ""+value.getKey (),(Serializable)value.getValue () );
             }
             return bundle;
         }

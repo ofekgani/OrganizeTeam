@@ -38,7 +38,7 @@ import  com.example.organizeteam.DataManagement.Authorization;
 import com.example.organizeteam.Resources.Image;
 import com.example.organizeteam.Resources.OpenMenu;
 import com.example.organizeteam.Core.Team;
-import com.example.organizeteam.Resources.TeamListAdapter;
+import com.example.organizeteam.Adapters.TeamListAdapter;
 import com.example.organizeteam.Core.User;
 import com.google.android.material.navigation.NavigationView;
 
@@ -83,7 +83,7 @@ public class TeamListActivity extends AppCompatActivity implements  NavigationVi
         //References
         listView = findViewById ( R.id.lv_teams );
         tv_name = findViewById ( R.id.tv_userName );
-        mv_logo = findViewById ( R.id.mv_logo );
+        mv_logo = findViewById ( R.id.mv_userLogo);
         drawerLayout = findViewById ( R.id.drawer_layout );
         navigationView = findViewById ( R.id.nav_view );
 
@@ -106,7 +106,7 @@ public class TeamListActivity extends AppCompatActivity implements  NavigationVi
         name = user.getFullName ();
         userID = user.getKeyID ();
         logo = user.getLogo ();
-        teamList = (ArrayList<Team>)intent.getSerializableExtra ( ConstantNames.TEAMS );
+        teamList = (ArrayList<Team>)intent.getSerializableExtra ( ConstantNames.TEAMS_LIST);
 
         nav_email.setText(""+email);
         nav_name.setText(""+name);
@@ -135,7 +135,7 @@ public class TeamListActivity extends AppCompatActivity implements  NavigationVi
             case R.id.btn_create_team:
                 Map<String,Object> values = new HashMap<> (  );
                 values.put ( ConstantNames.USER_KEY_ID,userID );
-                values.put ( ConstantNames.USER_TEAMS,teams );
+                values.put ( ConstantNames.USER_TEAM,teams );
 
                 activityTransition.goToWithResult ( this,CreateTeamActivity.class, TEAM_CREATE_CODE, values ,null );
                 break;
@@ -164,7 +164,7 @@ public class TeamListActivity extends AppCompatActivity implements  NavigationVi
         }
         else if(requestCode == TEAM_CREATE_CODE && resultCode == Activity.RESULT_OK)
         {
-            teamList = (ArrayList<Team>)intent.getSerializableExtra ( ConstantNames.TEAMS );
+            teamList = (ArrayList<Team>)intent.getSerializableExtra ( ConstantNames.TEAMS_LIST);
             adapter.notifyDataSetChanged();
         }
     }
@@ -236,7 +236,7 @@ public class TeamListActivity extends AppCompatActivity implements  NavigationVi
         final String teamLogo = teamList.get ( i ).getLogo ();
         String hostID = teamList.get ( i ).getHost ();
 
-        dataExtraction.getTeamInformation ( hostID, new ISavable () {
+        dataExtraction.getUserDataByID( hostID, new ISavable () {
             @Override
             public void onDataRead(Object data) {
                 Map<String, Object> save = (Map<String, Object>)data;

@@ -8,7 +8,7 @@
     tools:context=".SelectTeamActivity">
 
     <ImageView
-        android:id="@+id/mv_teamLogo2"
+        android:id="@+id/mv_teamLogo"
         android:layout_width="98dp"
         android:layout_height="98dp"
         android:scaleType="fitXY"
@@ -33,23 +33,23 @@
         app:srcCompat="@drawable/back_icon" />
 
     <TextView
-        android:id="@+id/textView12"
+        android:id="@+id/tv_teamName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Team name"
+        android:text="No join request."
         android:fontFamily="@font/nexa_bold"
         android:textSize="18dp"
         android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="@+id/mv_teamLogo2"
+        app:layout_constraintBottom_toBottomOf="@+id/mv_teamLogo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/mv_teamLogo2"
-        app:layout_constraintTop_toTopOf="@+id/mv_teamLogo2"
+        app:layout_constraintStart_toEndOf="@+id/mv_teamLogo"
+        app:layout_constraintTop_toTopOf="@+id/mv_teamLogo"
         app:layout_constraintVertical_bias="0.493" />
 
     <TextView
-        android:id="@+id/textView13"
+        android:id="@+id/tv_cancelRequest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -57,11 +57,12 @@
         android:text="Cancel request"
         android:textColor="@color/darkBlue"
         android:textSize="18dp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView12"
+        android:onClick="oc_cancelRequest"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_teamName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.797"
-        app:layout_constraintStart_toEndOf="@+id/textView12"
-        app:layout_constraintTop_toTopOf="@+id/textView12"
+        app:layout_constraintStart_toEndOf="@+id/tv_teamName"
+        app:layout_constraintTop_toTopOf="@+id/tv_teamName"
         app:layout_constraintVertical_bias="1.0" />
 
     <View
@@ -75,7 +76,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mv_teamLogo2"
+        app:layout_constraintTop_toBottomOf="@+id/mv_teamLogo"
         app:layout_constraintVertical_bias="0.0" />
 
     <EditText

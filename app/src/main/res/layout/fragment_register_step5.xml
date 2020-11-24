@@ -55,14 +55,14 @@
         android:textColor="@color/black"
         android:textSize="@dimen/title_text_size"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/mv_logo"
+        app:layout_constraintEnd_toEndOf="@+id/mv_userLogo"
         app:layout_constraintHorizontal_bias="0.413"
-        app:layout_constraintStart_toStartOf="@+id/mv_logo"
+        app:layout_constraintStart_toStartOf="@+id/mv_userLogo"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.175" />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/mv_logo"
+        android:id="@+id/mv_userLogo"
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:layout_marginTop="24dp"
@@ -103,7 +103,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mv_logo"
+        app:layout_constraintTop_toBottomOf="@+id/mv_userLogo"
         app:layout_constraintVertical_bias="0.0" />
 
     <ImageView

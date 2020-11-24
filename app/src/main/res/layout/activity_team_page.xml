@@ -19,7 +19,7 @@
         app:layout_constraintTop_toBottomOf="@+id/mv_mangerLogo">
 
         <ListView
-            android:id="@+id/lv_users"
+            android:id="@+id/lv_usersList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"

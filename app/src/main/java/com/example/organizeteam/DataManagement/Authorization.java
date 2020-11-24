@@ -14,17 +14,14 @@ import com.example.organizeteam.Core.User;
 import com.example.organizeteam.MainActivity;
 import com.example.organizeteam.Resources.Loading;
 import com.example.organizeteam.Resources.Transformation;
-import com.example.organizeteam.SelectTeamActivity;
-import com.example.organizeteam.TeamListActivity;
 import com.example.organizeteam.TeamPageActivity;
+import com.example.organizeteam.WelcomeActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import com.example.organizeteam.Core.ActivityTransition;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 
 import java.util.ArrayList;
@@ -42,17 +39,13 @@ public class Authorization {
 
     /**
      * Extracts all teams from the cloud and saves them to next activity.
-     * @param data data to save into intent.
-     * @param context The activity from which the user moves to a new activity.
      */
-    private void getAllTeams(final Map<String, Object> data, final Activity context) {
+    public void getAllTeams(final ISavable iSavable) {
         dataExtraction.getTeams ( new ISavable () {
             @Override
             public void onDataRead( Object stat) {
                 ArrayList<Team> teamsSave = (ArrayList<Team>)stat;
-                data.put ( ConstantNames.TEAMS, teamsSave);
-
-                connect ( context, SelectTeamActivity.class, data );
+                iSavable.onDataRead(teamsSave);
             }
         } );
     }
@@ -113,10 +106,7 @@ public class Authorization {
                             if (task.isSuccessful ())
                             {
                                 //save user data in firebase
-                                DatabaseReference mDatabase = FirebaseDatabase.getInstance ().getReference ( ConstantNames.USER_PATH);
-                                String keyID = mDatabase.push ().getKey ();
-                                User user = new User ( name,email,"none",keyID);
-                                dataExtraction.setObject ( ConstantNames.USER_PATH,keyID,user );
+                                createNewUser(fba, name, email);
 
                                 //save the user`s email in intent, to get to this user data.
                                 Toast.makeText ( context,"Register successfully. Please check your email to verification. ",Toast.LENGTH_LONG ).show ();
@@ -140,6 +130,12 @@ public class Authorization {
                 }
             }
         } );
+    }
+
+    private void createNewUser(FirebaseAuth fba, String name, String email) {
+        String keyID = fba.getCurrentUser().getUid();
+        User user = new User ( name,email,"",keyID);
+        dataExtraction.setObject ( ConstantNames.USER_PATH,keyID,user );
     }
 
     /**
@@ -189,7 +185,7 @@ public class Authorization {
         if(isEmailVerified ( fba ))
         {
             //get all user information
-            dataExtraction.getUserInformation ( new ISavable () {
+            dataExtraction.getCurrentUserData(new ISavable () {
                 @Override
                 public void onDataRead(Object stat) {
 
@@ -197,7 +193,7 @@ public class Authorization {
                     final Map<String, Object> data = (Map<String, Object>)stat;
 
                     //get user`s id
-                    User user = (User)data.get ( ConstantNames.USER );
+                    final User user = (User)data.get ( ConstantNames.USER );
                     String id = user.getKeyID ();
 
                     //check if to user has team
@@ -206,13 +202,20 @@ public class Authorization {
                         public void onDataRead(Object exist) {
                             if(!(boolean)exist)
                             {
-                                //if to user has not team, get all teams and go to team list activity
-                                getAllTeams ( data, context );
+                                connect ( context, WelcomeActivity.class,data );
                             }
                             else
                             {
                                 //if to user has team, go to team page.
-                                connect ( context, TeamPageActivity.class,data );
+                                final Team team = (Team) data.get ( ConstantNames.TEAM );
+                                dataExtraction.getUserDataByID(team.getHost(), new ISavable() {
+                                    @Override
+                                    public void onDataRead(Object save) {
+                                        data.put(ConstantNames.TEAM_HOST,save);
+                                        connect ( context, TeamPageActivity.class,data );
+                                    }
+                                });
+
                             }
                         }
                     } );
@@ -231,6 +234,10 @@ public class Authorization {
      */
     public void singOut(Activity context)
     {
+        FirebaseAuth fba = FirebaseAuth.getInstance();
+        String userID = fba.getCurrentUser().getUid();
+        dataExtraction.deleteToken(userID);
+
         FirebaseAuth.getInstance ().signOut ();
         connect ( context, MainActivity.class,null );
     }

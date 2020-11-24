@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.organizeteam.Core.User;
 import com.example.organizeteam.DataManagement.ISavable;
 import com.example.organizeteam.Core.InputManagement;
 import com.example.organizeteam.Core.ActivityTransition;
@@ -46,7 +47,7 @@ public class CreateTeamActivity extends AppCompatActivity {
 
     Intent intent;
 
-    Map<String, Team> teams;
+    User user;
     String userID;
     Uri imageUri, imageUriResultCrop;
 
@@ -62,12 +63,8 @@ public class CreateTeamActivity extends AppCompatActivity {
         mv_logo = findViewById ( R.id.mv_teamLogo );
 
         intent = getIntent (  );
-
-        userID = activityTransition.getData ( intent,ConstantNames.USER_KEY_ID );
-        teams = (Map<String, Team>) intent.getSerializableExtra ( ConstantNames.USER_TEAMS );
-
-        if(teams == null)
-            teams = new HashMap<> (  );
+        user = (User)intent.getSerializableExtra(ConstantNames.USER);
+        userID = user.getKeyID();
     }
 
     @Override
@@ -145,14 +142,23 @@ public class CreateTeamActivity extends AppCompatActivity {
         String description = userInput.getInput ( ed_description );
 
         //Save the new team into firebase
-        Team team = new Team ( name, description, logoUri, userID, keyID );
+        final Team team = new Team ( name, description, logoUri, userID, keyID );
         dataExtraction.setObject ( ConstantNames.TEAM_PATH, keyID, team );
 
-        //Save user`s teams to team list activity.
-        teams.put ( keyID, team );
-        Map<String, Object> values = new HashMap<> ();
-        values.put ( ConstantNames.USER_TEAMS, teams );
-        activityTransition.back ( CreateTeamActivity.this, values );
+
+
+        dataExtraction.getUserDataByID(team.getHost(), new ISavable() {
+            @Override
+            public void onDataRead(Object save) {
+                Map<String,Object> values = new HashMap<>();
+                values.put(ConstantNames.TEAM,team);
+                values.put(ConstantNames.USER,user);
+                values.put(ConstantNames.TEAM_HOST,save);
+                //Save user`s teams to team list activity.
+                activityTransition.goTo ( CreateTeamActivity.this,TeamPageActivity.class,true,values,null);
+            }
+        });
+
     }
 
     public void oc_back(View view) {

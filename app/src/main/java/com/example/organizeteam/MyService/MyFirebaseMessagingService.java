@@ -45,7 +45,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void showNotification(RemoteMessage remoteMessage)
     {
         Notification notification = new Notification ();
-        notification.createNotificationChannel (this,CHANNEL_ID,"Join Request","Handle join request notifications",4);
+        notification.createNotificationChannel (this,CHANNEL_ID,"Join Request","Handle join request notifications",5);
 
         String title = remoteMessage.getData().get("title");
         String body = remoteMessage.getData().get("body");

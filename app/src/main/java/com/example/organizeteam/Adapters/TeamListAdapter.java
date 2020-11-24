@@ -1,4 +1,4 @@
-package com.example.organizeteam.Resources;
+package com.example.organizeteam.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.example.organizeteam.Core.Team;
 import com.example.organizeteam.R;
+import com.example.organizeteam.Resources.Image;
 
 import java.util.ArrayList;
 

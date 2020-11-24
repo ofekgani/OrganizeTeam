@@ -1,6 +1,6 @@
 package com.example.organizeteam.MyService;
 
-public class Token  implements java.io.Serializable{
+public class Token implements java.io.Serializable{
 
     private String userID;
     private String token;
