@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/register_background"
     android:orientation="vertical"
-    tools:context=".RegisterActivity">
+    tools:context="com.myapp.organizeteam.RegisterActivity">
 
     <ProgressBar
         android:id="@+id/pb_singUp"

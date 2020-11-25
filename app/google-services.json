@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:711812762807:android:5cc8a9d86e9ec020505132",
         "android_client_info": {
-          "package_name": "com.example.organizeteam"
+          "package_name": "com.myapp.organizeteam"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "711812762807-qb7rhf3fbt9spktmka2bhgkv77phi0ak.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.organizeteam",
+            "package_name": "com.myapp.organizeteam",
             "certificate_hash": "9176b9abc23e003f7b8e1a039cc40108bb9589a9"
           }
         },

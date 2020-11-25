@@ -6,7 +6,7 @@
     android:layout_height="fill_parent"
     android:id="@+id/drawer_layout"
     android:fitsSystemWindows="true"
-    tools:context=".TeamListActivity">
+    tools:context="com.myapp.organizeteam.TeamListActivity">
 
 <androidx.constraintlayout.widget.ConstraintLayout
 android:layout_width="match_parent"
