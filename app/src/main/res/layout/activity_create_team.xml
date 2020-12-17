@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/new_team_background"
+    android:background="@drawable/bg_create"
     tools:context="com.myapp.organizeteam.CreateTeamActivity">
 
     <ImageView
@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.019"
-        app:srcCompat="@drawable/back_icon" />
+        app:srcCompat="@drawable/ic_arrow_left" />
 
     <Button
         android:id="@+id/btn_register2"
@@ -48,7 +48,7 @@
         android:layout_marginTop="8dp"
         android:fontFamily="@font/nexa_bold"
         android:text="Create new team"
-        android:textColor="@color/black"
+        android:textColor="@color/secondaryTextColor"
         android:textSize="32sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -67,7 +67,7 @@
         android:hint="Team name"
         android:inputType="textPersonName"
         android:paddingLeft="12dp"
-        android:textColor="@color/gray"
+        android:textColor="@color/secondaryTextColor"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/ed_teamDescription"
@@ -102,7 +102,7 @@
         app:layout_constraintStart_toStartOf="@+id/mv_teamLogo"
         app:layout_constraintTop_toTopOf="@+id/mv_teamLogo"
         app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/pencil_icon" />
+        app:srcCompat="@drawable/ic_pencil" />
 
     <EditText
         android:id="@+id/ed_teamDescription"
@@ -118,7 +118,7 @@
         android:inputType="textMultiLine"
         android:paddingLeft="12dp"
         android:paddingTop="12dp"
-        android:textColor="@color/gray"
+        android:textColor="@color/secondaryTextColor"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -91,6 +91,6 @@ public class MainActivity extends AppCompatActivity {
         ActivityOptions options = transformation.pushDown ( MainActivity.this );
 
         //go to main activity
-        activityTransition.goTo ( MainActivity.this, RegisterActivity.class,false,null,options );
+        activityTransition.goTo ( MainActivity.this, CreateAccount.class,false,null,options );
     }
 }

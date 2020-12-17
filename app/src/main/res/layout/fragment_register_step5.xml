@@ -4,20 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/welcome_background">
+    android:background="@drawable/bg_welcome">
 
     <Button
         android:id="@+id/btn_register5"
-        android:layout_width="260dp"
-        android:layout_height="50dp"
+        android:layout_width="115dp"
+        android:layout_height="36dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/button2"
-        android:fontFamily="@font/sans_semi_bold"
+        android:fontFamily="@font/roboto_medium"
         android:gravity="center"
-        android:text="Create new team"
+        android:text="Create team"
         android:textAllCaps="false"
-        android:textColor="@color/lightBlue"
-        android:textSize="24dp"
+        android:textColor="@color/secondaryColor"
+        android:textSize="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/btn_register50"
         app:layout_constraintHorizontal_bias="0.0"
@@ -27,22 +27,21 @@
 
     <Button
         android:id="@+id/btn_register50"
-        android:layout_width="260dp"
-        android:layout_height="50dp"
+        android:layout_width="115dp"
+        android:layout_height="36dp"
         android:layout_marginTop="24dp"
         android:background="@drawable/button"
-        android:fontFamily="@font/sans_semi_bold"
+        android:fontFamily="@font/roboto_medium"
         android:gravity="center"
         android:text="Join to team"
         android:textAllCaps="false"
         android:textColor="#ffffff"
-        android:textSize="24dp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.006" />
 
     <TextView
         android:id="@+id/textView9"
@@ -51,29 +50,29 @@
         android:layout_marginTop="1dp"
         android:layout_marginEnd="48dp"
         android:fontFamily="@font/nexa_bold"
-        android:text="Welcome,"
-        android:textColor="@color/black"
-        android:textSize="@dimen/title_text_size"
+        android:text="Welcome"
+        android:textColor="@color/secondaryTextColor"
+        android:textSize="34sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/mv_userLogo"
-        app:layout_constraintHorizontal_bias="0.413"
+        app:layout_constraintHorizontal_bias="0.255"
         app:layout_constraintStart_toStartOf="@+id/mv_userLogo"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.175" />
+        app:layout_constraintVertical_bias="0.273" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/mv_userLogo"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
+        android:layout_width="98dp"
+        android:layout_height="98dp"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="364dp"
         android:onClick="oc_chooseImage"
-        android:src="@drawable/user_icon"
+        android:src="@drawable/ic_user"
         app:civ_border_color="#FF000000"
         app:civ_border_width="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView9"
         app:layout_constraintVertical_bias="0.0" />
@@ -89,7 +88,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textView4"
         app:layout_constraintVertical_bias="0.52"
-        app:srcCompat="@drawable/user_icon" />
+        app:srcCompat="@drawable/ic_user" />
 
     <TextView
         android:id="@+id/textView4"
@@ -98,7 +97,7 @@
         android:layout_marginTop="16dp"
         android:fontFamily="@font/nexa_bold"
         android:text="Full Name"
-        android:textColor="@color/black"
+        android:textColor="@color/secondaryTextColor"
         android:textSize="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -116,7 +115,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/imageView3"
         app:layout_constraintTop_toTopOf="@+id/textView5"
-        app:srcCompat="@drawable/email_icon" />
+        app:srcCompat="@drawable/ic_email" />
 
     <TextView
         android:id="@+id/textView5"
@@ -125,7 +124,7 @@
         android:layout_marginTop="8dp"
         android:fontFamily="@font/nexa_bold"
         android:text="Email"
-        android:textColor="@color/black"
+        android:textColor="@color/secondaryTextColor"
         android:textSize="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/textView4"
@@ -144,7 +143,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/imageView4"
         app:layout_constraintTop_toBottomOf="@+id/textView5"
-        app:srcCompat="@drawable/phone_icon" />
+        app:srcCompat="@drawable/ic_phone" />
 
     <TextView
         android:id="@+id/textView6"
@@ -153,7 +152,7 @@
         android:layout_marginTop="8dp"
         android:fontFamily="@font/nexa_bold"
         android:text="Phone"
-        android:textColor="@color/black"
+        android:textColor="@color/secondaryTextColor"
         android:textSize="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/textView5"
@@ -166,168 +165,14 @@
         android:id="@+id/imageView2"
         android:layout_width="32sp"
         android:layout_height="32sp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.04"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.019"
-        app:srcCompat="@drawable/back_icon" />
-
-    <ImageView
-        android:id="@+id/stepsBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/step_bar" />
-
-    <ImageView
-        android:id="@+id/completeStepsBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:scaleX="3.5"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/stepsBar"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="@+id/stepsBar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/access_line" />
-
-    <ImageView
-        android:id="@+id/step1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="@+id/stepsBar"
-        app:layout_constraintEnd_toEndOf="@+id/stepsBar"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/stepsBar"
-        app:layout_constraintTop_toTopOf="@+id/stepsBar"
-        app:layout_constraintVertical_bias="0.41000003"
-        app:srcCompat="@drawable/circle" />
-
-    <ImageView
-        android:id="@+id/step2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="@+id/stepsBar"
-        app:layout_constraintEnd_toEndOf="@+id/stepsBar"
-        app:layout_constraintHorizontal_bias="0.25"
-        app:layout_constraintStart_toStartOf="@+id/stepsBar"
-        app:layout_constraintTop_toTopOf="@+id/stepsBar"
-        app:layout_constraintVertical_bias="0.414"
-        app:srcCompat="@drawable/circle" />
-
-    <ImageView
-        android:id="@+id/step3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="@+id/stepsBar"
-        app:layout_constraintEnd_toEndOf="@+id/stepsBar"
-        app:layout_constraintStart_toStartOf="@+id/stepsBar"
-        app:layout_constraintTop_toTopOf="@+id/stepsBar"
-        app:layout_constraintVertical_bias="0.414"
-        app:srcCompat="@drawable/circle" />
-
-    <ImageView
-        android:id="@+id/step4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="@+id/stepsBar"
-        app:layout_constraintEnd_toEndOf="@+id/stepsBar"
-        app:layout_constraintHorizontal_bias="0.75"
-        app:layout_constraintStart_toStartOf="@+id/stepsBar"
-        app:layout_constraintTop_toTopOf="@+id/stepsBar"
-        app:layout_constraintVertical_bias="0.414"
-        app:srcCompat="@drawable/circle" />
-
-    <ImageView
-        android:id="@+id/step5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="@+id/stepsBar"
-        app:layout_constraintEnd_toEndOf="@+id/stepsBar"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/stepsBar"
-        app:layout_constraintTop_toTopOf="@+id/stepsBar"
-        app:layout_constraintVertical_bias="0.414"
-        app:srcCompat="@drawable/access_circle" />
-
-
-    <TextView
-        android:id="@+id/textView96"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="1"
-        android:textColor="#ffffff"
-        app:layout_constraintBottom_toBottomOf="@+id/step1"
-        app:layout_constraintEnd_toEndOf="@+id/step1"
-        app:layout_constraintStart_toStartOf="@+id/step1"
-        app:layout_constraintTop_toTopOf="@+id/step1"></TextView>
-
-    <TextView
-        android:id="@+id/textView59"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="2"
-        android:textColor="#ffffff"
-        app:layout_constraintBottom_toBottomOf="@+id/step2"
-        app:layout_constraintEnd_toEndOf="@+id/step2"
-        app:layout_constraintStart_toStartOf="@+id/step2"
-        app:layout_constraintTop_toTopOf="@+id/step2"
-        app:layout_constraintVertical_bias="0.538"></TextView>
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="3"
-        android:textColor="#ffffff"
-        app:layout_constraintBottom_toBottomOf="@+id/step3"
-        app:layout_constraintEnd_toEndOf="@+id/step3"
-        app:layout_constraintStart_toStartOf="@+id/step3"
-        app:layout_constraintTop_toTopOf="@+id/step3"
-        app:layout_constraintVertical_bias="0.538"></TextView>
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="4"
-        android:textColor="#ffffff"
-        app:layout_constraintBottom_toBottomOf="@+id/step4"
-        app:layout_constraintEnd_toEndOf="@+id/step4"
-        app:layout_constraintStart_toStartOf="@+id/step4"
-        app:layout_constraintTop_toTopOf="@+id/step4"
-        app:layout_constraintVertical_bias="0.538"></TextView>
-
-    <TextView
-        android:id="@+id/tv_common"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="5"
-        android:textColor="#ffffff"
-        app:layout_constraintBottom_toBottomOf="@+id/step5"
-        app:layout_constraintEnd_toEndOf="@+id/step5"
-        app:layout_constraintStart_toStartOf="@+id/step5"
-        app:layout_constraintTop_toTopOf="@+id/step5"
-        app:layout_constraintVertical_bias="0.538"></TextView>
+        app:srcCompat="@drawable/ic_arrow_left" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

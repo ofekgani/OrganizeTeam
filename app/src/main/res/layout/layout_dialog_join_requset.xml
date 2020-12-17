@@ -12,7 +12,7 @@
         android:layout_marginTop="8dp"
         android:fontFamily="@font/nexa_bold"
         android:text="Team title"
-        android:textColor="@color/black"
+        android:textColor="@color/secondaryTextColor"
         android:textSize="24dp" />
 
     <ScrollView
@@ -38,7 +38,7 @@
                 android:fontFamily="@font/roboto_medium"
                 android:scrollbars="vertical"
                 android:text="Team description"
-                android:textColor="@color/black"
+                android:textColor="@color/secondaryTextColor"
                 android:textSize="16dp" />
         </LinearLayout>
     </ScrollView>

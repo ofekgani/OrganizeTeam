@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.myapp.organizeteam.WelcomeActivity"
-    android:background="@drawable/welcome_background">
+    android:background="@drawable/bg_welcome">
 
     <Button
         android:id="@+id/btn_register5"
@@ -17,7 +17,7 @@
         android:gravity="center"
         android:text="Create new team"
         android:textAllCaps="false"
-        android:textColor="@color/lightBlue"
+        android:textColor="@color/secondaryColor"
         android:textSize="24dp"
         android:onClick="oc_createTeam"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -55,8 +55,8 @@
         android:layout_marginEnd="48dp"
         android:fontFamily="@font/nexa_bold"
         android:text="Welcome,"
-        android:textColor="@color/black"
-        android:textSize="@dimen/title_text_size"
+        android:textColor="@color/secondaryTextColor"
+        android:textSize="@dimen/welcome_title_text_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/mv_userLogo"
         app:layout_constraintHorizontal_bias="0.409"
@@ -71,7 +71,7 @@
         android:layout_marginTop="24dp"
         android:layout_marginBottom="364dp"
         android:onClick="oc_chooseImage"
-        android:src="@drawable/user_icon"
+        android:src="@drawable/ic_user"
         app:civ_border_color="#FF000000"
         app:civ_border_width="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -92,7 +92,7 @@
         app:layout_constraintStart_toStartOf="@+id/imageView4"
         app:layout_constraintTop_toTopOf="@+id/tv_userName"
         app:layout_constraintVertical_bias="0.52"
-        app:srcCompat="@drawable/user_icon" />
+        app:srcCompat="@drawable/ic_user" />
 
     <TextView
         android:id="@+id/tv_userName"
@@ -102,7 +102,7 @@
         android:layout_marginTop="16dp"
         android:fontFamily="@font/nexa_bold"
         android:text="Full Name"
-        android:textColor="@color/black"
+        android:textColor="@color/secondaryTextColor"
         android:textSize="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -122,7 +122,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_userEmail"
         app:layout_constraintVertical_bias="0.437"
-        app:srcCompat="@drawable/email_icon" />
+        app:srcCompat="@drawable/ic_email" />
 
     <TextView
         android:id="@+id/tv_userEmail"
@@ -132,7 +132,7 @@
         android:layout_marginTop="8dp"
         android:fontFamily="@font/nexa_bold"
         android:text="Email"
-        android:textColor="@color/black"
+        android:textColor="@color/secondaryTextColor"
         android:textSize="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -151,7 +151,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.019"
-        app:srcCompat="@drawable/back_icon"
+        app:srcCompat="@drawable/ic_arrow_left"
         android:onClick="oc_signOut"/>
 
     <ImageView
@@ -164,6 +164,6 @@
         app:layout_constraintStart_toStartOf="@+id/mv_userLogo"
         app:layout_constraintTop_toTopOf="@+id/mv_userLogo"
         app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/pencil_icon" />
+        app:srcCompat="@drawable/ic_pencil" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
