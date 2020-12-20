@@ -11,10 +11,14 @@ import android.widget.ProgressBar;
 import com.myapp.organizeteam.DataManagement.Authorization;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.Core.InputManagement;
+import com.myapp.organizeteam.DataManagement.IRegister;
 import com.myapp.organizeteam.Resources.Loading;
 import com.myapp.organizeteam.Resources.Transformation;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author ofek gani
@@ -55,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
         progressBar.setVisible ( pb_singIn,false );
 
-        checkUserConnected ();
+        //checkUserConnected ();
     }
 
     /**
@@ -65,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         fba = FirebaseAuth.getInstance ();
         if(fba.getCurrentUser () != null)
         {
-            authorization.connectUserToSystem ( fba,this );
+            authorization.connectUserToSystem ( this );
         }
     }
 
@@ -79,7 +83,20 @@ public class MainActivity extends AppCompatActivity {
             return;
 
         //login to system.
-        authorization.login ( MainActivity.this,ed_email,ed_password,pb_singIn );
+        authorization.login(input.getInput(ed_email), input.getInput(ed_password), new IRegister() {
+            @Override
+            public void onProcess() {
+                progressBar.setVisible(pb_singIn,true);
+            }
+
+            @Override
+            public void onDone(boolean successful, String message) {
+                Map<String,Object> save = new HashMap<>();
+                save.put("password",input.getInput(ed_password));
+                progressBar.setVisible(pb_singIn,false);
+                activityTransition.goTo(MainActivity.this,CreateAccount.class,false,save,null);
+            }
+        });
     }
 
     /**
@@ -89,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     public void oc_newAccount(View view) {
         //Create transform animation
         ActivityOptions options = transformation.pushDown ( MainActivity.this );
-
+        authorization.singOut();
         //go to main activity
         activityTransition.goTo ( MainActivity.this, CreateAccount.class,false,null,options );
     }

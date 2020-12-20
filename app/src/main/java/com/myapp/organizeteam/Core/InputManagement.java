@@ -102,6 +102,34 @@ public class InputManagement {
         return true;
     }
 
+    public boolean isInputValid(EditText edEmail, EditText edPassword, EditText edConfirmPassword) {
+        if(edEmail == null && edPassword == null)
+            return false;
+        if(edConfirmPassword == null)
+            return false;
+
+        String email = getInput ( edEmail );
+        String password = getInput ( edPassword );
+        String confirmPassword = getInput ( edConfirmPassword );
+
+        if(TextUtils.isEmpty ( email ))
+        {
+            setError ( edEmail,"Email is Required." );
+            return false;
+        }
+        else if(TextUtils.isEmpty ( password ))
+        {
+            setError ( edPassword, "Password is Required." );
+            return false;
+        }
+        else if(!confirmPassword.equals ( password ))
+        {
+            edConfirmPassword.setError ( "Your confirm password is incorrect." );
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Check if the input in edit text is empty or not.
      * @param editText editText reference that you want get from input.

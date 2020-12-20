@@ -1,26 +1,94 @@
 package com.myapp.organizeteam;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 
-import com.myapp.organizeteam.R;
+import com.myapp.organizeteam.Core.InputManagement;
+import com.myapp.organizeteam.DataManagement.Authorization;
+import com.myapp.organizeteam.DataManagement.IRegister;
+import com.myapp.organizeteam.Resources.Loading;
+import com.myapp.organizeteam.Resources.Stepper;
 import com.stepstone.stepper.Step;
+import com.stepstone.stepper.StepperLayout;
 import com.stepstone.stepper.VerificationError;
 
 public class StepOneRegisterFragment extends Fragment implements Step {
 
+    Button btn_create;
+    EditText ed_email, ed_password, ed_confirmPassword;
+    ProgressBar pb;
+
+    StepperLayout mStepperLayout;
+
+    Authorization authorization;
+    InputManagement input;
+    Loading progressBar;
+    Stepper stepper;
+
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_register_step1, container, false);
 
-        //initialize your UI
+        btn_create = v.findViewById(R.id.btn_createAccount);
 
+        ed_email = v.findViewById(R.id.ed_email);
+        ed_password = v.findViewById(R.id.ed_password);
+        ed_confirmPassword = v.findViewById(R.id.ed_confirmPassword);
+
+        pb = v.findViewById(R.id.pb_verify);
+
+        //allocating memory
+        authorization = new Authorization ();
+        input = new InputManagement ();
+        stepper = new Stepper();
+        progressBar = new Loading ( );
+
+        mStepperLayout = stepper.getStepperLayout(container,R.id.stepperLayout);
+
+        progressBar.setVisible ( pb,false );
+
+        if(authorization.isUserConnected() && !authorization.isEmailVerified())
+        {
+            stepper.goNext(mStepperLayout);
+        }
+        else if(authorization.isUserConnected() && authorization.isEmailVerified())
+        {
+            stepper.go(mStepperLayout,2);
+        }
+
+        btn_create.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!input.isInputValid ( ed_email, ed_password, ed_confirmPassword ))
+                    return;
+
+                //create user in firebase
+                authorization.createUser(input.getInput(ed_email), input.getInput(ed_password), new IRegister() {
+                    @Override
+                    public void onProcess() {
+                        progressBar.setVisible(pb,true);
+                    }
+
+                    @Override
+                    public void onDone(boolean successful,String message) {
+                        progressBar.setVisible(pb,false);
+                        if(successful)
+                        {
+                            stepper.goNext(mStepperLayout);
+                        }
+                    }
+                });
+            }
+        });
         return v;
     }
 

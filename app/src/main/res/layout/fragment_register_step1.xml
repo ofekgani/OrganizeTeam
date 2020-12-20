@@ -40,7 +40,7 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <EditText
-            android:id="@+id/ed_currentPassword"
+            android:id="@+id/ed_confirmPassword"
             android:layout_width="280dp"
             android:layout_height="56dp"
             android:layout_marginTop="16dp"
@@ -55,7 +55,7 @@
             android:paddingLeft="16dp"
             android:textColor="@color/secondaryTextColor"
             android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/pb_singUp"
+            app:layout_constraintBottom_toTopOf="@+id/pb_verify"
             app:layout_constraintEnd_toEndOf="@+id/ed_password"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/ed_password"
@@ -67,7 +67,7 @@
             android:layout_width="115dp"
             android:layout_height="36dp"
             android:layout_marginTop="32dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="64dp"
             android:background="@drawable/button"
             android:fontFamily="@font/roboto_medium"
             android:gravity="center"
@@ -75,15 +75,15 @@
             android:textAllCaps="false"
             android:textColor="#ffffff"
             android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@+id/pb_singUp"
-            app:layout_constraintEnd_toEndOf="@+id/ed_currentPassword"
+            app:layout_constraintBottom_toBottomOf="@+id/pb_verify"
+            app:layout_constraintEnd_toEndOf="@+id/ed_confirmPassword"
             app:layout_constraintHorizontal_bias="0.503"
-            app:layout_constraintStart_toStartOf="@+id/ed_currentPassword"
-            app:layout_constraintTop_toBottomOf="@+id/ed_currentPassword"
+            app:layout_constraintStart_toStartOf="@+id/ed_confirmPassword"
+            app:layout_constraintTop_toBottomOf="@+id/ed_confirmPassword"
             app:layout_constraintVertical_bias="1.0" />
 
         <ProgressBar
-            android:id="@+id/pb_singUp"
+            android:id="@+id/pb_verify"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:indeterminateDrawable="@drawable/progressbar"

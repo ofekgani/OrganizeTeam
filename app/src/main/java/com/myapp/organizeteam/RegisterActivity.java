@@ -45,8 +45,8 @@ public class RegisterActivity extends AppCompatActivity {
         ed_name = findViewById ( R.id.ed_name );
         ed_email = findViewById ( R.id.ed_email );
         ed_password = findViewById ( R.id.ed_password );
-        ed_currentPassword = findViewById ( R.id.ed_currentPassword );
-        pb_singUp = findViewById ( R.id.pb_singUp );
+        ed_currentPassword = findViewById ( R.id.ed_confirmPassword);
+        pb_singUp = findViewById ( R.id.pb_verify);
 
         //allocating memory
         authorization = new Authorization ();

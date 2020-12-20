@@ -1,6 +1,7 @@
 package com.myapp.organizeteam.Adapters;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
@@ -16,8 +17,11 @@ import com.stepstone.stepper.viewmodel.StepViewModel;
 
 public class MyStepperAdapter extends AbstractFragmentStepAdapter {
 
-    public MyStepperAdapter(FragmentManager fm, Context context) {
+    String userPassword;
+
+    public MyStepperAdapter(FragmentManager fm, Context context, String userPassword) {
         super(fm, context);
+        this.userPassword = userPassword;
     }
 
     @Override
@@ -31,6 +35,9 @@ public class MyStepperAdapter extends AbstractFragmentStepAdapter {
         else if(position == 1)
         {
             final StepTwoRegisterFragment step = new StepTwoRegisterFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString("password", userPassword);
+            step.setArguments(bundle);
             return step;
         }
         else if(position == 2)

@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="450dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -18,7 +19,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
             android:fontFamily="@font/roboto_bold"
             android:text="Register successful,"
             android:textColor="@color/secondaryTextColor"
@@ -78,13 +78,15 @@
             app:layout_constraintVertical_bias="0.555" />
 
         <Button
-            android:id="@+id/btn_register3"
+            android:id="@+id/btn_verify"
             android:layout_width="115dp"
             android:layout_height="36dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="64dp"
             android:background="@drawable/button"
             android:fontFamily="@font/roboto_medium"
             android:gravity="center"
-            android:text="Next"
+            android:text="Verify"
             android:textAllCaps="false"
             android:textColor="#ffffff"
             android:textSize="14sp"
@@ -92,23 +94,22 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.765" />
+            app:layout_constraintVertical_bias="1.0" />
 
         <ProgressBar
-            android:id="@+id/pb_singUp"
+            android:id="@+id/pb_verify"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
 
 
             android:indeterminateDrawable="@drawable/progressbar"
             android:progress="50"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/btn_register3"
-            app:layout_constraintHorizontal_bias="0.492"
-            app:layout_constraintStart_toStartOf="@+id/btn_register3"
-            app:layout_constraintTop_toBottomOf="@+id/btn_register3"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintEnd_toEndOf="@+id/btn_verify"
+            app:layout_constraintHorizontal_bias="0.477"
+            app:layout_constraintStart_toStartOf="@+id/btn_verify"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

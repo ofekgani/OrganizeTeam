@@ -62,11 +62,18 @@ public class Authorization {
 
     /**
      * This function check if a user verified its email.
-     * @param fba The firebase path to get the user which you want to check.
      * @return return true if email is verified, false if not.
      */
-    private boolean isEmailVerified(FirebaseAuth fba) {
+    public boolean isEmailVerified() {
+        FirebaseAuth fba = FirebaseAuth.getInstance ();
+        if(fba.getCurrentUser() == null) return false;
         return fba.getCurrentUser ().isEmailVerified ();
+    }
+
+    public boolean isUserConnected() {
+        FirebaseAuth fba = FirebaseAuth.getInstance ();
+        if(fba.getCurrentUser() == null) return false;
+        return true;
     }
 
     /**
@@ -132,6 +139,43 @@ public class Authorization {
         } );
     }
 
+    public void createUser(String email, String password, final IRegister iRegister) {
+
+        //get to firebase
+        final FirebaseAuth fba = FirebaseAuth.getInstance ();
+
+        iRegister.onProcess();
+
+        fba.createUserWithEmailAndPassword ( email,password ).addOnCompleteListener ( new OnCompleteListener<AuthResult> () {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+
+                //if creating a user is successful than, send email verification .
+                if(task.isSuccessful ())
+                {
+                    //send email verification and check if this task is successful.
+                    fba.getCurrentUser ().sendEmailVerification ().addOnCompleteListener ( new OnCompleteListener<Void> () {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful())
+                            {
+                                iRegister.onDone(task.isSuccessful (),null);
+                            }
+                            else
+                            {
+                                iRegister.onDone(task.isSuccessful (),task.getException().toString());
+                            }
+                        }
+                    } );
+                }
+                else
+                {
+                    iRegister.onDone(task.isSuccessful (),task.getException().toString());
+                }
+            }
+        } );
+    }
+
     private void createNewUser(FirebaseAuth fba, String name, String email) {
         String keyID = fba.getCurrentUser().getUid();
         User user = new User ( name,email,"",keyID);
@@ -165,7 +209,7 @@ public class Authorization {
 
                 if(task.isSuccessful ())
                 {
-                    connectUserToSystem ( fba, context );
+                    connectUserToSystem ( context );
 
                 }
                 else
@@ -176,13 +220,37 @@ public class Authorization {
         } );
     }
 
+    public void login(final String email, String password, final IRegister iRegister) {
+
+        //get to firebase
+        final FirebaseAuth fba = FirebaseAuth.getInstance ();
+
+        //show the progress bar
+        iRegister.onProcess();
+
+        fba.signInWithEmailAndPassword ( email , password ).addOnCompleteListener ( new OnCompleteListener<AuthResult> () {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+
+                if(task.isSuccessful ())
+                {
+                    iRegister.onDone(task.isSuccessful(),null);
+
+                }
+                else
+                {
+                    iRegister.onDone(task.isSuccessful(),task.getException().toString());
+                }
+            }
+        } );
+    }
+
     /**
      * This function use to handle all the user`s information and connect him to right activity.
-     * @param fba the firebase path to get the user which you want to enter into the system and manage its information
      * @param context The activity from which you perform this function.
      */
-    public void connectUserToSystem(FirebaseAuth fba, final Activity context) {
-        if(isEmailVerified ( fba ))
+    public void connectUserToSystem(final Activity context) {
+        if(isEmailVerified ( ))
         {
             //get all user information
             dataExtraction.getCurrentUserData(new ISavable () {
@@ -240,5 +308,14 @@ public class Authorization {
 
         FirebaseAuth.getInstance ().signOut ();
         connect ( context, MainActivity.class,null );
+    }
+
+    public void singOut()
+    {
+        FirebaseAuth fba = FirebaseAuth.getInstance();
+        String userID = fba.getCurrentUser().getUid();
+        dataExtraction.deleteToken(userID);
+
+        FirebaseAuth.getInstance ().signOut ();
     }
 }
