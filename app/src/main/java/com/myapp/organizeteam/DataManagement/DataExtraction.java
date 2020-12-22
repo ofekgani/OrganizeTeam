@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class DataExtraction
 {
@@ -269,7 +270,7 @@ public class DataExtraction
      * @param intent Update the new data to this intent.
      * @param iSavable Is used to keep the information called so we can use that information.
      */
-    public void uploadPicture(Uri image, final Context context, final String path , final String id, String where, final Intent intent, final ISavable iSavable)
+    public void uploadPicture(Uri image, final Context context, final String path , final String id, String where, final ISavable iSavable)
     {
         //Get access to firebase storage.
         FirebaseStorage storage = FirebaseStorage.getInstance ();
@@ -301,9 +302,6 @@ public class DataExtraction
 
                         //save the new image url into firebase
                         setNewData (path, id,ConstantNames.DATA_USER_LOGO,image );
-
-                        //save the new image url into intent
-                        activityTransition.setData (intent, ConstantNames.USER_LOGO,image);
 
                         //save image url into the interface
                         iSavable.onDataRead ( image );
@@ -401,7 +399,26 @@ public class DataExtraction
     public void setObject(String path,String key,Object value)
     {
         DatabaseReference mDatabase = getDatabaseReference(path);
-        mDatabase.child ( key ).setValue ( value );
+        mDatabase.child ( key ).setValue(value);
+    }
+
+    public void setObject(String path, String key, Object value, final IRegister iRegister)
+    {
+        iRegister.onProcess();
+        DatabaseReference mDatabase = getDatabaseReference(path);
+        mDatabase.child ( key ).setValue(value, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                if(error == null)
+                {
+                    iRegister.onDone(true,null);
+                }
+                else
+                {
+                    iRegister.onDone(false,error.toString());
+                }
+            }
+        });
     }
 
     /**

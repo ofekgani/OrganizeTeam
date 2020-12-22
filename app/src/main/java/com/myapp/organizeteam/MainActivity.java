@@ -91,10 +91,14 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onDone(boolean successful, String message) {
-                Map<String,Object> save = new HashMap<>();
-                save.put("password",input.getInput(ed_password));
                 progressBar.setVisible(pb_singIn,false);
-                activityTransition.goTo(MainActivity.this,CreateAccount.class,false,save,null);
+                if(successful)
+                {
+                    Map<String,Object> save = new HashMap<>();
+                    save.put("password",input.getInput(ed_password));
+                    activityTransition.goTo(MainActivity.this,CreateAccount.class,false,save,null);
+                }
+
             }
         });
     }

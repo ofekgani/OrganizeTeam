@@ -12,6 +12,7 @@ public class InputManagement {
      */
     public String getInput(EditText editText)
     {
+        if(editText == null) return null;
         return editText.getText ().toString ().trim ();
     }
 
@@ -21,6 +22,7 @@ public class InputManagement {
      * @param errorText the text you want to set.
      */
     public void setError(EditText editText, String errorText) {
+        if(editText == null) return;
         editText.setError ( ""+errorText );
     }
 

@@ -199,10 +199,10 @@ public class TeamListActivity extends AppCompatActivity implements  NavigationVi
 
     private void uploadPicture(Uri image)
     {
-        dataExtraction.uploadPicture ( image, TeamListActivity.this, ConstantNames.USER_PATH, userID, email, intent, new ISavable() {
+        dataExtraction.uploadPicture ( image, TeamListActivity.this, ConstantNames.USER_PATH, userID, email, new ISavable() {
             @Override
             public void onDataRead(Object uri) {
-
+                activityTransition.setData (intent, ConstantNames.USER_LOGO,(String) uri);
             }
         } );
     }

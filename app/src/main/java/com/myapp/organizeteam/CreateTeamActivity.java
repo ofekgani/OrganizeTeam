@@ -103,10 +103,11 @@ public class CreateTeamActivity extends AppCompatActivity {
 
     private void uploadPicture(Uri image,String where,final String id)
     {
-        dataExtraction.uploadPicture ( image, CreateTeamActivity.this, ConstantNames.TEAM_PATH, id, where, intent, new ISavable() {
+        dataExtraction.uploadPicture ( image, CreateTeamActivity.this, ConstantNames.TEAM_PATH, id, where, new ISavable() {
             @Override
             public void onDataRead(Object uri) {
                 saveAllData ( id, (String) uri );
+                activityTransition.setData (intent, ConstantNames.USER_LOGO,(String) uri);
             }
         } );
     }

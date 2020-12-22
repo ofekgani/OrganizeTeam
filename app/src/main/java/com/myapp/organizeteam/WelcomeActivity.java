@@ -114,10 +114,10 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private void uploadPicture(Uri image)
     {
-        dataExtraction.uploadPicture ( image, WelcomeActivity.this, ConstantNames.USER_PATH, user.getKeyID(), user.getEmail(), intent, new ISavable() {
+        dataExtraction.uploadPicture ( image, WelcomeActivity.this, ConstantNames.USER_PATH, user.getKeyID(), user.getEmail(), new ISavable() {
             @Override
             public void onDataRead(Object uri) {
-
+                activityTransition.setData (intent, ConstantNames.USER_LOGO,(String) uri);
             }
         } );
     }

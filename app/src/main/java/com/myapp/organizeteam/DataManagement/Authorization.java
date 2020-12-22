@@ -113,7 +113,17 @@ public class Authorization {
                             if (task.isSuccessful ())
                             {
                                 //save user data in firebase
-                                createNewUser(fba, name, email);
+                                createNewUser(name, email, new IRegister() {
+                                    @Override
+                                    public void onProcess() {
+
+                                    }
+
+                                    @Override
+                                    public void onDone(boolean successful, String message) {
+
+                                    }
+                                });
 
                                 //save the user`s email in intent, to get to this user data.
                                 Toast.makeText ( context,"Register successfully. Please check your email to verification. ",Toast.LENGTH_LONG ).show ();
@@ -176,10 +186,21 @@ public class Authorization {
         } );
     }
 
-    private void createNewUser(FirebaseAuth fba, String name, String email) {
-        String keyID = fba.getCurrentUser().getUid();
-        User user = new User ( name,email,"",keyID);
-        dataExtraction.setObject ( ConstantNames.USER_PATH,keyID,user );
+    public void createNewUser(String name, String email, final IRegister iRegister) {
+         FirebaseAuth fba = FirebaseAuth.getInstance ();
+         String keyID = fba.getCurrentUser().getUid();
+         User user = new User ( name,email,"",keyID);
+         dataExtraction.setObject(ConstantNames.USER_PATH, keyID, user, new IRegister() {
+             @Override
+             public void onProcess() {
+                 iRegister.onProcess();
+             }
+
+             @Override
+             public void onDone(boolean successful, String message) {
+                iRegister.onDone(successful,message);
+             }
+         });
     }
 
     /**
@@ -313,6 +334,7 @@ public class Authorization {
     public void singOut()
     {
         FirebaseAuth fba = FirebaseAuth.getInstance();
+        if(fba.getCurrentUser() == null) return;
         String userID = fba.getCurrentUser().getUid();
         dataExtraction.deleteToken(userID);
 

@@ -56,15 +56,6 @@ public class StepOneRegisterFragment extends Fragment implements Step {
 
         progressBar.setVisible ( pb,false );
 
-        if(authorization.isUserConnected() && !authorization.isEmailVerified())
-        {
-            stepper.goNext(mStepperLayout);
-        }
-        else if(authorization.isUserConnected() && authorization.isEmailVerified())
-        {
-            stepper.go(mStepperLayout,2);
-        }
-
         btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
