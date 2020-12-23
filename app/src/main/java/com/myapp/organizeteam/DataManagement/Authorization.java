@@ -50,6 +50,12 @@ public class Authorization {
         } );
     }
 
+    public String getUserID()
+    {
+        FirebaseAuth fba = FirebaseAuth.getInstance();
+        return fba.getCurrentUser().getUid();
+    }
+
     /**
      * Send the user to new activity.
      * @param context The activity from which the user moves to a new activity.

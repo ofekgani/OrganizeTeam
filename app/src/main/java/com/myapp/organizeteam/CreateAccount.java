@@ -11,7 +11,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.myapp.organizeteam.Adapters.MyStepperAdapter;
+import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.DataManagement.Authorization;
+import com.myapp.organizeteam.DataManagement.DataExtraction;
+import com.myapp.organizeteam.DataManagement.ISavable;
 import com.myapp.organizeteam.Resources.Stepper;
 import com.stepstone.stepper.BlockingStep;
 import com.stepstone.stepper.StepperLayout;
@@ -22,10 +25,14 @@ public class CreateAccount extends AppCompatActivity implements StepperLayout.St
     private StepperLayout mStepperLayout;
     Intent intent;
 
+    DataExtraction dataExtraction;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
+
+        dataExtraction = new DataExtraction();
 
         intent = getIntent();
         String password = (String)intent.getSerializableExtra("password");
@@ -34,19 +41,31 @@ public class CreateAccount extends AppCompatActivity implements StepperLayout.St
         mStepperLayout.setAdapter(new MyStepperAdapter(getSupportFragmentManager(), null, password));
 
         Authorization authorization = new Authorization();
-        Stepper stepper = new Stepper();
+        final Stepper stepper = new Stepper();
 
-        if(authorization.isUserConnected() && !authorization.isEmailVerified())
+        if(!authorization.isUserConnected() && !authorization.isEmailVerified())
+        {
+            stepper.go(mStepperLayout,0);
+        }
+        else if(authorization.isUserConnected() && !authorization.isEmailVerified())
         {
             stepper.go(mStepperLayout,1);
         }
         else if(authorization.isUserConnected() && authorization.isEmailVerified())
         {
-            stepper.go(mStepperLayout,2);
-        }
-        else
-        {
-            stepper.go(mStepperLayout,0);
+            dataExtraction.hasChild(ConstantNames.USER_PATH, authorization.getUserID(), ConstantNames.DATA_USER_NAME, new ISavable() {
+                @Override
+                public void onDataRead(Object save) {
+                    if((boolean)save)
+                    {
+                        stepper.go(mStepperLayout, 3);
+                    }
+                    else
+                    {
+                        stepper.go(mStepperLayout, 2);
+                    }
+                }
+            });
         }
     }
 

@@ -33,6 +33,11 @@ import com.myapp.organizeteam.Resources.Stepper;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.StepperLayout;
 import com.stepstone.stepper.VerificationError;
+import com.yalantis.ucrop.UCrop;
+
+import java.io.File;
+
+import static android.app.Activity.RESULT_OK;
 
 public class StepThreeRegisterFragment extends Fragment implements Step {
 
@@ -49,6 +54,9 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
     Loading progressBar;
     Stepper stepper;
     Image image;
+
+    Uri imageUriResult;
+    boolean isImageUploaded = false, isNameUploaded = false;
 
     private static final int PERMISSION_CODE = 1001;
 
@@ -85,10 +93,17 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
                     input.setError(ed_name,"This field is required.");
                     return;
                 }
-                if(fba.getCurrentUser() == null && name == null) return;
+                if(fba.getCurrentUser() == null) return;
 
                 String email = fba.getCurrentUser().getEmail();
 
+                //upload image to firebase if the user choice image.
+                if(imageUriResult != null)
+                {
+                    uploadPicture (imageUriResult);
+                }
+
+                //Create new user with name in firebase realtime.
                 authorization.createNewUser(name, email, new IRegister() {
                     @Override
                     public void onProcess() {
@@ -98,9 +113,15 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
                     @Override
                     public void onDone(boolean successful, String message) {
                         progressBar.setVisible ( pb,false );
+
                         if(successful)
                         {
-                            stepper.goNext(mStepperLayout);
+                            isNameUploaded = true;
+
+                            if(imageUriResult == null || isImageUploaded == true)
+                            {
+                                stepper.goNext(mStepperLayout);
+                            }
                         }
                     }
                 });
@@ -119,12 +140,12 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
                     }
                     else
                     {
-                        image.pickImageFromGallery(getActivity());
+                        image.pickImageFromGallery(StepThreeRegisterFragment.this);
                     }
                 }
                 else
                 {
-                    image.pickImageFromGallery(getActivity());
+                    image.pickImageFromGallery(StepThreeRegisterFragment.this);
                 }
             }
         });
@@ -138,7 +159,9 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
         dataExtraction.uploadPicture ( image, getContext(), ConstantNames.USER_PATH, fba.getCurrentUser().getUid(),fba.getCurrentUser().getEmail(), new ISavable() {
             @Override
             public void onDataRead(Object uri) {
-
+                isImageUploaded = true;
+                if(isNameUploaded)
+                    stepper.goNext(mStepperLayout);
             }
         } );
     }
@@ -147,18 +170,17 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(image.imageSelectedFromGallery ( requestCode, resultCode ) && data != null)
+        if(data == null) return;
+        if(resultCode == RESULT_OK && requestCode == image.IMAGE_PICK_CODE)
         {
-            Uri imageUri = image.getImageUri ( data );
-            image.cropImage ( imageUri,getActivity() );
+            Uri imageUri = image.getImageUri(data);
+            image.cropImage(imageUri,getContext(),StepThreeRegisterFragment.this);
         }
-        else if(image.isImageCropped ( requestCode, resultCode ))
+        else if(requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK)
         {
-            Uri imageUriResultCrop = image.getCropOutput ( data );
-            image.setImageUri ( imageUriResultCrop.toString (),mv_userLogo );
-
-            uploadPicture (imageUriResultCrop);
-
+            Uri imageUriResultCrop = image.getCropOutput(data);
+            image.setImageUri(imageUriResultCrop.toString(),mv_userLogo);
+            imageUriResult = imageUriResultCrop;
         }
     }
 
@@ -171,7 +193,7 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
             case PERMISSION_CODE:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
-                    image.pickImageFromGallery(getActivity());
+                    image.pickImageFromGallery(this);
                 }
                 else
                 {
