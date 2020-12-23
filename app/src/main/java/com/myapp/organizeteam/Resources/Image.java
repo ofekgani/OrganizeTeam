@@ -108,6 +108,7 @@ public class Image  extends AppCompatActivity {
     }
 
     public Uri getImageUri(@Nullable Intent data) {
+        if(data == null) return null;
         return data.getData ();
     }
 }

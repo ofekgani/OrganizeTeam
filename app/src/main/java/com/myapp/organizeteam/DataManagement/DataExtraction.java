@@ -267,7 +267,6 @@ public class DataExtraction
      * @param path The path that we want to save the image url.
      * @param id The user`s id that we want to save the image url.
      * @param where The place that we want to save the image.
-     * @param intent Update the new data to this intent.
      * @param iSavable Is used to keep the information called so we can use that information.
      */
     public void uploadPicture(Uri image, final Context context, final String path , final String id, String where, final ISavable iSavable)
