@@ -30,9 +30,15 @@ import com.myapp.organizeteam.DataManagement.ISavable;
 import com.myapp.organizeteam.Resources.Image;
 import com.myapp.organizeteam.Resources.Loading;
 import com.myapp.organizeteam.Resources.Stepper;
+import com.squareup.picasso.Picasso;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.StepperLayout;
 import com.stepstone.stepper.VerificationError;
+import com.yalantis.ucrop.UCrop;
+
+import java.io.File;
+
+import static android.app.Activity.RESULT_OK;
 
 public class StepThreeRegisterFragment extends Fragment implements Step {
 
@@ -51,6 +57,8 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
     Image image;
 
     private static final int PERMISSION_CODE = 1001;
+    private static final int IMAGE_PICK_CODE = 1000;
+    private static final String SAMPLE_CROPPED_IMG_NAME = "SampleCropImg";
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -119,12 +127,16 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
                     }
                     else
                     {
-                        image.pickImageFromGallery(getActivity());
+                        Intent intent = new Intent ( Intent.ACTION_PICK  );
+                        intent.setType ( "image/*" );
+                        startActivityForResult (intent,IMAGE_PICK_CODE);
                     }
                 }
                 else
                 {
-                    image.pickImageFromGallery(getActivity());
+                    Intent intent = new Intent ( Intent.ACTION_PICK  );
+                    intent.setType ( "image/*" );
+                    startActivityForResult (intent,IMAGE_PICK_CODE);
                 }
             }
         });
@@ -146,16 +158,25 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if(image.imageSelectedFromGallery ( requestCode, resultCode ) && data != null)
+        if(data == null) return;
+        if(resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE)
         {
-            Uri imageUri = image.getImageUri ( data );
-            image.cropImage ( imageUri,getActivity() );
+            Uri imageUri = data.getData ();
+            if(imageUri == null) return;
+            String fileName = SAMPLE_CROPPED_IMG_NAME;
+            double token=Math.random();
+            fileName += token;
+            fileName += ".jpg";
+            UCrop.of(imageUri, Uri.fromFile ( new File( getContext().getCacheDir (),fileName ) ))
+                    .withAspectRatio(1, 1)
+                    .withMaxResultSize(450, 450)
+                    .start(getContext(),this);
         }
-        else if(image.isImageCropped ( requestCode, resultCode ))
+        else if(requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK)
         {
-            Uri imageUriResultCrop = image.getCropOutput ( data );
-            image.setImageUri ( imageUriResultCrop.toString (),mv_userLogo );
+            Uri imageUriResultCrop = UCrop.getOutput ( data );
+            if(data == null || data.equals ( "" )) return;
+            Picasso.get().load(imageUriResultCrop).into(mv_userLogo);
 
             uploadPicture (imageUriResultCrop);
 
@@ -171,7 +192,9 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
             case PERMISSION_CODE:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
-                    image.pickImageFromGallery(getActivity());
+                    Intent intent = new Intent ( Intent.ACTION_PICK  );
+                    intent.setType ( "image/*" );
+                    startActivityForResult (intent,IMAGE_PICK_CODE);
                 }
                 else
                 {
