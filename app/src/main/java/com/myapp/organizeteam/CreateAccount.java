@@ -3,70 +3,73 @@ package com.myapp.organizeteam;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import android.app.ActionBar;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
 import com.myapp.organizeteam.Adapters.MyStepperAdapter;
+import com.myapp.organizeteam.Adapters.UsersListAdapter;
 import com.myapp.organizeteam.Core.ConstantNames;
+import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.Authorization;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.ISavable;
+import com.myapp.organizeteam.Dialogs.RequestJoinDialog;
 import com.myapp.organizeteam.Resources.Stepper;
 import com.stepstone.stepper.BlockingStep;
 import com.stepstone.stepper.StepperLayout;
 import com.stepstone.stepper.VerificationError;
 
-public class CreateAccount extends AppCompatActivity implements StepperLayout.StepperListener {
+import java.util.HashMap;
+import java.util.Map;
+
+public class CreateAccount extends AppCompatActivity implements StepperLayout.StepperListener, StepThreeRegisterFragment.DataPassListener {
 
     private StepperLayout mStepperLayout;
-    Intent intent;
 
     DataExtraction dataExtraction;
+    Stepper stepper;
+    Authorization authorization;
+
+    Toolbar toolbar;
+
+    Intent intent;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
 
+        toolbar = findViewById(R.id.appBarLayout);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         dataExtraction = new DataExtraction();
+        authorization = new Authorization();
+        stepper = new Stepper();
 
         intent = getIntent();
-        String password = (String)intent.getSerializableExtra("password");
+        int step = intent.getIntExtra("step",0);
+        Map<String,Object> data = (Map<String, Object>) intent.getSerializableExtra(ConstantNames.USER);
+
+        DataPass.passData = data;
 
         mStepperLayout = findViewById(R.id.stepperLayout);
-        mStepperLayout.setAdapter(new MyStepperAdapter(getSupportFragmentManager(), null, password));
+        mStepperLayout.setAdapter(new MyStepperAdapter(getSupportFragmentManager(), this,data));
 
-        Authorization authorization = new Authorization();
-        final Stepper stepper = new Stepper();
+        stepper.go(mStepperLayout, step);
 
-        if(!authorization.isUserConnected() && !authorization.isEmailVerified())
-        {
-            stepper.go(mStepperLayout,0);
-        }
-        else if(authorization.isUserConnected() && !authorization.isEmailVerified())
-        {
-            stepper.go(mStepperLayout,1);
-        }
-        else if(authorization.isUserConnected() && authorization.isEmailVerified())
-        {
-            dataExtraction.hasChild(ConstantNames.USER_PATH, authorization.getUserID(), ConstantNames.DATA_USER_NAME, new ISavable() {
-                @Override
-                public void onDataRead(Object save) {
-                    if((boolean)save)
-                    {
-                        stepper.go(mStepperLayout, 3);
-                    }
-                    else
-                    {
-                        stepper.go(mStepperLayout, 2);
-                    }
-                }
-            });
-        }
+
     }
 
     @Override
@@ -95,5 +98,11 @@ public class CreateAccount extends AppCompatActivity implements StepperLayout.St
         StepThreeRegisterFragment stepThreeRegisterFragment = new StepThreeRegisterFragment();
         if(stepThreeRegisterFragment != null)
         stepThreeRegisterFragment.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void passData(Map<String,Object> data) {
+        Toast.makeText(this, "Dude!", Toast.LENGTH_SHORT).show();
+        mStepperLayout.getAdapter().createStep(5);
     }
 }

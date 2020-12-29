@@ -1,6 +1,8 @@
 package com.myapp.organizeteam;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -23,10 +25,12 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.InputManagement;
+import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.Authorization;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.IRegister;
 import com.myapp.organizeteam.DataManagement.ISavable;
+import com.myapp.organizeteam.Dialogs.RequestJoinDialog;
 import com.myapp.organizeteam.Resources.Image;
 import com.myapp.organizeteam.Resources.Loading;
 import com.myapp.organizeteam.Resources.Stepper;
@@ -36,6 +40,8 @@ import com.stepstone.stepper.VerificationError;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -54,6 +60,11 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
     Loading progressBar;
     Stepper stepper;
     Image image;
+
+    Map<String,Object> userData;
+    User user;
+
+    DataPassListener mCallback;
 
     Uri imageUriResult;
     boolean isImageUploaded = false, isNameUploaded = false;
@@ -85,8 +96,8 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
             @Override
             public void onClick(View view) {
 
-                String name = input.getInput(ed_name);
-                FirebaseAuth fba = FirebaseAuth.getInstance ();
+                final String name = input.getInput(ed_name);
+                final FirebaseAuth fba = FirebaseAuth.getInstance ();
 
                 if(input.isInputEmpty(ed_name))
                 {
@@ -95,7 +106,7 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
                 }
                 if(fba.getCurrentUser() == null) return;
 
-                String email = fba.getCurrentUser().getEmail();
+                final String email = fba.getCurrentUser().getEmail();
 
                 //upload image to firebase if the user choice image.
                 if(imageUriResult != null)
@@ -104,24 +115,32 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
                 }
 
                 //Create new user with name in firebase realtime.
-                authorization.createNewUser(name, email, new IRegister() {
+                dataExtraction.hasChild(ConstantNames.USER_PATH, user.getKeyID(), new ISavable() {
                     @Override
-                    public void onProcess() {
-                        progressBar.setVisible ( pb,true );
-                    }
-
-                    @Override
-                    public void onDone(boolean successful, String message) {
-                        progressBar.setVisible ( pb,false );
-
-                        if(successful)
+                    public void onDataRead(Object exist) {
+                        if(!(boolean)exist)
                         {
-                            isNameUploaded = true;
+                            authorization.createNewUser(name, email, new IRegister() {
+                                @Override
+                                public void onProcess() {
+                                    progressBar.setVisible ( pb,true );
+                                }
 
-                            if(imageUriResult == null || isImageUploaded == true)
-                            {
-                                stepper.goNext(mStepperLayout);
-                            }
+                                @Override
+                                public void onDone(boolean successful, String message) {
+                                    progressBar.setVisible ( pb,false );
+
+                                    if(successful)
+                                    {
+                                        next();
+                                    }
+                                }
+                            });
+                        }
+                        else
+                        {
+                            dataExtraction.setNewData(ConstantNames.USER_PATH,user.getKeyID(),ConstantNames.DATA_USER_NAME,name);
+                            next();
                         }
                     }
                 });
@@ -153,17 +172,57 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
         return v;
     }
 
+    private void next() {
+        isNameUploaded = true;
+        if(imageUriResult == null || isImageUploaded == true) {
+            if (imageUriResult != null) {
+                userData.put(ConstantNames.USER, getUserData(imageUriResult.toString()));
+            } else if (user.getLogo() != null) {
+                userData.put(ConstantNames.USER, getUserData(user.getLogo()));
+            }
+            else
+            {
+                userData.put(ConstantNames.USER, getUserData(null));
+            }
+            DataPass.passData = userData;
+            stepper.goNext(mStepperLayout);
+        }
+    }
+
+    private User getUserData(String o) {
+        String email = null;
+        String keyID = null;
+        String phone = null;
+        if(user != null)
+        {
+            if(user.getEmail() != null)
+                email = user.getEmail();
+            if(user.getKeyID() != null)
+                keyID = user.getKeyID();
+            if(user.getPhone() != null);
+                phone = user.getPhone();
+        }
+
+        return new User(input.getInput(ed_name), email, phone, o, keyID);
+    }
+
     private void uploadPicture(Uri image)
     {
-        FirebaseAuth fba = FirebaseAuth.getInstance();
-        dataExtraction.uploadPicture ( image, getContext(), ConstantNames.USER_PATH, fba.getCurrentUser().getUid(),fba.getCurrentUser().getEmail(), new ISavable() {
-            @Override
-            public void onDataRead(Object uri) {
-                isImageUploaded = true;
-                if(isNameUploaded)
-                    stepper.goNext(mStepperLayout);
-            }
-        } );
+        if(user.getEmail() != null && user.getKeyID() != null)
+        {
+            dataExtraction.uploadPicture ( image, getContext(), ConstantNames.USER_PATH, user.getKeyID(),user.getEmail(), new ISavable() {
+                @Override
+                public void onDataRead(Object uri) {
+                    isImageUploaded = true;
+                    if(isNameUploaded)
+                    {
+                        userData.put(ConstantNames.USER,getUserData(imageUriResult.toString()));
+                        DataPass.passData = userData;
+                        stepper.goNext(mStepperLayout);
+                    }
+                }
+            } );
+        }
     }
 
     @Override
@@ -213,6 +272,21 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
     @Override
     public void onSelected() {
         //update UI when selected
+        if (DataPass.passData != null) {
+            userData = DataPass.passData;
+            if(userData.get(ConstantNames.USER) != null)
+            {
+                user = (User)userData.get(ConstantNames.USER);
+                if(user.getFullName() != null)
+                {
+                    ed_name.setText(user.getFullName());
+                }
+                if(user.getLogo() != null && user.getLogo() != "")
+                {
+                    image.setImageUri(user.getLogo(),mv_userLogo);
+                }
+            }
+        }
     }
 
     @Override
@@ -220,4 +294,23 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
         //handle error inside of the fragment, e.g. show error on EditText
     }
 
+    @Override
+    public void onAttach(Context context)
+    {
+        super.onAttach(context);
+        // This makes sure that the host activity has implemented the callback interface
+        // If not, it throws an exception
+        try
+        {
+            mCallback = (DataPassListener) context;
+        }
+        catch (ClassCastException e)
+        {
+            throw new ClassCastException(context.toString()+ " must implement OnImageClickListener");
+        }
+    }
+
+    public interface DataPassListener{
+        void passData(Map<String,Object> data);
+    }
 }

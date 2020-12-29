@@ -13,7 +13,8 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme.NoActionBar">
         <activity android:name=".CreateAccount"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".MainActivity"></activity>
         <activity android:name=".WelcomeActivity" />
 
         <meta-data

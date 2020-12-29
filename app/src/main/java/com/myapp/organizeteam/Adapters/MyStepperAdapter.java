@@ -2,11 +2,15 @@ package com.myapp.organizeteam.Adapters;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 
+import com.myapp.organizeteam.Core.ConstantNames;
+import com.myapp.organizeteam.Core.User;
+import com.myapp.organizeteam.StepFiveRegisterFragment;
 import com.myapp.organizeteam.StepFourRegisterFragment;
 import com.myapp.organizeteam.StepOneRegisterFragment;
 import com.myapp.organizeteam.StepThreeRegisterFragment;
@@ -15,13 +19,19 @@ import com.stepstone.stepper.Step;
 import com.stepstone.stepper.adapter.AbstractFragmentStepAdapter;
 import com.stepstone.stepper.viewmodel.StepViewModel;
 
+import java.io.Serializable;
+import java.util.Map;
+
 public class MyStepperAdapter extends AbstractFragmentStepAdapter {
 
-    String userPassword;
+    Map<String,Object> data;
+    Context context;
 
-    public MyStepperAdapter(FragmentManager fm, Context context, String userPassword) {
+    public MyStepperAdapter(FragmentManager fm, Context context, Map<String,Object> data) {
         super(fm, context);
-        this.userPassword = userPassword;
+
+        this.data =  data;
+        this.context = context;
     }
 
     @Override
@@ -35,19 +45,34 @@ public class MyStepperAdapter extends AbstractFragmentStepAdapter {
         else if(position == 1)
         {
             final StepTwoRegisterFragment step = new StepTwoRegisterFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString("password", userPassword);
-            step.setArguments(bundle);
             return step;
         }
         else if(position == 2)
         {
             final StepThreeRegisterFragment step = new StepThreeRegisterFragment();
+            if(data != null)
+            {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(ConstantNames.USER, (Serializable) data);
+                step.setArguments(bundle);
+            }
+
+            return step;
+        }
+        else if(position == 3)
+        {
+            final StepFourRegisterFragment step = new StepFourRegisterFragment();
             return step;
         }
         else
         {
-            final StepFourRegisterFragment step = new StepFourRegisterFragment();
+            final StepFiveRegisterFragment step = new StepFiveRegisterFragment();
+            if(data != null)
+            {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(ConstantNames.USER, (Serializable) data);
+                step.setArguments(bundle);
+            }
             return step;
         }
 
@@ -82,13 +107,26 @@ public class MyStepperAdapter extends AbstractFragmentStepAdapter {
                     .setTitle("Setup profile") //can be a CharSequence instead
                     .create();
         }
-        else
+        else if(position == 3)
         {
             stepView = new StepViewModel.Builder(context)
                     .setTitle("Add phone") //can be a CharSequence instead
                     .setSubtitle("Optional")
                     .create();
         }
+        else
+        {
+            stepView = new StepViewModel.Builder(context)
+                    .setTitle("Join to team") //can be a CharSequence instead
+                    .create();
+        }
         return stepView;
     }
+
+    public void updateUserData(Map<String,Object> data)
+    {
+        this.data = data;
+    }
+
+
 }

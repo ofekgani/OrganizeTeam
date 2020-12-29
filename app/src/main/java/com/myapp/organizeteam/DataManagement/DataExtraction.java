@@ -137,6 +137,7 @@ public class DataExtraction
 
         //Get email to get access to user`s data.
         final String email = FirebaseAuth.getInstance ().getCurrentUser().getEmail ();
+        if(email == null) return;
         final DatabaseReference mDatabase = getDatabaseReference(ConstantNames.USER_PATH);
 
         //Get user data (name, email, logo, user`s key id) .

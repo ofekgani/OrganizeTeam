@@ -9,12 +9,14 @@ public class User implements java.io.Serializable{
 
     private String fullName;
     private String email;
+    private String phone;
     private String logo;
     private String keyID;
 
-    public User(String fullName, String email,String logo,String keyID) {
+    public User(String fullName, String email, String phone,String logo,String keyID) {
         this.fullName = fullName;
         this.email = email;
+        this.phone = phone;
         this.keyID = keyID;
         this.logo = logo;
     }
@@ -51,6 +53,14 @@ public class User implements java.io.Serializable{
 
     public void setLogo(String logo) {
         this.logo = logo;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
 }

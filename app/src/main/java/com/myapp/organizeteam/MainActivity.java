@@ -4,14 +4,18 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityOptions;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import com.myapp.organizeteam.Core.ConstantNames;
+import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.Authorization;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.Core.InputManagement;
 import com.myapp.organizeteam.DataManagement.IRegister;
+import com.myapp.organizeteam.DataManagement.ISavable;
 import com.myapp.organizeteam.Resources.Loading;
 import com.myapp.organizeteam.Resources.Transformation;
 import com.myapp.organizeteam.Core.ActivityTransition;
@@ -38,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     Loading progressBar;
 
     FirebaseAuth fba;
+
+    int step;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,8 +88,11 @@ public class MainActivity extends AppCompatActivity {
         if(!input.isInputValid ( ed_email, ed_password ))
             return;
 
+        String email = input.getInput(ed_email);
+        String password = input.getInput(ed_password);
+
         //login to system.
-        authorization.login(input.getInput(ed_email), input.getInput(ed_password), new IRegister() {
+        authorization.login(email, password, new IRegister() {
             @Override
             public void onProcess() {
                 progressBar.setVisible(pb_singIn,true);
@@ -94,13 +103,66 @@ public class MainActivity extends AppCompatActivity {
                 progressBar.setVisible(pb_singIn,false);
                 if(successful)
                 {
-                    Map<String,Object> save = new HashMap<>();
-                    save.put("password",input.getInput(ed_password));
-                    activityTransition.goTo(MainActivity.this,CreateAccount.class,false,save,null);
-                }
+                    step = 0;
+                    if(!authorization.isEmailVerified())
+                    {
+                        step = 1;
+                        signIn(null);
+                    }
+                    else if(authorization.isUserConnected() && authorization.isEmailVerified())
+                    {
+                        dataExtraction.hasChild(ConstantNames.USER_PATH, authorization.getUserID(), new ISavable() {
+                            @Override
+                            public void onDataRead(Object exist) {
+                                if((boolean)exist)
+                                {
+                                    dataExtraction.hasChild(ConstantNames.USER_PATH, authorization.getUserID(), ConstantNames.DATA_USER_NAME, new ISavable() {
+                                        @Override
+                                        public void onDataRead(final Object exist) {
+                                            dataExtraction.getCurrentUserData(new ISavable() {
+                                                @Override
+                                                public void onDataRead(Object save) {
+                                                    if((boolean)exist)
+                                                    {
+                                                        step = 4;
+                                                    }
+                                                    else
+                                                    {
+                                                        step = 2;
+                                                    }
+                                                    Map<String,Object> userInfo = (Map<String,Object>)save;
+                                                    signIn(userInfo);
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                                else
+                                {
+                                    step = 2;
+                                    FirebaseAuth fba = FirebaseAuth.getInstance();
+                                    User user = new User(null, fba.getCurrentUser().getEmail(),null,null,fba.getCurrentUser().getUid());
+                                    Map<String,Object> userInfo = new HashMap<>();
+                                    userInfo.put(ConstantNames.USER,user);
+                                    signIn(userInfo);
+                                }
+                            }
+                        });
 
+                    }
+                }
             }
         });
+    }
+
+    private void signIn(Map<String,Object> userInfo) {
+        Map<String, Object> save = new HashMap<>();
+        save.put("step",step);
+        if(userInfo != null)
+        {
+            save.put(ConstantNames.USER,userInfo);
+        }
+        activityTransition.goTo(MainActivity.this, CreateAccount.class,false,save,null);
     }
 
     /**

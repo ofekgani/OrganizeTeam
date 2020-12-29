@@ -15,6 +15,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.myapp.organizeteam.Core.InputManagement;
@@ -89,57 +91,19 @@ public class StepTwoRegisterFragment extends Fragment implements Step {
     }
 
     private void updateUI() {
-
-        final FirebaseAuth fba = FirebaseAuth.getInstance ();
-
-        String password = getPassword(fba);
-
-        if(password == null) return;
-
-        String email = fba.getCurrentUser().getEmail();
-        authorization.login(email, password, new IRegister() {
+        FirebaseAuth fba = FirebaseAuth.getInstance();
+        if(fba.getCurrentUser() == null) return;
+        fba.getCurrentUser().reload().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onProcess() {
-                progressBar.setVisible ( pb,true );
-            }
-
-            @Override
-            public void onDone(boolean successful, String message) {
-                progressBar.setVisible ( pb,false );
-
-                if(!successful) return;
-
-                if(authorization.isEmailVerified())
-                {
+            public void onComplete(@NonNull Task<Void> task) {
+                if (authorization.isEmailVerified()) {
                     btn_verify.setText("Next");
                     mv_verify.setImageResource(R.drawable.mark_icon);
-                    if(!verified) verified = true;
+                    if (!verified) verified = true;
                 }
             }
         });
     }
-
-    private String getPassword(FirebaseAuth fba)
-    {
-        if(fba.getCurrentUser() == null)
-            return null;
-        if(input.getInput(ed_password) == null || input.getInput(ed_password).equals(""))
-        {
-            if(this.password != null && !this.password.equals(""))
-            {
-               return password;
-            }
-            else
-            {
-                return null;
-            }
-        }
-        else
-        {
-            return input.getInput(ed_password);
-        }
-    }
-
 
     @Override
     public VerificationError verifyStep() {

@@ -62,8 +62,11 @@ public class StepOneRegisterFragment extends Fragment implements Step {
                 if(!input.isInputValid ( ed_email, ed_password, ed_confirmPassword ))
                     return;
 
+                final String email = input.getInput(ed_email);
+                final String password = input.getInput(ed_password);
+
                 //create user in firebase
-                authorization.createUser(input.getInput(ed_email), input.getInput(ed_password), new IRegister() {
+                authorization.createUser(email, password, new IRegister() {
                     @Override
                     public void onProcess() {
                         progressBar.setVisible(pb,true);
@@ -71,9 +74,9 @@ public class StepOneRegisterFragment extends Fragment implements Step {
 
                     @Override
                     public void onDone(boolean successful,String message) {
-                        progressBar.setVisible(pb,false);
                         if(successful)
                         {
+                            progressBar.setVisible(pb,false);
                             stepper.goNext(mStepperLayout);
                         }
                     }

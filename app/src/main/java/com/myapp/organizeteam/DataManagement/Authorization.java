@@ -3,10 +3,16 @@ package com.myapp.organizeteam.DataManagement;
 import android.app.Activity;
 import android.app.ActivityOptions;
 
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthOptions;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.InputManagement;
 import com.myapp.organizeteam.Core.Team;
@@ -26,6 +32,7 @@ import com.myapp.organizeteam.Core.ActivityTransition;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 
@@ -195,7 +202,7 @@ public class Authorization {
     public void createNewUser(String name, String email, final IRegister iRegister) {
          FirebaseAuth fba = FirebaseAuth.getInstance ();
          String keyID = fba.getCurrentUser().getUid();
-         User user = new User ( name,email,"",keyID);
+         User user = new User ( name,email,null,null,keyID);
          dataExtraction.setObject(ConstantNames.USER_PATH, keyID, user, new IRegister() {
              @Override
              public void onProcess() {
@@ -321,6 +328,56 @@ public class Authorization {
         {
             Toast.makeText ( context,"Email is not verified. Please verify your email address. ",Toast.LENGTH_SHORT ).show ();
         }
+    }
+
+    public void sendVerifyPhoneNumber(final Activity activity, String phone, PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks)
+    {
+        FirebaseAuth fba = FirebaseAuth.getInstance();
+        PhoneAuthOptions options =
+                PhoneAuthOptions.newBuilder(fba)
+                        .setPhoneNumber(phone)       // Phone number to verify
+                        .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+                        .setActivity(activity)                 // Activity (for callback binding)
+                        .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
+                        .build();
+        PhoneAuthProvider.verifyPhoneNumber(options);
+    }
+
+    public void sendVerifyPhoneNumber(final Activity activity, String phone, PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks, PhoneAuthProvider.ForceResendingToken token)
+    {
+        FirebaseAuth fba = FirebaseAuth.getInstance();
+        PhoneAuthOptions options =
+                PhoneAuthOptions.newBuilder(fba)
+                        .setPhoneNumber(phone)       // Phone number to verify
+                        .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+                        .setActivity(activity)                 // Activity (for callback binding)
+                        .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
+                        .setForceResendingToken(token)
+                        .build();
+        PhoneAuthProvider.verifyPhoneNumber(options);
+    }
+
+    public void signInWithPhoneNumber(String codeVerification, String code, final IRegister iRegister)
+    {
+        if(codeVerification == null) return;
+
+        iRegister.onProcess();
+
+        PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.getCredential(codeVerification,code);
+        FirebaseAuth fba = FirebaseAuth.getInstance();
+        fba.signInWithCredential(phoneAuthCredential)
+                .addOnCompleteListener( new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            iRegister.onDone(true,null);
+                        }
+                        else
+                        {
+                            iRegister.onDone(false,task.getException().toString());
+                        }
+                    }
+                });
     }
 
     /**
