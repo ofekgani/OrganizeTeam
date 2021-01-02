@@ -52,58 +52,6 @@ public class InputManagement {
         return true;
     }
 
-    /**
-     * this method use to check if user`s input is valid.
-     * @param edName user`s name.
-     * @param edEmail user`s email.
-     * @param edPassword user`s password.
-     * @param edCurrentPassword user`s current password.
-     * @return Return true if user`s input is valid, false if not or EditText reference is null.
-     */
-    public boolean isInputValid(EditText edName, EditText edEmail, EditText edPassword, EditText edCurrentPassword) {
-        if(edEmail == null && edName == null)
-            return false;
-        if(edPassword == null && edCurrentPassword == null)
-            return false;
-
-        String name = getInput ( edName );
-        String email = getInput ( edEmail );
-        String password = getInput ( edPassword );
-        String currentPassword = getInput ( edCurrentPassword );
-
-        if(TextUtils.isEmpty ( name ))
-        {
-            setError ( edName, "Name is Required." );
-            return false;
-        }
-        else if (name.length () >= 16)
-        {
-            setError ( edName, "Invalid name, maximum length: 16 letters" );
-            return false;
-        }
-        if(TextUtils.isEmpty ( email ))
-        {
-            setError ( edEmail,"Email is Required." );
-            return false;
-        }
-        else if(TextUtils.isEmpty ( password ))
-        {
-            setError ( edPassword, "Password is Required." );
-            return false;
-        }
-        else if(edCurrentPassword != null && TextUtils.isEmpty ( password ))
-        {
-            setError ( edPassword,"Password is Required." );
-            return false;
-        }
-        else if(!currentPassword.equals ( password ))
-        {
-            edCurrentPassword.setError ( "Your current password is incorrect." );
-            return false;
-        }
-        return true;
-    }
-
     public boolean isInputValid(EditText edEmail, EditText edPassword, EditText edConfirmPassword) {
         if(edEmail == null && edPassword == null)
             return false;

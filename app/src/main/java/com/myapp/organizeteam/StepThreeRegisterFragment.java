@@ -22,6 +22,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.InputManagement;
@@ -47,6 +49,12 @@ import static android.app.Activity.RESULT_OK;
 
 public class StepThreeRegisterFragment extends Fragment implements Step {
 
+    Authorization authorization;
+    InputManagement input;
+    Loading progressBar;
+    Stepper stepper;
+    Image image;
+
     StepperLayout mStepperLayout;
 
     ProgressBar pb;
@@ -55,30 +63,19 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
     ImageView mv_userLogo;
     DataExtraction dataExtraction;
 
-    Authorization authorization;
-    InputManagement input;
-    Loading progressBar;
-    Stepper stepper;
-    Image image;
-
+    //Helper variables to save and update user`s information
     Map<String,Object> userData;
     User user;
-
-    DataPassListener mCallback;
-
     Uri imageUriResult;
-    boolean isImageUploaded = false, isNameUploaded = false;
+
+    //Helper variables to manage upload process to firebase
+    boolean isImageUploaded, isNameUploaded;
 
     private static final int PERMISSION_CODE = 1001;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_register_step3, container, false);
-
-        pb = v.findViewById(R.id.pb_next);
-        btn_next = v.findViewById(R.id.btn_next);
-        mv_userLogo = v.findViewById(R.id.mv_userLogo);
-        ed_name = v.findViewById(R.id.ed_name);
+        final View v = inflater.inflate(R.layout.fragment_register_step3, container, false);
 
         //allocating memory
         authorization = new Authorization ();
@@ -88,6 +85,11 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
         image = new Image();
         dataExtraction = new DataExtraction();
 
+        pb = v.findViewById(R.id.pb_next);
+        btn_next = v.findViewById(R.id.btn_next);
+        mv_userLogo = v.findViewById(R.id.mv_userLogo);
+        ed_name = v.findViewById(R.id.ed_name);
+
         mStepperLayout = stepper.getStepperLayout(container,R.id.stepperLayout);
 
         progressBar.setVisible ( pb,false );
@@ -96,17 +98,20 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
             @Override
             public void onClick(View view) {
 
-                final String name = input.getInput(ed_name);
-                final FirebaseAuth fba = FirebaseAuth.getInstance ();
-
+                //Check if input is valid
                 if(input.isInputEmpty(ed_name))
                 {
                     input.setError(ed_name,"This field is required.");
                     return;
                 }
+
+                progressBar.setVisible ( pb,true );
+
+                final FirebaseAuth fba = FirebaseAuth.getInstance ();
                 if(fba.getCurrentUser() == null) return;
 
                 final String email = fba.getCurrentUser().getEmail();
+                final String name = input.getInput(ed_name);
 
                 //upload image to firebase if the user choice image.
                 if(imageUriResult != null)
@@ -114,12 +119,13 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
                     uploadPicture (imageUriResult);
                 }
 
-                //Create new user with name in firebase realtime.
+                //Check if user exist on firebase realtime
                 dataExtraction.hasChild(ConstantNames.USER_PATH, user.getKeyID(), new ISavable() {
                     @Override
                     public void onDataRead(Object exist) {
                         if(!(boolean)exist)
                         {
+                            //Create new user with name in firebase realtime
                             authorization.createNewUser(name, email, new IRegister() {
                                 @Override
                                 public void onProcess() {
@@ -132,14 +138,22 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
 
                                     if(successful)
                                     {
+                                        //go to next step
                                         next();
+                                    }
+                                    else
+                                    {
+                                        Snackbar.make(v,""+message, BaseTransientBottomBar.LENGTH_LONG).show();
                                     }
                                 }
                             });
                         }
                         else
                         {
+                            //if user exist, update just user`s name and logo
                             dataExtraction.setNewData(ConstantNames.USER_PATH,user.getKeyID(),ConstantNames.DATA_USER_NAME,name);
+
+                            //go to next step
                             next();
                         }
                     }
@@ -147,6 +161,7 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
             }
         });
 
+        //go to gallery and change user`s logo
         mv_userLogo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -172,8 +187,14 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
         return v;
     }
 
+    /**
+     * Save user`s information and go to next step.
+     */
     private void next() {
+        //Update action status
         isNameUploaded = true;
+
+        //save user`s data
         if(imageUriResult == null || isImageUploaded == true) {
             if (imageUriResult != null) {
                 userData.put(ConstantNames.USER, getUserData(imageUriResult.toString()));
@@ -184,12 +205,34 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
             {
                 userData.put(ConstantNames.USER, getUserData(null));
             }
+
+            //Save user`s data into global variable
             DataPass.passData = userData;
-            stepper.goNext(mStepperLayout);
+
+            //Go to next step
+            dataExtraction.hasChild(ConstantNames.USER_PATH, user.getKeyID(), ConstantNames.DATA_USER_PHONE, new ISavable() {
+                @Override
+                public void onDataRead(Object exist) {
+                    if((boolean)exist)
+                    {
+                        stepper.go(mStepperLayout,4);
+                    }
+                    else
+                    {
+                        stepper.goNext(mStepperLayout);
+                    }
+                }
+            });
+
         }
     }
 
-    private User getUserData(String o) {
+    /**
+     * Get new user object with current user`s information.
+     * @param imageUri image url to save user`s logo into object.
+     * @return Return new user object with update information.
+     */
+    private User getUserData(String imageUri) {
         String email = null;
         String keyID = null;
         String phone = null;
@@ -203,11 +246,16 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
                 phone = user.getPhone();
         }
 
-        return new User(input.getInput(ed_name), email, phone, o, keyID);
+        return new User(input.getInput(ed_name), email, phone, imageUri, keyID);
     }
 
+    /**
+     * Upload image to firebase storage by image uri and save user`s information
+     * @param image
+     */
     private void uploadPicture(Uri image)
     {
+        if(user == null) return;
         if(user.getEmail() != null && user.getKeyID() != null)
         {
             dataExtraction.uploadPicture ( image, getContext(), ConstantNames.USER_PATH, user.getKeyID(),user.getEmail(), new ISavable() {
@@ -271,6 +319,9 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
 
     @Override
     public void onSelected() {
+
+        isImageUploaded = false; isNameUploaded = false;
+
         //update UI when selected
         if (DataPass.passData != null) {
             userData = DataPass.passData;
@@ -292,25 +343,5 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
     @Override
     public void onError(@NonNull VerificationError error) {
         //handle error inside of the fragment, e.g. show error on EditText
-    }
-
-    @Override
-    public void onAttach(Context context)
-    {
-        super.onAttach(context);
-        // This makes sure that the host activity has implemented the callback interface
-        // If not, it throws an exception
-        try
-        {
-            mCallback = (DataPassListener) context;
-        }
-        catch (ClassCastException e)
-        {
-            throw new ClassCastException(context.toString()+ " must implement OnImageClickListener");
-        }
-    }
-
-    public interface DataPassListener{
-        void passData(Map<String,Object> data);
     }
 }

@@ -52,16 +52,6 @@ public class ActivityTransition  extends AppCompatActivity {
         from.finish();
     }
 
-    public void goTo(Fragment to)
-    {
-        FragmentTransaction ft = getFragmentManager ().beginTransaction();
-        ft.replace( R.id.fragment_container, to);
-        ft.commit();
-
-        ft.addToBackStack(null);
-
-    }
-
     public Bundle CreateBundle(Map<String,Object> values)
     {
         Bundle bundle = new Bundle();

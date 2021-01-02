@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -35,20 +36,21 @@ import java.util.Map;
 
 public class SelectTeamActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, RequestJoinDialog.DialogListener {
 
-    ListView listView;
-    ImageView mv_teamLogo;
-    TextView tv_teamName, btn_cancelRequest;
-
     ActivityTransition activityTransition;
     Authorization authorization;
     DataExtraction dataExtraction;
     Image image;
 
+    ListView listView;
+    ImageView mv_teamLogo;
+    TextView tv_teamName, btn_cancelRequest;
+
     Intent intent;
 
-    ArrayList<Team> teamList;
     TeamListAdapter adapter;
+    ArrayList<Team> teamList;
 
+    Team team;
     User user;
     String userID;
     String teamID;
@@ -75,11 +77,48 @@ public class SelectTeamActivity extends AppCompatActivity implements AdapterView
         teamList = (ArrayList<Team>)intent.getSerializableExtra ( ConstantNames.TEAMS_LIST);
 
         //get user information
+        team = (Team)intent.getSerializableExtra ( ConstantNames.TEAM );
         user = (User)intent.getSerializableExtra ( ConstantNames.USER );
         userID = user.getKeyID();
 
         createTeamList ();
         getTeamByJoinRequest();
+
+        FirebaseDatabase fbd = FirebaseDatabase.getInstance();
+        fbd.getReference(ConstantNames.USER_PATH).child(userID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                dataExtraction.hasChild(ConstantNames.USER_PATH, userID, ConstantNames.TEAM, new ISavable() {
+                    @Override
+                    public void onDataRead(Object exist) {
+                        Log.i("EXIST","exist");
+                        if((boolean)exist)
+                        {
+                            final Map<String,Object> data = new HashMap<>();
+                            if(team != null)
+                            {
+                                data.put(ConstantNames.TEAM,team);
+                                dataExtraction.getUserDataByID(team.getHost(), new ISavable() {
+                                    @Override
+                                    public void onDataRead(Object save) {
+                                        data.put(ConstantNames.TEAM_HOST,save);
+                                        if(user != null)
+                                            data.put(ConstantNames.USER,user);
+                                        Log.i("EXISTTTTTT",data+"");
+                                        activityTransition.goTo(SelectTeamActivity.this,TeamPageActivity.class,true,data,null);
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     /**
@@ -100,7 +139,8 @@ public class SelectTeamActivity extends AppCompatActivity implements AdapterView
                             dataExtraction.getTeamDataByID(teamID, new ISavable() {
                                 @Override
                                 public void onDataRead(Object save) {
-                                    updateTeamInformation((Team) save);
+                                    team = (Team)save;
+                                    updateTeamInformation(team);
                                 }
                             });
                         }

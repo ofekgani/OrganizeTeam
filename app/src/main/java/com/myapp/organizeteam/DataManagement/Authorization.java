@@ -1,15 +1,10 @@
 package com.myapp.organizeteam.DataManagement;
 
 import android.app.Activity;
-import android.app.ActivityOptions;
 
-import android.util.Log;
-import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -38,11 +33,8 @@ import androidx.annotation.NonNull;
 
 public class Authorization {
 
-    InputManagement input = new InputManagement ();
     DataExtraction dataExtraction = new DataExtraction ();
     ActivityTransition activityTransition = new ActivityTransition ();
-    Transformation transformation = new Transformation ();
-    Loading progressBar = new Loading ();
 
     /**
      * Extracts all teams from the cloud and saves them to next activity.
@@ -57,19 +49,13 @@ public class Authorization {
         } );
     }
 
-    public String getUserID()
-    {
-        FirebaseAuth fba = FirebaseAuth.getInstance();
-        return fba.getCurrentUser().getUid();
-    }
-
     /**
      * Send the user to new activity.
      * @param context The activity from which the user moves to a new activity.
      * @param to The activity that user move on.
      * @param data data to save into intent.
      */
-    private void connect(Activity context, Class to,Map<String, Object> data) {
+    private void sendTo(Activity context, Class to, Map<String, Object> data) {
         activityTransition.goTo ( context, to, true, data, null );
     }
 
@@ -77,96 +63,40 @@ public class Authorization {
      * This function check if a user verified its email.
      * @return return true if email is verified, false if not.
      */
+
+    /**
+     * Get the user keyID by the current user on the system.
+     * @return Return UID by the current user on the system.
+     */
+    public String getUserID()
+    {
+        FirebaseAuth fba = FirebaseAuth.getInstance();
+        return fba.getCurrentUser().getUid();
+    }
+
+    /**
+     * Checking if the current user verified his email.
+     * @return Return true if the current user verified his email and false if not.
+     */
     public boolean isEmailVerified() {
         FirebaseAuth fba = FirebaseAuth.getInstance ();
         if(fba.getCurrentUser() == null) return false;
         return fba.getCurrentUser ().isEmailVerified ();
     }
 
-    public boolean isUserConnected() {
-        FirebaseAuth fba = FirebaseAuth.getInstance ();
-        if(fba.getCurrentUser() == null) return false;
-        return true;
-    }
-
     /**
-     * create a new user in firebase
-     * @param context a activity that this function use.
-     * @param edEmail user`s email.
-     * @param edPassword user`s password.
-     * @param edName user`s name.
-     * @param pb Progress Bar resource.
+     * This function create new user on firebase authentication by email and password.
+     * This function call to interface that manage the actions when user creating and actions when user created.
+     * @param email The email with which will create the user.
+     * @param password The password with which will create the user.
+     * @param iRegister Interface that manage the actions when user creating and actions when user created.
      */
-     public void createUser(final Activity context, final EditText edEmail, final EditText edPassword, final EditText edName , final ProgressBar pb) {
-
-         //get to firebase
-         final FirebaseAuth fba = FirebaseAuth.getInstance ();
-
-         //get user input
-         String password = input.getInput ( edPassword );
-         final String email = input.getInput ( edEmail );
-         final String name = input.getInput ( edName );
-
-        //show the progress bar
-         progressBar.setVisible ( pb,true );
-
-        fba.createUserWithEmailAndPassword ( email,password ).addOnCompleteListener ( new OnCompleteListener<AuthResult> () {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-
-                progressBar.setVisible ( pb,false );
-
-                //if creating a user is successful than, send email verification .
-                if(task.isSuccessful ())
-                {
-                    //send email verification and check if this task is successful.
-                    fba.getCurrentUser ().sendEmailVerification ().addOnCompleteListener ( new OnCompleteListener<Void> () {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful ())
-                            {
-                                //save user data in firebase
-                                createNewUser(name, email, new IRegister() {
-                                    @Override
-                                    public void onProcess() {
-
-                                    }
-
-                                    @Override
-                                    public void onDone(boolean successful, String message) {
-
-                                    }
-                                });
-
-                                //save the user`s email in intent, to get to this user data.
-                                Toast.makeText ( context,"Register successfully. Please check your email to verification. ",Toast.LENGTH_LONG ).show ();
-
-                                //transform animation
-                                ActivityOptions options = transformation.pushUp ( context );
-
-                                //start Activity
-                                activityTransition.goTo ( context, MainActivity.class,true,null, options );
-                            }
-                            else
-                            {
-                                input.setError (edEmail, ""+task.getException () );
-                            }
-                        }
-                    } );
-                }
-                else
-                {
-                    input.setError (edEmail, ""+task.getException () );
-                }
-            }
-        } );
-    }
-
     public void createUser(String email, String password, final IRegister iRegister) {
 
-        //get to firebase
+        //get reference to firebase authentication
         final FirebaseAuth fba = FirebaseAuth.getInstance ();
 
+        //Calls to action when user creation is process
         iRegister.onProcess();
 
         fba.createUserWithEmailAndPassword ( email,password ).addOnCompleteListener ( new OnCompleteListener<AuthResult> () {
@@ -176,107 +106,174 @@ public class Authorization {
                 //if creating a user is successful than, send email verification .
                 if(task.isSuccessful ())
                 {
-                    //send email verification and check if this task is successful.
+                    //Send email verification
                     fba.getCurrentUser ().sendEmailVerification ().addOnCompleteListener ( new OnCompleteListener<Void> () {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful())
                             {
+                                //Calls to action when user creation is complete
                                 iRegister.onDone(task.isSuccessful (),null);
                             }
                             else
                             {
-                                iRegister.onDone(task.isSuccessful (),task.getException().toString());
+                                //Calls to action when user creation is failed and save the fail message.
+                                iRegister.onDone(task.isSuccessful (),task.getException().getLocalizedMessage());
                             }
                         }
                     } );
                 }
                 else
                 {
-                    iRegister.onDone(task.isSuccessful (),task.getException().toString());
+                    //Calls to action when user creation is failed and save the fail message.
+                    iRegister.onDone(task.isSuccessful (),task.getException().getLocalizedMessage());
                 }
             }
         } );
-    }
-
-    public void createNewUser(String name, String email, final IRegister iRegister) {
-         FirebaseAuth fba = FirebaseAuth.getInstance ();
-         String keyID = fba.getCurrentUser().getUid();
-         User user = new User ( name,email,null,null,keyID);
-         dataExtraction.setObject(ConstantNames.USER_PATH, keyID, user, new IRegister() {
-             @Override
-             public void onProcess() {
-                 iRegister.onProcess();
-             }
-
-             @Override
-             public void onDone(boolean successful, String message) {
-                iRegister.onDone(successful,message);
-             }
-         });
     }
 
     /**
-     * login to system.
-     * @param context a activity that this function use.
-     * @param edPassword user`s password.
-     * @param edEmail user`s email.
-     * @param pb Progress Bar resource.
+     * Connect to system with email and password.
+     * @param email The email of user.
+     * @param password The password of user.
+     * @param iRegister Interface that manage the actions when user connect to system and actions when user connected.
      */
-    public void login(final Activity context, final EditText edEmail, EditText edPassword, final ProgressBar pb) {
-
-        //get to firebase
-        final FirebaseAuth fba = FirebaseAuth.getInstance ();
-
-        //get user input
-        String email = input.getInput ( edEmail );
-        String password = input.getInput ( edPassword );
-
-        //show the progress bar
-        progressBar.setVisible ( pb,true );
-
-        fba.signInWithEmailAndPassword ( email , password ).addOnCompleteListener ( new OnCompleteListener<AuthResult> () {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-
-                progressBar.setVisible ( pb,false );
-
-                if(task.isSuccessful ())
-                {
-                    connectUserToSystem ( context );
-
-                }
-                else
-                {
-                    input.setError (edEmail, ""+task.getException () );
-                }
-            }
-        } );
-    }
-
     public void login(final String email, String password, final IRegister iRegister) {
 
-        //get to firebase
+        //Get reference to firebase authentication
         final FirebaseAuth fba = FirebaseAuth.getInstance ();
 
-        //show the progress bar
+        //Calls to action when user creation is process
         iRegister.onProcess();
 
+        //Connect the user to the system
         fba.signInWithEmailAndPassword ( email , password ).addOnCompleteListener ( new OnCompleteListener<AuthResult> () {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
 
                 if(task.isSuccessful ())
                 {
+                    //Calls to action when user creation is complete.
                     iRegister.onDone(task.isSuccessful(),null);
 
                 }
                 else
                 {
-                    iRegister.onDone(task.isSuccessful(),task.getException().toString());
+                    //Calls to action when user creation is failed and save the fail message.
+                    iRegister.onDone(task.isSuccessful (),task.getException().getLocalizedMessage());
                 }
             }
         } );
+    }
+
+    /**
+     * This function create new reference of user on firebase realtime.
+     * @param name The name of user.
+     * @param email The email of user.
+     * @param iRegister Interface that manage the actions when user creating and actions when user created.
+     */
+    public void createNewUser(String name, String email, final IRegister iRegister) {
+
+        //Get reference to firebase authentication
+        FirebaseAuth fba = FirebaseAuth.getInstance ();
+
+        //Get current user`s Uid from firebase authentication
+        String keyID = fba.getCurrentUser().getUid();
+
+        //Set all information on new object to set into firebase realtime
+        User user = new User ( name,email,null,null,keyID);
+
+        //Set the object into firebase realtime
+        dataExtraction.setObject(ConstantNames.USER_PATH, keyID, user, new IRegister() {
+            @Override
+            public void onProcess() {
+                iRegister.onProcess();
+            }
+
+            @Override
+            public void onDone(boolean successful, String message) {
+                if(successful)
+                {
+                    //Calls to action when user creation is complete.
+                    iRegister.onDone(successful,null);
+
+                }
+                else
+                {
+                    //Calls to action when user creation is failed and save the fail message.
+                    iRegister.onDone(successful,message);
+                }
+            }
+        });
+    }
+
+    /**
+     * This function receive phone and send to this phone sms verification.
+     * @param activity the activity will which send sms verification.
+     * @param phone The phone to which it will send verification.
+     * @param mCallbacks An interface through which we can manage all operations in different occurrences.
+     */
+    public void sendVerifyPhoneNumber(final Activity activity, String phone, PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks)
+    {
+        FirebaseAuth fba = FirebaseAuth.getInstance();
+        PhoneAuthOptions options =
+                PhoneAuthOptions.newBuilder(fba)
+                        .setPhoneNumber(phone)       // Phone number to verify
+                        .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+                        .setActivity(activity)                 // Activity (for callback binding)
+                        .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
+                        .build();
+        PhoneAuthProvider.verifyPhoneNumber(options);
+    }
+
+    /**
+     * This function receive a phone and force to send SMS verification to the phone.
+     * @param activity the activity will which send sms verification.
+     * @param phone The phone to which it will send verification.
+     * @param mCallbacks An interface through which we can manage all operations in different occurrences.
+     * @param token phone`s token to force send verification.
+     */
+    public void sendVerifyPhoneNumber(final Activity activity, String phone, PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks, PhoneAuthProvider.ForceResendingToken token)
+    {
+        FirebaseAuth fba = FirebaseAuth.getInstance();
+        PhoneAuthOptions options =
+                PhoneAuthOptions.newBuilder(fba)
+                        .setPhoneNumber(phone)       // Phone number to verify
+                        .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+                        .setActivity(activity)                 // Activity (for callback binding)
+                        .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
+                        .setForceResendingToken(token)
+                        .build();
+        PhoneAuthProvider.verifyPhoneNumber(options);
+    }
+
+    /**
+     * Get a receiver code and a verification code for a phone and connect to the system in case they are both equal.
+     * @param codeVerification Verification code to check authentication with phone.
+     * @param code Code to check if it is the same as verification code
+     * @param iRegister An interface that manages the operations during the verification process and upon completion.
+     */
+    public void signInWithPhoneNumber(String codeVerification, String code, final IRegister iRegister)
+    {
+        if(codeVerification == null) return;
+
+        iRegister.onProcess();
+
+        PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.getCredential(codeVerification,code);
+        FirebaseAuth fba = FirebaseAuth.getInstance();
+        fba.signInWithCredential(phoneAuthCredential)
+                .addOnCompleteListener( new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            iRegister.onDone(true,null);
+                        }
+                        else
+                        {
+                            iRegister.onDone(false,task.getException().getLocalizedMessage());
+                        }
+                    }
+                });
     }
 
     /**
@@ -304,7 +301,7 @@ public class Authorization {
                         public void onDataRead(Object exist) {
                             if(!(boolean)exist)
                             {
-                                connect ( context, WelcomeActivity.class,data );
+                                sendTo( context, WelcomeActivity.class,data );
                             }
                             else
                             {
@@ -314,7 +311,7 @@ public class Authorization {
                                     @Override
                                     public void onDataRead(Object save) {
                                         data.put(ConstantNames.TEAM_HOST,save);
-                                        connect ( context, TeamPageActivity.class,data );
+                                        sendTo( context, TeamPageActivity.class,data );
                                     }
                                 });
 
@@ -330,56 +327,6 @@ public class Authorization {
         }
     }
 
-    public void sendVerifyPhoneNumber(final Activity activity, String phone, PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks)
-    {
-        FirebaseAuth fba = FirebaseAuth.getInstance();
-        PhoneAuthOptions options =
-                PhoneAuthOptions.newBuilder(fba)
-                        .setPhoneNumber(phone)       // Phone number to verify
-                        .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
-                        .setActivity(activity)                 // Activity (for callback binding)
-                        .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
-                        .build();
-        PhoneAuthProvider.verifyPhoneNumber(options);
-    }
-
-    public void sendVerifyPhoneNumber(final Activity activity, String phone, PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks, PhoneAuthProvider.ForceResendingToken token)
-    {
-        FirebaseAuth fba = FirebaseAuth.getInstance();
-        PhoneAuthOptions options =
-                PhoneAuthOptions.newBuilder(fba)
-                        .setPhoneNumber(phone)       // Phone number to verify
-                        .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
-                        .setActivity(activity)                 // Activity (for callback binding)
-                        .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
-                        .setForceResendingToken(token)
-                        .build();
-        PhoneAuthProvider.verifyPhoneNumber(options);
-    }
-
-    public void signInWithPhoneNumber(String codeVerification, String code, final IRegister iRegister)
-    {
-        if(codeVerification == null) return;
-
-        iRegister.onProcess();
-
-        PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.getCredential(codeVerification,code);
-        FirebaseAuth fba = FirebaseAuth.getInstance();
-        fba.signInWithCredential(phoneAuthCredential)
-                .addOnCompleteListener( new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            iRegister.onDone(true,null);
-                        }
-                        else
-                        {
-                            iRegister.onDone(false,task.getException().toString());
-                        }
-                    }
-                });
-    }
-
     /**
      * Sign out from the system.
      * @param context The activity from which the user sign out.
@@ -391,7 +338,7 @@ public class Authorization {
         dataExtraction.deleteToken(userID);
 
         FirebaseAuth.getInstance ().signOut ();
-        connect ( context, MainActivity.class,null );
+        sendTo( context, MainActivity.class,null );
     }
 
     public void singOut()

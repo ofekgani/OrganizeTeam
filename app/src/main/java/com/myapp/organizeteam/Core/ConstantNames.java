@@ -47,6 +47,5 @@ public class ConstantNames {
     public static final String USER_TOKEN = "userToken";
 
 
-
-
+    public static final String DATA_USER_PHONE = "phone";
 }

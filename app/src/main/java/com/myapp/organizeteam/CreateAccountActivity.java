@@ -29,7 +29,7 @@ import com.stepstone.stepper.VerificationError;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CreateAccount extends AppCompatActivity implements StepperLayout.StepperListener, StepThreeRegisterFragment.DataPassListener {
+public class CreateAccountActivity extends AppCompatActivity implements StepperLayout.StepperListener {
 
     private StepperLayout mStepperLayout;
 
@@ -98,11 +98,5 @@ public class CreateAccount extends AppCompatActivity implements StepperLayout.St
         StepThreeRegisterFragment stepThreeRegisterFragment = new StepThreeRegisterFragment();
         if(stepThreeRegisterFragment != null)
         stepThreeRegisterFragment.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void passData(Map<String,Object> data) {
-        Toast.makeText(this, "Dude!", Toast.LENGTH_SHORT).show();
-        mStepperLayout.getAdapter().createStep(5);
     }
 }

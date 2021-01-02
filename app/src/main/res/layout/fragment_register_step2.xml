@@ -61,7 +61,7 @@
             app:srcCompat="@drawable/x_icon" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/tv_statusVerification"
             android:layout_width="193dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"

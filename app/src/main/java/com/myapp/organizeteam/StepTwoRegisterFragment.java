@@ -1,8 +1,6 @@
 package com.myapp.organizeteam;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -18,10 +16,8 @@ import androidx.fragment.app.Fragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.myapp.organizeteam.Core.InputManagement;
 import com.myapp.organizeteam.DataManagement.Authorization;
-import com.myapp.organizeteam.DataManagement.IRegister;
 import com.myapp.organizeteam.Resources.Loading;
 import com.myapp.organizeteam.Resources.Stepper;
 import com.stepstone.stepper.Step;
@@ -34,26 +30,20 @@ public class StepTwoRegisterFragment extends Fragment implements Step {
 
     ProgressBar pb;
     Button btn_verify;
-    EditText ed_password;
     ImageView mv_verify;
+    TextView tv_statusVerification;
 
     Authorization authorization;
     InputManagement input;
     Loading progressBar;
     Stepper stepper;
 
-    String password;
+    //Helper variable to check if the user can go next by press on next button or not.
     boolean verified = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_register_step2, container, false);
-
-        pb = v.findViewById(R.id.pb_verify);
-        btn_verify = v.findViewById(R.id.btn_verify);
-        mv_verify = v.findViewById(R.id.mv_emailVerify);
-
-        ed_password = container.findViewById(R.id.ed_password);
 
         //allocating memory
         authorization = new Authorization ();
@@ -61,12 +51,12 @@ public class StepTwoRegisterFragment extends Fragment implements Step {
         stepper = new Stepper();
         progressBar = new Loading ( );
 
-        mStepperLayout = stepper.getStepperLayout(container,R.id.stepperLayout);
+        pb = v.findViewById(R.id.pb_verify);
+        btn_verify = v.findViewById(R.id.btn_verify);
+        mv_verify = v.findViewById(R.id.mv_emailVerify);
+        tv_statusVerification = v.findViewById(R.id.tv_statusVerification);
 
-        Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            password = bundle.getString("password");
-        }
+        mStepperLayout = stepper.getStepperLayout(container,R.id.stepperLayout);
 
         progressBar.setVisible ( pb,false );
 
@@ -90,15 +80,23 @@ public class StepTwoRegisterFragment extends Fragment implements Step {
         return v;
     }
 
+    /**
+     * update the ui when the current user`s email is verified and update verification status.
+     */
     private void updateUI() {
+
         FirebaseAuth fba = FirebaseAuth.getInstance();
+
         if(fba.getCurrentUser() == null) return;
         fba.getCurrentUser().reload().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (authorization.isEmailVerified()) {
                     btn_verify.setText("Next");
+                    tv_statusVerification.setText("Email is verified.");
                     mv_verify.setImageResource(R.drawable.mark_icon);
+
+                    //The user can go next now
                     if (!verified) verified = true;
                 }
             }

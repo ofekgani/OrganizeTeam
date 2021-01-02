@@ -4,12 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityOptions;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.myapp.organizeteam.Core.ConstantNames;
+import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.Authorization;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
@@ -31,9 +33,6 @@ import java.util.Map;
  */
 public class MainActivity extends AppCompatActivity {
 
-    EditText ed_email, ed_password;
-    ProgressBar pb_singIn;
-
     Authorization authorization;
     InputManagement input;
     DataExtraction dataExtraction;
@@ -41,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
     ActivityTransition activityTransition;
     Loading progressBar;
 
-    FirebaseAuth fba;
+    EditText ed_email, ed_password;
+    ProgressBar pb_singIn;
 
     int step;
 
@@ -64,19 +64,6 @@ public class MainActivity extends AppCompatActivity {
         progressBar = new Loading ( );
 
         progressBar.setVisible ( pb_singIn,false );
-
-        //checkUserConnected ();
-    }
-
-    /**
-     * check if the user is connected to the device, if he is than connect him to system.
-     */
-    private void checkUserConnected() {
-        fba = FirebaseAuth.getInstance ();
-        if(fba.getCurrentUser () != null)
-        {
-            authorization.connectUserToSystem ( this );
-        }
     }
 
     /**
@@ -91,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         String email = input.getInput(ed_email);
         String password = input.getInput(ed_password);
 
-        //login to system.
+        //Connect to system.
         authorization.login(email, password, new IRegister() {
             @Override
             public void onProcess() {
@@ -103,66 +90,124 @@ public class MainActivity extends AppCompatActivity {
                 progressBar.setVisible(pb_singIn,false);
                 if(successful)
                 {
-                    step = 0;
-                    if(!authorization.isEmailVerified())
-                    {
-                        step = 1;
-                        signIn(null);
-                    }
-                    else if(authorization.isUserConnected() && authorization.isEmailVerified())
-                    {
-                        dataExtraction.hasChild(ConstantNames.USER_PATH, authorization.getUserID(), new ISavable() {
-                            @Override
-                            public void onDataRead(Object exist) {
-                                if((boolean)exist)
+                    step = 0; //Default step
+
+                    dataExtraction.hasChild(ConstantNames.USER_PATH, authorization.getUserID(), ConstantNames.DATA_USER_TEAMS, new ISavable() {
+                        @Override
+                        public void onDataRead(Object exist) {
+                            if((boolean)exist)
+                            {
+                                dataExtraction.getCurrentUserData(new ISavable() {
+                                    @Override
+                                    public void onDataRead(Object save) {
+                                        final Map<String,Object> userInfo = (Map<String, Object>)save;
+                                        final Team team = (Team) userInfo.get ( ConstantNames.TEAM );
+                                        dataExtraction.getUserDataByID(team.getHost(), new ISavable() {
+                                            @Override
+                                            public void onDataRead(Object save) {
+                                                userInfo.put(ConstantNames.TEAM_HOST,save);
+                                                activityTransition.goTo(MainActivity.this,TeamPageActivity.class,true,userInfo,null);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                //Check if user verified his email.
+                                if(!authorization.isEmailVerified())
                                 {
-                                    dataExtraction.hasChild(ConstantNames.USER_PATH, authorization.getUserID(), ConstantNames.DATA_USER_NAME, new ISavable() {
-                                        @Override
-                                        public void onDataRead(final Object exist) {
-                                            dataExtraction.getCurrentUserData(new ISavable() {
-                                                @Override
-                                                public void onDataRead(Object save) {
-                                                    if((boolean)exist)
-                                                    {
-                                                        step = 4;
-                                                    }
-                                                    else
-                                                    {
-                                                        step = 2;
-                                                    }
-                                                    Map<String,Object> userInfo = (Map<String,Object>)save;
-                                                    signIn(userInfo);
-                                                }
-                                            });
-                                        }
-                                    });
+                                    //If email not verified go to step 2
+                                    step = 1;
+                                    Map<String,Object> userInfo = getUser();
+                                    connect(userInfo);
                                 }
                                 else
                                 {
-                                    step = 2;
-                                    FirebaseAuth fba = FirebaseAuth.getInstance();
-                                    User user = new User(null, fba.getCurrentUser().getEmail(),null,null,fba.getCurrentUser().getUid());
-                                    Map<String,Object> userInfo = new HashMap<>();
-                                    userInfo.put(ConstantNames.USER,user);
-                                    signIn(userInfo);
+                                    //If email is verified check if user set his name by checking if the user exist on firebase realtime.
+                                    dataExtraction.hasChild(ConstantNames.USER_PATH, authorization.getUserID(), new ISavable() {
+                                        @Override
+                                        public void onDataRead(Object exist) {
+                                            //If user exist check if his name exist on firebase realtime
+                                            if((boolean)exist)
+                                            {
+                                                dataExtraction.hasChild(ConstantNames.USER_PATH, authorization.getUserID(), ConstantNames.DATA_USER_NAME, new ISavable() {
+                                                    @Override
+                                                    public void onDataRead(final Object exist) {
+                                                        dataExtraction.getCurrentUserData(new ISavable() {
+                                                            @Override
+                                                            public void onDataRead(Object save) {
+                                                                //if user`s name exist go to last step
+                                                                if((boolean)exist)
+                                                                {
+                                                                    step = 4;
+                                                                }
+                                                                else
+                                                                {
+                                                                    step = 2;
+                                                                }
+                                                                //Save all user`s information to next use.
+                                                                Map<String,Object> userInfo = (Map<String,Object>)save;
+
+                                                                connect(userInfo);
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                            else
+                                            {
+                                                step = 2;
+
+                                                //Save all user`s information to next use.
+                                                Map<String, Object> userInfo = getUser();
+
+                                                connect(userInfo);
+                                            }
+                                        }
+                                    });
+
                                 }
                             }
-                        });
-
-                    }
+                        }
+                    });
+                }
+                else
+                {
+                    Snackbar.make(view,""+message, BaseTransientBottomBar.LENGTH_LONG).show();
                 }
             }
         });
     }
 
-    private void signIn(Map<String,Object> userInfo) {
+    /**
+     * Build Map to save user`s information for register.
+     * @return Return map that contains user object.
+     */
+    private Map<String, Object> getUser() {
+        FirebaseAuth fba = FirebaseAuth.getInstance();
+        User user = new User(null, fba.getCurrentUser().getEmail(),null,null,fba.getCurrentUser().getUid());
+        Map<String,Object> userInfo = new HashMap<>();
+        userInfo.put(ConstantNames.USER,user);
+        return userInfo;
+    }
+
+    /**
+     * Send the user to register activity with user`s data and his step on the register process.
+     * @param userInfo
+     */
+    private void connect(Map<String,Object> userInfo) {
+
+        progressBar.setVisible(pb_singIn,false);
+
+        //Save all user`s information and the step of create account.
         Map<String, Object> save = new HashMap<>();
         save.put("step",step);
         if(userInfo != null)
         {
             save.put(ConstantNames.USER,userInfo);
         }
-        activityTransition.goTo(MainActivity.this, CreateAccount.class,false,save,null);
+        activityTransition.goTo(MainActivity.this, CreateAccountActivity.class,false,save,null);
     }
 
     /**
@@ -173,7 +218,6 @@ public class MainActivity extends AppCompatActivity {
         //Create transform animation
         ActivityOptions options = transformation.pushDown ( MainActivity.this );
         authorization.singOut();
-        //go to main activity
-        activityTransition.goTo ( MainActivity.this, CreateAccount.class,false,null,options );
+        activityTransition.goTo ( MainActivity.this, CreateAccountActivity.class,false,null,options );
     }
 }

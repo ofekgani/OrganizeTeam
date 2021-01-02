@@ -22,6 +22,8 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -53,6 +55,13 @@ import java.util.concurrent.TimeUnit;
 
 public class StepFourRegisterFragment extends Fragment implements Step {
 
+    Authorization authorization;
+    InputManagement input;
+    Loading progressBar;
+    Stepper stepper;
+    Image image;
+    DataExtraction dataExtraction;
+
     StepperLayout mStepperLayout;
 
     CountryCodePicker ccp;
@@ -62,27 +71,12 @@ public class StepFourRegisterFragment extends Fragment implements Step {
     Button btn_next;
     ProgressBar pb;
 
-    String codeVerification, keyID;
+    String codeVerification;
     PhoneAuthProvider.ForceResendingToken tokenVerification;
-
-    Authorization authorization;
-    InputManagement input;
-    Loading progressBar;
-    Stepper stepper;
-    Image image;
-    DataExtraction dataExtraction;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_register_step4, container, false);
-
-        ccp = v.findViewById(R.id.ccp);
-        ed_phone = v.findViewById(R.id.ed_phone);
-        btn_next = v.findViewById(R.id.btn_next);
-        pb = v.findViewById(R.id.pb_next);
-        tv_skipButton = v.findViewById(R.id.tv_btn_skip);
-        tv_prevStep = v.findViewById(R.id.tv_prevStep);
 
         //allocating memory
         authorization = new Authorization ();
@@ -92,7 +86,12 @@ public class StepFourRegisterFragment extends Fragment implements Step {
         image = new Image();
         dataExtraction = new DataExtraction();
 
-        keyID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        ccp = v.findViewById(R.id.ccp);
+        ed_phone = v.findViewById(R.id.ed_phone);
+        btn_next = v.findViewById(R.id.btn_next);
+        pb = v.findViewById(R.id.pb_next);
+        tv_skipButton = v.findViewById(R.id.tv_btn_skip);
+        tv_prevStep = v.findViewById(R.id.tv_prevStep);
 
         mStepperLayout = stepper.getStepperLayout(container,R.id.stepperLayout);
 
@@ -125,15 +124,99 @@ public class StepFourRegisterFragment extends Fragment implements Step {
         return v;
     }
 
-    private void createDialogVerification(String code) {
+    /**
+     * Get phone number from input.
+     * @return Return phone number.
+     */
+    private String getPhoneNumber() {
+        String phoneNumber = ed_phone.getText().toString().trim();
+        return "+"+ccp.getSelectedCountryCode()+phoneNumber;
+    }
+
+    /**
+     * Set country number by user`s sim and update ui
+     */
+    private void setCountryNumber() {
+        telephonyManager = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
+
+        String countryNum = telephonyManager.getNetworkCountryIso();
+        ccp.setCountryForNameCode(countryNum);
+    }
+
+    /**
+     * Verify user`s phone and save user`s information to next step.
+     * @param code The code the user entered on the input.
+     */
+    private void verifyCode(String code) {
+        authorization.signInWithPhoneNumber(codeVerification, code, new IRegister() {
+            @Override
+            public void onProcess() {
+                progressBar.setVisible(pb,true);
+            }
+
+            @Override
+            public void onDone(boolean successful, String message) {
+                progressBar.setVisible(pb,false);
+                if(successful)
+                {
+                    final Map<String,Object> userInfo = DataPass.passData;
+                    final User user =(User) userInfo.get(ConstantNames.USER);
+                    user.setPhone(getPhoneNumber());
+                    dataExtraction.setObject(ConstantNames.USER_PATH, user.getKeyID(), user, new IRegister() {
+                        @Override
+                        public void onProcess() {
+                            progressBar.setVisible(pb,true);
+                        }
+
+                        @Override
+                        public void onDone(boolean successful, String message) {
+                            progressBar.setVisible(pb,false);
+                            if(successful)
+                            {
+                                userInfo.put(ConstantNames.USER,user);
+                                DataPass.passData = userInfo;
+                                stepper.goNext(mStepperLayout);
+                            }
+                            else
+                            {
+                                Snackbar.make(getView(),""+message, BaseTransientBottomBar.LENGTH_LONG).show();
+                            }
+                        }
+
+                    });
+                }
+                else
+                {
+                    //if verification code not wrong, open alert dialog again.
+                    Snackbar.make(getView(),""+message, BaseTransientBottomBar.LENGTH_LONG).show();
+                    createDialogVerification(null,"Verification code is wrong.");
+                }
+            }
+        });
+    }
+
+    /**
+     * Create alert dialog to do the verification with pin code input.
+     * @param code The code from the system to check authentication
+     */
+    private void createDialogVerification(String code, String error) {
+
+        //Create edit text to input the pin code
         final EditText ed_pinCode = new EditText(getContext());
         ed_pinCode.setInputType(InputType.TYPE_CLASS_NUMBER);
         if(code != null)
         {
             ed_pinCode.setText(""+code);
         }
+        if(error != null)
+        {
+            ed_pinCode.setError(error);
+        }
+
+        //Build an alert dialog
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Verify phone number")
+                .setMessage("We have just sent a code to the phone you entered. \nCheck the phone and enter the code to verify the number.")
                 .setView(ed_pinCode)
                 .setPositiveButton("Verify", new DialogInterface.OnClickListener() {
                     @Override
@@ -148,7 +231,10 @@ public class StepFourRegisterFragment extends Fragment implements Step {
                     }
                 });
         final AlertDialog alertDialog = builder.create();
+
+        //Show the alert dialog
         alertDialog.show();
+
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -165,18 +251,10 @@ public class StepFourRegisterFragment extends Fragment implements Step {
         });
     }
 
-    private String getPhoneNumber() {
-        String phoneNumber = ed_phone.getText().toString().trim();
-        return "+"+ccp.getSelectedCountryCode()+phoneNumber;
-    }
-
-    private void setCountryNumber() {
-        telephonyManager = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
-
-        String countryNum = telephonyManager.getNetworkCountryIso();
-        ccp.setCountryForNameCode(countryNum);
-    }
-
+    /**
+     * The function get phone number and sends code verification to phone.
+     * @param phone A phone number to which a verification code will be sent
+     */
     private void sendVerificationCodeToUser(String phone)
     {
         mCallbacks.onCodeAutoRetrievalTimeOut(codeVerification);
@@ -186,57 +264,12 @@ public class StepFourRegisterFragment extends Fragment implements Step {
         }
         else
         {
+            //Force verification code to phone after first attempt
             authorization.sendVerifyPhoneNumber(getActivity(),phone,mCallbacks,tokenVerification);
             tokenVerification = null;
         }
 
         progressBar.setVisible(pb,true);
-    }
-
-    private void verifyCode(String code) {
-        authorization.signInWithPhoneNumber(codeVerification, code, new IRegister() {
-            @Override
-            public void onProcess() {
-                progressBar.setVisible(pb,true);
-            }
-
-            @Override
-            public void onDone(boolean successful, String message) {
-                progressBar.setVisible(pb,false);
-                if(successful)
-                {
-                    dataExtraction.getUserDataByID(keyID,new ISavable() {
-                        @Override
-                        public void onDataRead(Object save) {
-                            final User user = (User)save;
-                            user.setPhone(getPhoneNumber());
-                            dataExtraction.setObject(ConstantNames.USER_PATH, user.getKeyID(), user, new IRegister() {
-                                @Override
-                                public void onProcess() {
-                                    progressBar.setVisible(pb,true);
-                                }
-
-                                @Override
-                                public void onDone(boolean successful, String message) {
-                                    progressBar.setVisible(pb,false);
-                                    if(successful)
-                                    {
-                                        Map<String,Object> data = DataPass.passData;
-                                        data.put(ConstantNames.USER,user);
-                                        DataPass.passData = data;
-                                        stepper.goNext(mStepperLayout);
-                                    }
-                                }
-                            });
-                        }
-                    });
-                }
-                else
-                {
-                    createDialogVerification(null);
-                }
-            }
-        });
     }
 
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks()
@@ -247,7 +280,7 @@ public class StepFourRegisterFragment extends Fragment implements Step {
             if(code != null)
             {
                 progressBar.setVisible(pb,true);
-                createDialogVerification(code);
+                createDialogVerification(code,null);
                 verifyCode(code);
             }
         }
@@ -255,6 +288,7 @@ public class StepFourRegisterFragment extends Fragment implements Step {
         @Override
         public void onVerificationFailed(@NonNull FirebaseException e) {
             progressBar.setVisible(pb,false);
+            Snackbar.make(getView(),""+e.getLocalizedMessage(), BaseTransientBottomBar.LENGTH_LONG).show();
         }
 
         @Override
@@ -266,7 +300,7 @@ public class StepFourRegisterFragment extends Fragment implements Step {
             codeVerification = s;
             tokenVerification = forceResendingToken;
 
-            createDialogVerification(null);
+            createDialogVerification(null,null);
         }
     };
 
@@ -284,6 +318,7 @@ public class StepFourRegisterFragment extends Fragment implements Step {
     @Override
     public void onError(@NonNull VerificationError error) {
         //handle error inside of the fragment, e.g. show error on EditText
+
     }
 
 }

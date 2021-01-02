@@ -41,8 +41,8 @@ public class DataExtraction
 {
 
     /**
-     * Build reference by path.
-     * @param path the path to get access to data
+     * Build reference to firebase realtime by path.
+     * @param path A path to get access to data.
      * @return Return reference to data by path.
      */
     private DatabaseReference getDatabaseReference(String path) {
@@ -52,8 +52,8 @@ public class DataExtraction
     /**
      * This function use to get value from firebase by key.
      * @param ds The pointer to find the value.
-     * @param value The key from which you get the value
-     * @return a value by the pointer.
+     * @param value The key from which you get the value.
+     * @return Return value by a pointer.
      */
     private Object getValue(DataSnapshot ds, Class value)
     {
@@ -415,7 +415,7 @@ public class DataExtraction
                 }
                 else
                 {
-                    iRegister.onDone(false,error.toString());
+                    iRegister.onDone(false,error.getMessage());
                 }
             }
         });
