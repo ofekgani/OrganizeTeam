@@ -30,9 +30,13 @@
 
         <activity
             android:name=".SelectTeamActivity"
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".CreateAccountActivity"
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".TeamPageActivity" />
-        <activity android:name=".CreateTeamActivity" />
+        <activity android:name=".CreateTeamActivity"
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".CreateAccountActivity"/>
         <activity
             android:name=".MainActivity">
             <intent-filter>

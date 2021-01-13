@@ -2,11 +2,13 @@ package com.myapp.organizeteam;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -43,8 +45,7 @@ public class SelectTeamActivity extends AppCompatActivity implements AdapterView
     Image image;
 
     ListView listView;
-    ImageView mv_teamLogo;
-    TextView tv_teamName, btn_cancelRequest;
+    Toolbar toolbar;
 
     Intent intent;
 
@@ -61,10 +62,14 @@ public class SelectTeamActivity extends AppCompatActivity implements AdapterView
         super.onCreate ( savedInstanceState );
         setContentView ( R.layout.activity_select_team );
 
+        toolbar = findViewById(R.id.appBarLayout);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("Join to team");
+
         listView = findViewById ( R.id.lv_teamsList );
-        tv_teamName = findViewById(R.id.tv_teamName);
-        mv_teamLogo = findViewById(R.id.mv_teamLogo);
-        btn_cancelRequest = findViewById(R.id.tv_cancelRequest);
 
         //allocating memory
         activityTransition = new ActivityTransition ();
@@ -84,40 +89,6 @@ public class SelectTeamActivity extends AppCompatActivity implements AdapterView
 
         createTeamList ();
         getTeamByJoinRequest();
-
-//        FirebaseDatabase fbd = FirebaseDatabase.getInstance();
-//        fbd.getReference(ConstantNames.USER_PATH).child(userID).addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                dataExtraction.hasChild(ConstantNames.USER_PATH, userID, ConstantNames.TEAM, new ISavable() {
-//                    @Override
-//                    public void onDataRead(Object exist) {
-//                        if((boolean)exist)
-//                        {
-//                            final Map<String,Object> data = new HashMap<>();
-//                            if(team != null)
-//                            {
-//                                data.put(ConstantNames.TEAM,team);
-//                                dataExtraction.getUserDataByID(team.getHost(), new ISavable() {
-//                                    @Override
-//                                    public void onDataRead(Object save) {
-//                                        data.put(ConstantNames.TEAM_HOST,save);
-//                                        if(user != null)
-//                                            data.put(ConstantNames.USER,user);
-//                                        activityTransition.goTo(SelectTeamActivity.this,TeamPageActivity.class,true,data,null);
-//                                    }
-//                                });
-//                            }
-//                        }
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
     }
 
     /**
@@ -139,7 +110,6 @@ public class SelectTeamActivity extends AppCompatActivity implements AdapterView
                                 @Override
                                 public void onDataRead(Object save) {
                                     team = (Team)save;
-                                    updateTeamInformation(team);
                                 }
                             });
                         }
@@ -153,16 +123,6 @@ public class SelectTeamActivity extends AppCompatActivity implements AdapterView
                 }
             }
         });
-    }
-
-    /**
-     * Update the title and logo of the team that got join request by user.
-     * @param save The team information to update.
-     */
-    private void updateTeamInformation(Team save) {
-        Team team = save;
-        tv_teamName.setText(""+team.getName());
-        image.setImageUri(team.getLogo(),mv_teamLogo);
     }
 
     /**
@@ -210,6 +170,18 @@ public class SelectTeamActivity extends AppCompatActivity implements AdapterView
          } );
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     /**
      * Called when user apply request from "RequestJoinDialog" .
      */
@@ -221,30 +193,5 @@ public class SelectTeamActivity extends AppCompatActivity implements AdapterView
         DataPass.passData = resultData;
         finish();
         this.teamID = team.getKeyID();
-        tv_teamName.setText(""+team.getName());
-        image.setImageUri(team.getLogo(),mv_teamLogo);
-    }
-
-    public void oc_cancelRequest(View view) {
-        if(teamID == null) return;
-        dataExtraction.hasChild(ConstantNames.USER_PATH, userID, ConstantNames.DATA_REQUEST_TO_JOIN, new ISavable() {
-            @Override
-            public void onDataRead(Object save) {
-                if((boolean)save)
-                {
-
-
-                    //Update the title and logo
-                    teamID = null;
-                    tv_teamName.setText("No join request.");
-                    mv_teamLogo.setImageResource(R.drawable.massivemultiplayer);
-                    Toast.makeText(SelectTeamActivity.this,"has child",Toast.LENGTH_LONG).show();
-                }
-                else
-                {
-                    Toast.makeText(SelectTeamActivity.this,"has not child",Toast.LENGTH_LONG).show();
-                }
-            }
-        });
     }
 }

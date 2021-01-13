@@ -4,117 +4,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/theme_bar_background"
+    android:background="@drawable/bg_create"
     tools:context="com.myapp.organizeteam.SelectTeamActivity">
 
-    <ImageView
-        android:id="@+id/mv_teamLogo"
-        android:layout_width="98dp"
-        android:layout_height="98dp"
-        android:scaleType="fitXY"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.051"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.097"
-        app:srcCompat="@drawable/massivemultiplayer" />
+        app:layout_constraintVertical_bias="0.0">
 
-    <ImageView
-        android:id="@+id/mv_back2"
-        android:layout_width="32sp"
-        android:layout_height="32sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.019"
-        app:srcCompat="@drawable/ic_left_arrow_white" />
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:backgroundTint="@color/primaryColor"
+            tools:layout_editor_absoluteX="2dp"
+            tools:layout_editor_absoluteY="-2dp"></com.google.android.material.appbar.MaterialToolbar>
 
-    <TextView
-        android:id="@+id/tv_teamName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="No join request."
-        android:fontFamily="@font/nexa_bold"
-        android:textSize="18dp"
-        android:textColor="@color/secondaryTextColor"
-        app:layout_constraintBottom_toBottomOf="@+id/mv_teamLogo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/mv_teamLogo"
-        app:layout_constraintTop_toTopOf="@+id/mv_teamLogo"
-        app:layout_constraintVertical_bias="0.493" />
-
-    <TextView
-        android:id="@+id/tv_cancelRequest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:fontFamily="@font/nexa_bold"
-        android:text="Cancel request"
-        android:textColor="@color/primaryDarkColor"
-        android:textSize="18dp"
-        android:onClick="oc_cancelRequest"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_teamName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.797"
-        app:layout_constraintStart_toEndOf="@+id/tv_teamName"
-        app:layout_constraintTop_toTopOf="@+id/tv_teamName"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <View
-        android:id="@+id/view2"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/secondaryTextColor"
-        android:elevation="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mv_teamLogo"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <EditText
-        android:id="@+id/editText"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/edit_text_button3"
-        android:drawableLeft="@drawable/ic_search"
-        android:drawablePadding="16dp"
-        android:drawableTint="@color/secondaryTextColor"
-        android:elevation="12dp"
-        android:fontFamily="@font/roboto_bold"
-        android:hint="Search"
-        android:paddingLeft="18dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view2"
-        app:layout_constraintVertical_bias="0.0" />
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
         android:outlineProvider="bounds"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText">
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout2">
 
         <ListView
             android:id="@+id/lv_teamsList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="64dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

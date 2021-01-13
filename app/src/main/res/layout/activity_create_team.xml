@@ -7,23 +7,30 @@
     android:background="@drawable/bg_create"
     tools:context="com.myapp.organizeteam.CreateTeamActivity">
 
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="32sp"
-        android:layout_height="32sp"
-        android:onClick="oc_back"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.019"
-        app:srcCompat="@drawable/ic_arrow_left" />
+        app:layout_constraintVertical_bias="0.0">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:backgroundTint="@color/primaryColor"
+            tools:layout_editor_absoluteX="2dp"
+            tools:layout_editor_absoluteY="-2dp"></com.google.android.material.appbar.MaterialToolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <Button
         android:id="@+id/btn_register2"
-        android:layout_width="220dp"
-        android:layout_height="50dp"
+        android:layout_width="115dp"
+        android:layout_height="36dp"
         android:layout_marginTop="32dp"
         android:layout_marginBottom="140dp"
         android:background="@drawable/button"
@@ -33,7 +40,7 @@
         android:text="Create"
         android:textAllCaps="false"
         android:textColor="#ffffff"
-        android:textSize="32sp"
+        android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
@@ -56,59 +63,69 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.265" />
 
-    <EditText
-        android:id="@+id/ed_teamName"
-        android:layout_width="220dp"
-        android:layout_height="50dp"
-        android:background="@drawable/edit_text_button_2"
-        android:elevation="18dp"
-        android:ems="10"
-        android:fontFamily="@font/roboto_bold"
-        android:hint="Team name"
-        android:inputType="textPersonName"
-        android:paddingLeft="12dp"
-        android:textColor="@color/secondaryTextColor"
-        android:textSize="16sp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/ed_teamDescription"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView10"
-        app:layout_constraintVertical_bias="0.077" />
+        app:layout_constraintVertical_bias="0.0">
 
-    <ImageView
-        android:id="@+id/mv_teamLogo"
-        android:layout_width="98dp"
-        android:layout_height="98dp"
-        android:scaleType="fitXY"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/ed_teamDescription"
-        app:layout_constraintEnd_toStartOf="@+id/ed_teamName"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.968"
-        app:srcCompat="@drawable/massivemultiplayer"
-        android:onClick="oc_chooseImage"/>
+        <EditText
+            android:id="@+id/ed_teamName"
+            android:layout_width="240dp"
+            android:layout_height="50dp"
+            android:background="@drawable/edit_text_button_2"
+            android:elevation="12dp"
+            android:ems="10"
+            android:fontFamily="@font/roboto_bold"
+            android:hint="Team name"
+            android:inputType="textPersonName"
+            android:paddingLeft="12dp"
+            android:textColor="@color/secondaryTextColor"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.882"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/imageView6"
-        android:layout_width="21dp"
-        android:layout_height="11dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/mv_teamLogo"
-        app:layout_constraintEnd_toEndOf="@+id/mv_teamLogo"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/mv_teamLogo"
-        app:layout_constraintTop_toTopOf="@+id/mv_teamLogo"
-        app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/ic_pencil" />
+        <ImageView
+            android:id="@+id/mv_teamLogo"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginEnd="16dp"
+            android:onClick="oc_chooseImage"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ed_teamName"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/massivemultiplayer" />
+
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="21dp"
+            android:layout_height="11dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/mv_teamLogo"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/mv_teamLogo"
+            app:layout_constraintTop_toTopOf="@+id/mv_teamLogo"
+            app:layout_constraintVertical_bias="1.0"
+            app:srcCompat="@drawable/ic_pencil" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <EditText
         android:id="@+id/ed_teamDescription"
         android:layout_width="330dp"
         android:layout_height="130dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/edit_text_button_2"
         android:elevation="18dp"
         android:ems="10"
@@ -122,10 +139,10 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ed_teamName"
-        app:layout_constraintVertical_bias="0.028" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout6"
+        app:layout_constraintVertical_bias="0.003" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
