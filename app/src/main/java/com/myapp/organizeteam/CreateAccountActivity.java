@@ -95,8 +95,10 @@ public class CreateAccountActivity extends AppCompatActivity implements StepperL
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         StepThreeRegisterFragment stepThreeRegisterFragment = new StepThreeRegisterFragment();
         if(stepThreeRegisterFragment != null)
-        stepThreeRegisterFragment.onActivityResult(requestCode, resultCode, data);
+            stepThreeRegisterFragment.onActivityResult(requestCode, resultCode, data);
+
     }
 }

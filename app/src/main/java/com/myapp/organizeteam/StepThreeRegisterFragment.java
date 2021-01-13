@@ -266,7 +266,20 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
                     {
                         userData.put(ConstantNames.USER,getUserData(imageUriResult.toString()));
                         DataPass.passData = userData;
-                        stepper.goNext(mStepperLayout);
+
+                        dataExtraction.hasChild(ConstantNames.USER_PATH, user.getKeyID(), ConstantNames.DATA_USER_PHONE, new ISavable() {
+                            @Override
+                            public void onDataRead(Object exist) {
+                                if((boolean)exist)
+                                {
+                                    stepper.go(mStepperLayout,4);
+                                }
+                                else
+                                {
+                                    stepper.goNext(mStepperLayout);
+                                }
+                            }
+                        });
                     }
                 }
             } );

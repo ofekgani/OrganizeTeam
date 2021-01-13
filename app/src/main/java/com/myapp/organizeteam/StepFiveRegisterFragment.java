@@ -1,12 +1,15 @@
 package com.myapp.organizeteam;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +23,17 @@ import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.hbb20.CountryCodePicker;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
@@ -42,7 +51,10 @@ import com.stepstone.stepper.Step;
 import com.stepstone.stepper.StepperLayout;
 import com.stepstone.stepper.VerificationError;
 
+import java.io.Serializable;
 import java.util.Map;
+
+import static android.app.Activity.RESULT_OK;
 
 public class StepFiveRegisterFragment extends Fragment implements Step {
 
@@ -58,7 +70,6 @@ public class StepFiveRegisterFragment extends Fragment implements Step {
 
     TextView tv_prevStep, tv_name, tv_phone, tv_email;
     ImageView mv_userLogo;
-    Button btn_createTeam, btn_joinToTeam;
 
     Map<String, Object> userData;
     User user;
@@ -81,8 +92,6 @@ public class StepFiveRegisterFragment extends Fragment implements Step {
         tv_email = v.findViewById(R.id.tv_userEmail);
         tv_phone = v.findViewById(R.id.tv_userPhone);
         mv_userLogo = v.findViewById(R.id.mv_userLogo);
-        btn_createTeam = v.findViewById(R.id.btn_createTeam);
-        btn_joinToTeam = v.findViewById(R.id.btn_joinToTeam);
 
         mStepperLayout = stepper.getStepperLayout(container,R.id.stepperLayout);
 
@@ -105,34 +114,6 @@ public class StepFiveRegisterFragment extends Fragment implements Step {
             }
         });
 
-        btn_joinToTeam.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(userData.get(ConstantNames.TEAMS_LIST) == null)
-                {
-                    dataExtraction.getTeams(new ISavable() {
-                        @Override
-                        public void onDataRead(Object save) {
-                            userData.put(ConstantNames.TEAMS_LIST,save);
-                            transformation.goTo(getActivity(),SelectTeamActivity.class,false,userData,null);
-                        }
-                    });
-                }
-                else
-                {
-                    transformation.goTo(getActivity(),SelectTeamActivity.class,false,userData,null);
-                }
-
-            }
-        });
-
-        btn_createTeam.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                transformation.goTo(getActivity(),CreateTeamActivity.class,false,userData,null);
-            }
-        });
-
         return v;
     }
 
@@ -141,7 +122,8 @@ public class StepFiveRegisterFragment extends Fragment implements Step {
      * @param user A user object used to update the ui.
      */
     private void updateUserData(User user) {
-
+        Log.i("FUCK YOU",tv_name + "   "+ user);
+        if(user == null) return;
         if(user.getFullName() != null)
         {
             tv_name.setText(user.getFullName());
@@ -158,6 +140,32 @@ public class StepFiveRegisterFragment extends Fragment implements Step {
         {
             image.setImageUri(user.getLogo(),mv_userLogo);
         }
+    }
+
+    /**
+     * Create menu fragment by user`s information.
+     * If user has not team or join request, so adapt "JoinToTeamFragment".
+     * If user has team or join request, so adapt "JoinRequestCard".
+     * @param keyID user`s keyID to find the user.
+     */
+    private void menuAdapt(String keyID) {
+        //Check if to user exist team or join request to adapt the correct fragment.
+        dataExtraction.hasChild(ConstantNames.USER_PATH, keyID, ConstantNames.DATA_REQUEST_TO_JOIN, new ISavable() {
+            @Override
+            public void onDataRead(Object exist) {
+                if(!(boolean)exist)
+                {
+                    JoinToTeamFragment joinToTeamFragment = new JoinToTeamFragment();
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.menuContainer, joinToTeamFragment).addToBackStack(null).commit();
+
+                }
+                else
+                {
+                    JoinRequestCard joinRequestCard = new JoinRequestCard();
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.menuContainer, joinRequestCard).addToBackStack(null).commit();
+                }
+            }
+        });
     }
 
     @Override
@@ -177,6 +185,12 @@ public class StepFiveRegisterFragment extends Fragment implements Step {
                 user = (User)userData.get(ConstantNames.USER);
                 updateUserData(user);
             }
+        }
+
+        //Adapt the correct fragment
+        if(user != null && user.getKeyID() != null)
+        {
+            menuAdapt(user.getKeyID());
         }
     }
 

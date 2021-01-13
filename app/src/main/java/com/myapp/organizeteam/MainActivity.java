@@ -1,5 +1,6 @@
 package com.myapp.organizeteam;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityOptions;
@@ -10,6 +11,11 @@ import android.widget.ProgressBar;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
@@ -43,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     EditText ed_email, ed_password;
     ProgressBar pb_singIn;
 
+    Map<String,Object> userInfo;
     int step;
 
     @Override
@@ -87,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onDone(boolean successful, String message) {
-                progressBar.setVisible(pb_singIn,false);
                 if(successful)
                 {
                     step = 0; //Default step
@@ -100,15 +106,7 @@ public class MainActivity extends AppCompatActivity {
                                 dataExtraction.getCurrentUserData(new ISavable() {
                                     @Override
                                     public void onDataRead(Object save) {
-                                        final Map<String,Object> userInfo = (Map<String, Object>)save;
-                                        final Team team = (Team) userInfo.get ( ConstantNames.TEAM );
-                                        dataExtraction.getUserDataByID(team.getHost(), new ISavable() {
-                                            @Override
-                                            public void onDataRead(Object save) {
-                                                userInfo.put(ConstantNames.TEAM_HOST,save);
-                                                activityTransition.goTo(MainActivity.this,TeamPageActivity.class,true,userInfo,null);
-                                            }
-                                        });
+                                        connectToTeam((Map<String, Object>) save);
                                     }
                                 });
                             }
@@ -118,9 +116,7 @@ public class MainActivity extends AppCompatActivity {
                                 if(!authorization.isEmailVerified())
                                 {
                                     //If email not verified go to step 2
-                                    step = 1;
-                                    Map<String,Object> userInfo = getUser();
-                                    connect(userInfo);
+                                    register();
                                 }
                                 else
                                 {
@@ -137,19 +133,33 @@ public class MainActivity extends AppCompatActivity {
                                                         dataExtraction.getCurrentUserData(new ISavable() {
                                                             @Override
                                                             public void onDataRead(Object save) {
+
+                                                                //Save all user`s information to next use.
+                                                                userInfo = (Map<String,Object>)save;
+
                                                                 //if user`s name exist go to last step
                                                                 if((boolean)exist)
                                                                 {
                                                                     step = 4;
+                                                                    dataExtraction.hasChild(ConstantNames.USER_PATH, authorization.getUserID(), ConstantNames.DATA_REQUEST_TO_JOIN, new ISavable() {
+                                                                        @Override
+                                                                        public void onDataRead(Object exist) {
+                                                                            if((boolean) exist)
+                                                                            {
+                                                                                goToStepFiveWithRequestJoin();
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                connect(userInfo);
+                                                                            }
+                                                                        }
+                                                                    });
                                                                 }
                                                                 else
                                                                 {
                                                                     step = 2;
+                                                                    connect(userInfo);
                                                                 }
-                                                                //Save all user`s information to next use.
-                                                                Map<String,Object> userInfo = (Map<String,Object>)save;
-
-                                                                connect(userInfo);
                                                             }
                                                         });
                                                     }
@@ -160,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
                                                 step = 2;
 
                                                 //Save all user`s information to next use.
-                                                Map<String, Object> userInfo = getUser();
+                                                userInfo = getUser();
 
                                                 connect(userInfo);
                                             }
@@ -174,8 +184,58 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else
                 {
+                    progressBar.setVisible(pb_singIn,false);
                     Snackbar.make(view,""+message, BaseTransientBottomBar.LENGTH_LONG).show();
                 }
+            }
+        });
+    }
+
+    private void goToStepFiveWithRequestJoin() {
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference(ConstantNames.USER_PATH).child(authorization.getUserID()).child(ConstantNames.DATA_REQUEST_TO_JOIN);
+        rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //If request exist, get information about the team that got request.
+                String teamID = snapshot.getValue().toString();
+                dataExtraction.getTeamDataByID(teamID, new ISavable() {
+                    @Override
+                    public void onDataRead(Object save) {
+                        userInfo.put(ConstantNames.TEAM,save);
+                        connect(userInfo);
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    /**
+     * Go to fist step and start register
+     */
+    private void register() {
+        step = 1;
+        Map<String,Object> userInfo = getUser();
+        connect(userInfo);
+    }
+
+    /**
+     * Get user`s data, team`s data and manager`s data and go to team page.
+     * @param save The collected data to save.
+     */
+    private void connectToTeam(Map<String, Object> save) {
+        final Map<String,Object> userInfo = save;
+        final Team team = (Team) userInfo.get ( ConstantNames.TEAM );
+        dataExtraction.getUserDataByID(team.getHost(), new ISavable() {
+            @Override
+            public void onDataRead(Object save) {
+                progressBar.setVisible(pb_singIn,false);
+                userInfo.put(ConstantNames.TEAM_HOST,save);
+                activityTransition.goTo(MainActivity.this, TeamPageActivity.class,true,userInfo,null);
             }
         });
     }

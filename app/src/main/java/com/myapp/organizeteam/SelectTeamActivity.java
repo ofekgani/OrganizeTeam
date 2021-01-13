@@ -3,6 +3,7 @@ package com.myapp.organizeteam;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -84,41 +85,39 @@ public class SelectTeamActivity extends AppCompatActivity implements AdapterView
         createTeamList ();
         getTeamByJoinRequest();
 
-        FirebaseDatabase fbd = FirebaseDatabase.getInstance();
-        fbd.getReference(ConstantNames.USER_PATH).child(userID).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                dataExtraction.hasChild(ConstantNames.USER_PATH, userID, ConstantNames.TEAM, new ISavable() {
-                    @Override
-                    public void onDataRead(Object exist) {
-                        Log.i("EXIST","exist");
-                        if((boolean)exist)
-                        {
-                            final Map<String,Object> data = new HashMap<>();
-                            if(team != null)
-                            {
-                                data.put(ConstantNames.TEAM,team);
-                                dataExtraction.getUserDataByID(team.getHost(), new ISavable() {
-                                    @Override
-                                    public void onDataRead(Object save) {
-                                        data.put(ConstantNames.TEAM_HOST,save);
-                                        if(user != null)
-                                            data.put(ConstantNames.USER,user);
-                                        Log.i("EXISTTTTTT",data+"");
-                                        activityTransition.goTo(SelectTeamActivity.this,TeamPageActivity.class,true,data,null);
-                                    }
-                                });
-                            }
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+//        FirebaseDatabase fbd = FirebaseDatabase.getInstance();
+//        fbd.getReference(ConstantNames.USER_PATH).child(userID).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                dataExtraction.hasChild(ConstantNames.USER_PATH, userID, ConstantNames.TEAM, new ISavable() {
+//                    @Override
+//                    public void onDataRead(Object exist) {
+//                        if((boolean)exist)
+//                        {
+//                            final Map<String,Object> data = new HashMap<>();
+//                            if(team != null)
+//                            {
+//                                data.put(ConstantNames.TEAM,team);
+//                                dataExtraction.getUserDataByID(team.getHost(), new ISavable() {
+//                                    @Override
+//                                    public void onDataRead(Object save) {
+//                                        data.put(ConstantNames.TEAM_HOST,save);
+//                                        if(user != null)
+//                                            data.put(ConstantNames.USER,user);
+//                                        activityTransition.goTo(SelectTeamActivity.this,TeamPageActivity.class,true,data,null);
+//                                    }
+//                                });
+//                            }
+//                        }
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
     }
 
     /**
@@ -186,7 +185,7 @@ public class SelectTeamActivity extends AppCompatActivity implements AdapterView
          //Get user information
          final String userName = user.getFullName ();
 
-         //get host`s token
+         //get host`s token that use to send to him notification
          dataExtraction.getToken ( hostID, new ISavable () {
              @Override
              public void onDataRead(Object save) {
@@ -213,15 +212,17 @@ public class SelectTeamActivity extends AppCompatActivity implements AdapterView
 
     /**
      * Called when user apply request from "RequestJoinDialog" .
-     * @param teamID team`s id.
-     * @param teamName team`s name.
-     * @param teamLogo team`s logo.
      */
     @Override
-    public void applyRequest(String teamID,String teamName,String teamLogo) {
-        this.teamID = teamID;
-        tv_teamName.setText(""+teamName);
-        image.setImageUri(teamLogo,mv_teamLogo);
+    public void applyRequest(Team team) {
+        Map<String,Object> resultData = DataPass.passData;
+        resultData.put(ConstantNames.TEAM,team);
+        activityTransition.back(this,resultData);
+        DataPass.passData = resultData;
+        finish();
+        this.teamID = team.getKeyID();
+        tv_teamName.setText(""+team.getName());
+        image.setImageUri(team.getLogo(),mv_teamLogo);
     }
 
     public void oc_cancelRequest(View view) {
@@ -231,19 +232,7 @@ public class SelectTeamActivity extends AppCompatActivity implements AdapterView
             public void onDataRead(Object save) {
                 if((boolean)save)
                 {
-                    //Delete join request in firebase
-                    dataExtraction.deleteData(ConstantNames.USER_PATH, userID, ConstantNames.DATA_REQUEST_TO_JOIN, new DataListener() {
-                        @Override
-                        public void onDataDelete() {
 
-                        }
-                    });
-                    dataExtraction.deleteValue(ConstantNames.TEAM_PATH, teamID, ConstantNames.DATA_REQUEST_TO_JOIN, userID, new DataListener() {
-                        @Override
-                        public void onDataDelete() {
-
-                        }
-                    });
 
                     //Update the title and logo
                     teamID = null;

@@ -105,7 +105,7 @@ public class RequestJoinDialog extends AppCompatDialogFragment{
             public void onDataRead(Object save) {
                 if(!(boolean)save)
                 {
-                    listener.applyRequest(team.getKeyID(),team.getName(),team.getLogo());
+                    listener.applyRequest(team);
 
                     //Set to user the his join request at firebase
                     dataExtraction.setNewData(ConstantNames.USER_PATH,userID,ConstantNames.DATA_REQUEST_TO_JOIN,team.getKeyID());
@@ -152,7 +152,7 @@ public class RequestJoinDialog extends AppCompatDialogFragment{
 
     public interface DialogListener
     {
-        void applyRequest(String teamID, String teamName,String teamLogo);
+        void applyRequest(Team team);
     }
 }
 
