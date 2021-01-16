@@ -5,9 +5,9 @@
         <item android:id="@+id/btn_home"
             android:icon="@drawable/home_icon"
             android:title="Home"></item>
-        <item android:id="@+id/btn_create_team"
-        android:icon="@drawable/ic_date_black"
-        android:title="Create new team"></item>
+        <item android:id="@+id/btn_participants"
+        android:icon="@drawable/ic_users"
+        android:title="Participants"></item>
         <item android:id="@+id/btn_notifications"
             android:icon="@drawable/bell_icon"
             android:title="Notifications "></item>

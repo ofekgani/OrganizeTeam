@@ -11,11 +11,17 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 public class OpenMenu extends AppCompatActivity {
 
+    int toolBar;
+
+    public OpenMenu(int toolBar)
+    {
+        this.toolBar = toolBar;
+    }
+
     public void createMenu(final AppCompatActivity act, final DrawerLayout drawerLayout)
     {
-        Toolbar toolbar = act.findViewById(R.id.toolbar);
+        Toolbar toolbar = act.findViewById(toolBar);
         act.setSupportActionBar ( toolbar);
-        act.getSupportActionBar().setTitle("");
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle ( this,drawerLayout, toolbar, R.string.navigation_drawer_open,R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener ( toggle );

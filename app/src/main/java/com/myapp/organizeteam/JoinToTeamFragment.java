@@ -11,6 +11,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,6 +44,10 @@ public class JoinToTeamFragment extends Fragment {
     Map<String, Object> userData;
     User user;
 
+    FirebaseDatabase firebaseDatabase;
+
+    FragmentManager fragmentManager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.join_to_team_buttons_fragment, container, false);
@@ -56,18 +62,23 @@ public class JoinToTeamFragment extends Fragment {
         userData = DataPass.passData;
         user = (User) userData.get(ConstantNames.USER);
 
+        fragmentManager = getActivity().getSupportFragmentManager();
+
         //When data is changed, check if there is join request, if there is, replace to other fragment.
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseDatabase.getReference(ConstantNames.USER_PATH).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                firebaseDatabase.getReference().removeEventListener(this);
+                dataExtraction.hashMap.put(firebaseDatabase.getReference(),this);
                 dataExtraction.hasChild(ConstantNames.USER_PATH, user.getKeyID(), ConstantNames.DATA_REQUEST_TO_JOIN, new ISavable() {
                     @Override
                     public void onDataRead(Object exist) {
                         if((boolean)exist)
                         {
                             JoinRequestCard joinRequestCard = new JoinRequestCard();
-                            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.menuContainer, joinRequestCard).addToBackStack(null).commitAllowingStateLoss();
+                            if(fragmentManager != null)
+                            fragmentManager.beginTransaction().replace(R.id.menuContainer, joinRequestCard).addToBackStack(null).commitAllowingStateLoss();
                         }
                     }
                 });

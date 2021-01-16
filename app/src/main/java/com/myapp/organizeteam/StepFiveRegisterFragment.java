@@ -11,6 +11,7 @@ import android.telephony.TelephonyManager;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -143,7 +144,7 @@ public class StepFiveRegisterFragment extends Fragment implements Step {
     }
 
     /**
-     * Create menu fragment by user`s information.
+     * Create drawer_navigation_menu fragment by user`s information.
      * If user has not team or join request, so adapt "JoinToTeamFragment".
      * If user has team or join request, so adapt "JoinRequestCard".
      * @param keyID user`s keyID to find the user.

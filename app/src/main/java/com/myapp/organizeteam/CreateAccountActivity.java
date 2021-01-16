@@ -10,6 +10,7 @@ import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -100,5 +101,18 @@ public class CreateAccountActivity extends AppCompatActivity implements StepperL
         if(stepThreeRegisterFragment != null)
             stepThreeRegisterFragment.onActivityResult(requestCode, resultCode, data);
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                authorization.singOut(this);
+                dataExtraction.removeValueEventListener();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

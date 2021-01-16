@@ -514,7 +514,7 @@ public class DataExtraction
      */
     public void hasChild(String path,final String id , final String child, final ISavable iSavable)
     {
-        DatabaseReference rootRef = getDatabaseReference(path);
+        final DatabaseReference rootRef = getDatabaseReference(path);
         rootRef.addListenerForSingleValueEvent ( new ValueEventListener () {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -685,4 +685,14 @@ public class DataExtraction
             }
         });
     }
+
+    public static void removeValueEventListener() {
+        for (Map.Entry<DatabaseReference, ValueEventListener> entry : hashMap.entrySet()) {
+            DatabaseReference databaseReference = entry.getKey();
+            ValueEventListener valueEventListener = entry.getValue();
+            databaseReference.removeEventListener(valueEventListener);
+        }
+    }
+
+    public static HashMap<DatabaseReference, ValueEventListener> hashMap = new HashMap<>();
 }

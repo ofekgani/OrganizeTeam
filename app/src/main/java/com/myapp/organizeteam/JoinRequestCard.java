@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -48,6 +49,8 @@ public class JoinRequestCard extends Fragment {
 
     Map<String, Object> userData;
     User user;
+
+    FragmentManager fragmentManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -82,19 +85,22 @@ public class JoinRequestCard extends Fragment {
             });
         }
 
+        fragmentManager = getActivity().getSupportFragmentManager();
+
         //When data is changed, check if join request canceled. if its canceled, replace to other fragment.
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseDatabase.getReference(ConstantNames.USER_PATH).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                dataExtraction.hashMap.put(firebaseDatabase.getReference(),this);
                 dataExtraction.hasChild(ConstantNames.USER_PATH, user.getKeyID(), ConstantNames.DATA_REQUEST_TO_JOIN, new ISavable() {
                     @Override
                     public void onDataRead(Object exist) {
                         if(!(boolean)exist)
                         {
                             JoinToTeamFragment joinToTeamFragment = new JoinToTeamFragment();
-                            getActivity().getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.menuContainer, joinToTeamFragment).addToBackStack(null).commitAllowingStateLoss();
+                            if(fragmentManager != null)
+                                fragmentManager.beginTransaction().replace(R.id.menuContainer, joinToTeamFragment).addToBackStack(null).commitAllowingStateLoss();
                         }
                     }
                 });

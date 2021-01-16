@@ -12,9 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".CreateAccountActivity"
-            android:theme="@style/AppTheme"
-            android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".CreateMeetingActivity"
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".CreateAccountActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme" />
         <activity android:name=".WelcomeActivity" />
 
         <meta-data
@@ -30,15 +33,18 @@
 
         <activity
             android:name=".SelectTeamActivity"
-            android:theme="@style/AppTheme"
             android:parentActivityName=".CreateAccountActivity"
-            android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".TeamPageActivity" />
-        <activity android:name=".CreateTeamActivity"
             android:theme="@style/AppTheme"
-            android:parentActivityName=".CreateAccountActivity"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".MainActivity">
+            android:name=".TeamPageActivity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".CreateTeamActivity"
+            android:parentActivityName=".CreateAccountActivity"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

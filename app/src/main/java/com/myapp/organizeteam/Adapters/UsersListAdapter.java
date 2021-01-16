@@ -37,10 +37,11 @@ public class UsersListAdapter extends ArrayAdapter<User> {
     private int mResource;
     private String teamID;
 
+    ArrayList<User> users;
+
     private DataExtraction dataExtraction;
 
     private AdapterListener listener;
-
 
     Image image = new Image ();
 
@@ -48,10 +49,13 @@ public class UsersListAdapter extends ArrayAdapter<User> {
         super ( context, resource, objects );
         mContext = context;
         mResource = resource;
-
-        listener = (AdapterListener) context;
-
+        try {
+            listener = (AdapterListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement MyInterface");
+        }
         this.teamID = teamID;
+        users = objects;
     }
 
     @NonNull
