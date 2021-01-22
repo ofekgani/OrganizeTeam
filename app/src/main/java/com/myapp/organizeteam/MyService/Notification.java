@@ -11,8 +11,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.myapp.organizeteam.R;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 public class Notification {
 
@@ -29,24 +32,18 @@ public class Notification {
         }
     }
 
-    public void myRegistrationToken(final Context context)
-    {
-        FirebaseInstanceId.getInstance().getInstanceId ().addOnCompleteListener ( new OnCompleteListener<InstanceIdResult> () {
-            @Override
-            public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                if(task.isSuccessful ())
-                {
-                    String token = task.getResult ().getToken ();
-                    Toast.makeText ( context,token,Toast.LENGTH_LONG ).show ();
-                    Log.d ("Token",token);
-                }
-            }
-        } );
-
-    }
-
     public APIService createClient()
     {
         return Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+    }
+
+    public void sendNotification(Context context,String channelID,String title,String body)
+    {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder ( context, channelID )
+                .setSmallIcon ( R.drawable.bell_icon ).setContentTitle ( title ).setContentText ( body)
+                .setPriority ( NotificationCompat.PRIORITY_DEFAULT );
+
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from ( context );
+        notificationManagerCompat.notify (2,builder.build ());
     }
 }

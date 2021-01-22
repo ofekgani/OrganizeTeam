@@ -101,6 +101,18 @@ public class ParticipantsFragment extends Fragment{
                             public void onDataRead(Object save) {
                                 usersList = (ArrayList<User>)save;
                                 requestsList.addAll(usersList);
+                                requestsList.addAll(usersList);
+                                requestsList.addAll(usersList);
+                                requestsList.addAll(usersList);
+                                requestsList.addAll(usersList);requestsList.addAll(usersList);
+                                requestsList.addAll(usersList);
+                                requestsList.addAll(usersList);
+                                requestsList.addAll(usersList);
+                                requestsList.addAll(usersList);
+                                requestsList.addAll(usersList);
+
+
+
                                 setAdapter(requestsList);
                             }
                         });

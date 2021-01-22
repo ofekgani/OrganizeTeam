@@ -7,8 +7,10 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.FirebaseApp;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
+import com.myapp.organizeteam.Core.Meeting;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.MyService.Token;
@@ -390,6 +392,11 @@ public class DataExtraction
         mDatabase.child ( key ).setValue ( value );
     }
 
+    public void setNewData(String path, String teamID, String keyID, String key, Object value) {
+        DatabaseReference mDatabase = getDatabaseReference(path);
+        mDatabase.child ( teamID ).child(keyID).child(key).setValue ( value );
+    }
+
     /**
      * Set object into firebase by path and key.
      * @param path The path that we want to save the value.
@@ -400,6 +407,12 @@ public class DataExtraction
     {
         DatabaseReference mDatabase = getDatabaseReference(path);
         mDatabase.child ( key ).setValue(value);
+    }
+
+    public void setObject(String path,String keyID,String key ,Object value)
+    {
+        DatabaseReference mDatabase = getDatabaseReference(path);
+        mDatabase.child ( keyID ).child(key).setValue(value);
     }
 
     public void setObject(String path, String key, Object value, final IRegister iRegister)
@@ -695,4 +708,26 @@ public class DataExtraction
     }
 
     public static HashMap<DatabaseReference, ValueEventListener> hashMap = new HashMap<>();
+
+    public void getAllMeetingsByTeam(String teamID, final ISavable iSavable)
+    {
+        final ArrayList<Meeting> meetings = new ArrayList<>();
+
+        final DatabaseReference mDatabase =  getDatabaseReference(ConstantNames.MEETINGS_PATH).child ( teamID );
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds : snapshot.getChildren()) {
+                    Meeting meeting = (Meeting) getValue ( ds,Meeting.class );
+                    meetings.add(meeting);
+                }
+                iSavable.onDataRead(meetings);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 }

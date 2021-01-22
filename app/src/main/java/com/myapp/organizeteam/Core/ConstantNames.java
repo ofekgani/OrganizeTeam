@@ -6,6 +6,7 @@ public class ConstantNames {
     public static final String USER_PATH  = "user";
     public static final String TEAM_PATH  = "team";
     public static final String TOKEN_PATH = "tokens";
+    public static final String MEETINGS_PATH = "meeting";
 
     //Keys in firebase
     //if you want to save data in firebase
@@ -48,4 +49,7 @@ public class ConstantNames {
 
 
     public static final String DATA_USER_PHONE = "phone";
+    public static final String MEETING = "meeting";
+    public static final String DATA_MEETING_STATUS = "status";
+    public static final String MEETING_KEY_ID = "meetingID";
 }
