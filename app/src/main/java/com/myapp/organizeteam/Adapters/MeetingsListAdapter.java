@@ -22,10 +22,14 @@ import com.myapp.organizeteam.Core.Hour;
 import com.myapp.organizeteam.Core.Meeting;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
+import com.myapp.organizeteam.DataManagement.DataListener;
+import com.myapp.organizeteam.DataManagement.ISavable;
 import com.myapp.organizeteam.R;
 import com.myapp.organizeteam.Resources.Image;
 
 import java.util.ArrayList;
+
+import static com.myapp.organizeteam.DataManagement.Authorization.isManager;
 
 /**
  * Design item to team list.
@@ -62,8 +66,8 @@ public class MeetingsListAdapter extends ArrayAdapter<Meeting> {
         Date date = getItem ( position ).getDate ();
         Hour hour = getItem ( position ).getHour ();
 
-        String meetingID = getItem(position).getKeyID();
-        String teamID = getItem(position).getTeamID();
+        final String meetingID = getItem(position).getKeyID();
+        final String teamID = getItem(position).getTeamID();
 
         TextView tv_name = convertView.findViewById ( R.id.tv_meetingName );
         TextView tv_description = convertView.findViewById ( R.id.tv_meetingDescription );
@@ -80,18 +84,26 @@ public class MeetingsListAdapter extends ArrayAdapter<Meeting> {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseDatabase.getReference(ConstantNames.MEETINGS_PATH).child(teamID).child(meetingID).child(ConstantNames.DATA_MEETING_STATUS).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int status = snapshot.getValue(Integer.class);
-                if(status == 0)
-                {
-                    btn_endMeeting.setVisibility(View.GONE);
-                }
-                else
-                {
-                    btn_endMeeting.setVisibility(View.VISIBLE);
-                }
+            public void onDataChange(@NonNull final DataSnapshot snapshot) {
+                DataExtraction dataExtraction = new DataExtraction();
+                dataExtraction.hasChild(ConstantNames.MEETINGS_PATH, teamID, meetingID, new ISavable() {
+                    @Override
+                    public void onDataRead(Object save) {
+                        if((boolean)save)
+                        {
+                            int status = snapshot.getValue(Integer.class);
+                            if(status == 0)
+                            {
+                                btn_endMeeting.setVisibility(View.GONE);
+                            }
+                            else if(status == 1 && isManager)
+                            {
+                                btn_endMeeting.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }
+                });
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -102,6 +114,13 @@ public class MeetingsListAdapter extends ArrayAdapter<Meeting> {
             @Override
             public void onClick(View view) {
                 listener.updateList(position);
+                DataExtraction dataExtraction = new DataExtraction();
+                dataExtraction.deleteData(ConstantNames.MEETINGS_PATH, teamID, meetingID, new DataListener() {
+                    @Override
+                    public void onDataDelete() {
+
+                    }
+                });
             }
         });
 

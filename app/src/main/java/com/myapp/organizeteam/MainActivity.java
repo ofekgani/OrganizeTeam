@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.myapp.organizeteam.Core.ConstantNames;
+import com.myapp.organizeteam.Core.Role;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.Authorization;
@@ -29,6 +30,7 @@ import com.myapp.organizeteam.Resources.Transformation;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 {
                     step = 0; //Default step
 
+                    //Check if user has team
                     dataExtraction.hasChild(ConstantNames.USER_PATH, authorization.getUserID(), ConstantNames.DATA_USER_TEAMS, new ISavable() {
                         @Override
                         public void onDataRead(Object exist) {
@@ -106,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
                                 dataExtraction.getCurrentUserData(new ISavable() {
                                     @Override
                                     public void onDataRead(Object save) {
+                                        //If user has team, connect to team
                                         connectToTeam((Map<String, Object>) save);
                                     }
                                 });
@@ -230,14 +234,44 @@ public class MainActivity extends AppCompatActivity {
     private void connectToTeam(Map<String, Object> save) {
         final Map<String,Object> userInfo = save;
         final Team team = (Team) userInfo.get ( ConstantNames.TEAM );
+
+        //Get data about team manager.
         dataExtraction.getUserDataByID(team.getHost(), new ISavable() {
             @Override
             public void onDataRead(Object save) {
                 progressBar.setVisible(pb_singIn,false);
                 userInfo.put(ConstantNames.TEAM_HOST,save);
-                activityTransition.goTo(MainActivity.this, TeamPageActivity.class,true,userInfo,null);
+                authorization.isManager = isManager((User)userInfo.get(ConstantNames.USER),(User) save);
+
+                //Get user`s roles
+                dataExtraction.getAllRolesByUser(authorization.getUserID(), team.getKeyID(), new ISavable() {
+                    @Override
+                    public void onDataRead(Object save) {
+                        userInfo.put(ConstantNames.USER_ROLES,save);
+
+                        //Get user`s permissions
+                        dataExtraction.getPermissions(team.getKeyID(), (ArrayList<Role>) save, new ISavable() {
+                            @Override
+                            public void onDataRead(Object save) {
+                                userInfo.put(ConstantNames.USER_PERMISSIONS_MEETING,save);
+                                //Connect to team page
+                                activityTransition.goTo(MainActivity.this, TeamPageActivity.class,true,userInfo,null);
+                            }
+                        });
+                    }
+                });
+
+
             }
         });
+    }
+
+    private boolean isManager(User user, User manager) {
+        if (manager.getKeyID().equals(user.getKeyID())) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

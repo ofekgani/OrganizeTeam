@@ -1,18 +1,13 @@
-package com.myapp.organizeteam;
+package com.myapp.organizeteam.Adapters;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,12 +25,12 @@ import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.DataListener;
+import com.myapp.organizeteam.DataManagement.DataPass;
 import com.myapp.organizeteam.DataManagement.ISavable;
+import com.myapp.organizeteam.R;
 import com.myapp.organizeteam.Resources.Image;
 
 import java.util.Map;
-
-import static android.app.Activity.RESULT_OK;
 
 public class JoinRequestCard extends Fragment {
 
@@ -92,7 +87,6 @@ public class JoinRequestCard extends Fragment {
         firebaseDatabase.getReference(ConstantNames.USER_PATH).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                dataExtraction.hashMap.put(firebaseDatabase.getReference(),this);
                 dataExtraction.hasChild(ConstantNames.USER_PATH, user.getKeyID(), ConstantNames.DATA_REQUEST_TO_JOIN, new ISavable() {
                     @Override
                     public void onDataRead(Object exist) {

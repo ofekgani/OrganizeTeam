@@ -1,38 +1,32 @@
-package com.myapp.organizeteam;
+package com.myapp.organizeteam.Adapters;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.myapp.organizeteam.Adapters.JoinRequestCard;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
-import com.myapp.organizeteam.Core.InputManagement;
 import com.myapp.organizeteam.Core.User;
-import com.myapp.organizeteam.DataManagement.Authorization;
+import com.myapp.organizeteam.CreateTeamActivity;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
+import com.myapp.organizeteam.DataManagement.DataPass;
 import com.myapp.organizeteam.DataManagement.ISavable;
-import com.myapp.organizeteam.Resources.Image;
-import com.myapp.organizeteam.Resources.Loading;
-import com.myapp.organizeteam.Resources.Stepper;
+import com.myapp.organizeteam.R;
+import com.myapp.organizeteam.SelectTeamActivity;
 
-import java.util.HashMap;
 import java.util.Map;
-
-import static android.app.Activity.RESULT_OK;
 
 public class JoinToTeamFragment extends Fragment {
 
@@ -69,8 +63,6 @@ public class JoinToTeamFragment extends Fragment {
         firebaseDatabase.getReference(ConstantNames.USER_PATH).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                firebaseDatabase.getReference().removeEventListener(this);
-                dataExtraction.hashMap.put(firebaseDatabase.getReference(),this);
                 dataExtraction.hasChild(ConstantNames.USER_PATH, user.getKeyID(), ConstantNames.DATA_REQUEST_TO_JOIN, new ISavable() {
                     @Override
                     public void onDataRead(Object exist) {
@@ -101,7 +93,7 @@ public class JoinToTeamFragment extends Fragment {
                         @Override
                         public void onDataRead(Object save) {
                             userData.put(ConstantNames.TEAMS_LIST,save);
-                            transformation.goTo(getActivity(),SelectTeamActivity.class,false,userData,null);
+                            transformation.goTo(getActivity(), SelectTeamActivity.class,false,userData,null);
                         }
                     });
                 }
@@ -116,7 +108,7 @@ public class JoinToTeamFragment extends Fragment {
         btn_createTeam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                transformation.goTo(getActivity(),CreateTeamActivity.class,false,userData,null);
+                transformation.goTo(getActivity(), CreateTeamActivity.class,false,userData,null);
             }
         });
 

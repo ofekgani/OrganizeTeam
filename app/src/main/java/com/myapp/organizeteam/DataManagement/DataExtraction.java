@@ -2,15 +2,16 @@ package com.myapp.organizeteam.DataManagement;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
+
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.Query;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Meeting;
+import com.myapp.organizeteam.Core.Role;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.MyService.Token;
@@ -33,6 +34,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -518,6 +521,47 @@ public class DataExtraction
         });
     }
 
+    public void deleteValue(final String path, final String teamID, final String userID,final String key, final String value,final DataListener dataListener)
+    {
+        //Check if the key that we want to delete, exist in firebase.
+        hasChild(path,teamID ,userID , new ISavable() {
+            @Override
+            public void onDataRead(Object hasChild) {
+                if((boolean)hasChild)
+                {
+                    DatabaseReference reference;
+                    reference = FirebaseDatabase.getInstance().getReference(path).child(teamID).child(userID).child(key);
+
+                    reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            //Find the child that we want to delete
+                            for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                                String child = childSnapshot.getValue().toString();
+                                String parent = childSnapshot.getKey();
+                                if(child.equals(value))
+                                {
+                                    //remove data from firebase
+                                    DatabaseReference mDatabase = getDatabaseReference(path).child ( teamID ).child(userID).child(key).child(parent);
+                                    mDatabase.removeValue();
+                                    dataListener.onDataDelete();
+                                    //End the loop when the child found.
+                                    break;
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
+                }
+            }
+        });
+    }
+
     /**
      * Check if to child has child.
      * @param path The path that we want to check.
@@ -699,16 +743,6 @@ public class DataExtraction
         });
     }
 
-    public static void removeValueEventListener() {
-        for (Map.Entry<DatabaseReference, ValueEventListener> entry : hashMap.entrySet()) {
-            DatabaseReference databaseReference = entry.getKey();
-            ValueEventListener valueEventListener = entry.getValue();
-            databaseReference.removeEventListener(valueEventListener);
-        }
-    }
-
-    public static HashMap<DatabaseReference, ValueEventListener> hashMap = new HashMap<>();
-
     public void getAllMeetingsByTeam(String teamID, final ISavable iSavable)
     {
         final ArrayList<Meeting> meetings = new ArrayList<>();
@@ -720,6 +754,256 @@ public class DataExtraction
                 for(DataSnapshot ds : snapshot.getChildren()) {
                     Meeting meeting = (Meeting) getValue ( ds,Meeting.class );
                     meetings.add(meeting);
+                }
+                iSavable.onDataRead(meetings);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void getAllRolesByTeam(String teamID, final ISavable iSavable)
+    {
+        final ArrayList<Role> roles = new ArrayList<>();
+
+        final DatabaseReference mDatabase =  getDatabaseReference(ConstantNames.ROLE_PATH).child ( teamID );
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds : snapshot.getChildren()) {
+                    Role role = (Role) getValue ( ds,Role.class );
+                    roles.add(role);
+                }
+                iSavable.onDataRead(roles);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void getAllRolesByUser(String userID, final String teamID, final ISavable iSavable)
+    {
+        final ArrayList<Role> roles = new ArrayList<>();
+        final ArrayList<String> rolesID = new ArrayList<>();
+
+        final DatabaseReference mDatabase =  getDatabaseReference(ConstantNames.USER_ACTIVITY_PATH).child(teamID).child ( userID ).child(ConstantNames.DATA_USER_ROLES);
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds : snapshot.getChildren()) {
+                    rolesID.add(ds.getValue().toString());
+                }
+
+                final DatabaseReference mDatabase = getDatabaseReference(ConstantNames.ROLE_PATH).child ( teamID );
+                mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot ds : snapshot.getChildren())
+                        {
+                            for(String id : rolesID)
+                            {
+                                if(ds.getKey().equals(id))
+                                {
+                                    Role role = (Role) getValue ( ds,Role.class );
+                                    roles.add(role);
+                                }
+                            }
+                        }
+                        iSavable.onDataRead(roles);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void getPermissions(final String teamID, final ArrayList<Role> roles, final ISavable iSavable)
+    {
+        final ArrayList<Role> meetingPermissions = new ArrayList<>();
+        final ArrayList<String> rolesID = new ArrayList<>();
+
+        final DatabaseReference mDatabase =  getDatabaseReference(ConstantNames.ROLE_PATH).child ( teamID );
+        Query query = mDatabase.orderByChild(ConstantNames.DATA_ROLE_MEETING_PERMISSION).startAt("All");
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds : snapshot.getChildren())
+                {
+                    for(Role r : roles)
+                    {
+                        if(r.getKeyID().equals(ds.getKey()))
+                        {
+                            if(ds.hasChild(ConstantNames.DATA_ROLE_MEETING_PERMISSION) && ds.child(ConstantNames.DATA_ROLE_MEETING_PERMISSION).getValue().equals("All"))
+                            {
+                                getAllRolesByTeam(teamID, new ISavable() {
+                                    @Override
+                                    public void onDataRead(Object save) {
+                                        ArrayList<Role> meetingPermissions = (ArrayList<Role>) save;
+                                        iSavable.onDataRead(meetingPermissions);
+                                    }
+                                });
+                                return;
+                            }
+                            else if(ds.hasChild(ConstantNames.DATA_ROLE_MEETING_PERMISSION))
+                            {
+                                for(DataSnapshot id : ds.child(ConstantNames.DATA_ROLE_MEETING_PERMISSION).getChildren())
+                                {
+                                    rolesID.add(id.getValue().toString());
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                Collections.sort(rolesID);
+                final ArrayList<String> nRolesID = removeDuplicateFromList(rolesID);
+
+                final DatabaseReference mDatabase = getDatabaseReference(ConstantNames.ROLE_PATH).child ( teamID );
+                mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot ds : snapshot.getChildren())
+                        {
+                            for(String id : nRolesID)
+                            {
+                                if(ds.getKey().equals(id))
+                                {
+                                    Role role = (Role) getValue ( ds,Role.class );
+                                    meetingPermissions.add(role);
+                                    break;
+                                }
+                            }
+                        }
+                        iSavable.onDataRead(meetingPermissions);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+    private ArrayList<String> removeDuplicateFromList(ArrayList<String> list) {
+        for (int i = 0; i < list.size(); i++)
+        {
+            if(i != list.size()-1 && list.get(i).equals(list.get(i+1)))
+            {
+                list.remove(i);
+                return removeDuplicateFromList(list);
+            }
+        }
+        return list;
+    }
+
+    public void getUsersByRoles(final ArrayList<String> rolesID, String teamID, final ISavable iSavable)
+    {
+        final ArrayList<String> usersID = new ArrayList<>();
+
+        final DatabaseReference mDatabase =  getDatabaseReference(ConstantNames.ROLE_PATH).child ( teamID );
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds : snapshot.getChildren())
+                {
+                    for(String r : rolesID)
+                    {
+                        if(r.equals(ds.getKey()))
+                        {
+                            for(DataSnapshot userID : ds.child(ConstantNames.DATA_USERS_SELECTED).getChildren())
+                            {
+                                usersID.add(userID.getValue().toString());
+                            }
+                        }
+                    }
+                }
+                Collections.sort(usersID);
+                iSavable.onDataRead(removeDuplicateFromList(usersID));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void getMeetingsByID(final ArrayList<String> meetingsID, final String teamID, final String userID, final ISavable iSavable)
+    {
+        final ArrayList<Meeting> meetings = new ArrayList<>();
+
+        final DatabaseReference mDatabase =  getDatabaseReference(ConstantNames.MEETINGS_PATH).child ( teamID );
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds : snapshot.getChildren())
+                {
+                    for(String id : meetingsID)
+                    {
+                        if(ds.getKey().equals(id))
+                        {
+                            Meeting meeting = (Meeting)getValue(ds,Meeting.class);
+                            meetings.add(meeting);
+                            meetingsID.remove(id);
+                            break;
+                        }
+                    }
+                }
+                if(meetingsID.size() > 0)
+                {
+                    for(String id : meetingsID)
+                    {
+                        deleteValue(ConstantNames.USER_ACTIVITY_PATH, teamID, userID, ConstantNames.DATA_USER_MEETINGS, id, new DataListener() {
+                            @Override
+                            public void onDataDelete() {
+
+                            }
+                        });
+                    }
+                }
+                iSavable.onDataRead(meetings);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void getMeetingsByUser(String userID, String teamID, final ISavable iSavable) {
+        final ArrayList<String> meetings = new ArrayList<>();
+
+        final DatabaseReference mDatabase = getDatabaseReference(ConstantNames.USER_ACTIVITY_PATH).child(teamID).child(userID).child(ConstantNames.DATA_USER_MEETINGS);
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    meetings.add(ds.getValue().toString());
                 }
                 iSavable.onDataRead(meetings);
             }

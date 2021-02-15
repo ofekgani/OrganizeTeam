@@ -1,13 +1,8 @@
 package com.myapp.organizeteam;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
 
-import android.app.ActionBar;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -15,19 +10,14 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.myapp.organizeteam.Adapters.MyStepperAdapter;
-import com.myapp.organizeteam.Adapters.UsersListAdapter;
 import com.myapp.organizeteam.Core.ConstantNames;
-import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.Authorization;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
-import com.myapp.organizeteam.DataManagement.ISavable;
-import com.myapp.organizeteam.Dialogs.RequestJoinDialog;
+import com.myapp.organizeteam.DataManagement.DataPass;
 import com.myapp.organizeteam.Resources.Stepper;
-import com.stepstone.stepper.BlockingStep;
 import com.stepstone.stepper.StepperLayout;
 import com.stepstone.stepper.VerificationError;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class CreateAccountActivity extends AppCompatActivity implements StepperLayout.StepperListener {
@@ -109,7 +99,6 @@ public class CreateAccountActivity extends AppCompatActivity implements StepperL
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
                 authorization.singOut(this);
-                dataExtraction.removeValueEventListener();
                 return true;
         }
 

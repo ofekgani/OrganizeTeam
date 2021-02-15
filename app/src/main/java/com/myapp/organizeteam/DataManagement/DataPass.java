@@ -1,4 +1,4 @@
-package com.myapp.organizeteam;
+package com.myapp.organizeteam.DataManagement;
 
 import java.util.HashMap;
 import java.util.Map;

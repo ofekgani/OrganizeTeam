@@ -1,61 +1,34 @@
 package com.myapp.organizeteam;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
-import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.PhoneAuthProvider;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.hbb20.CountryCodePicker;
+import com.myapp.organizeteam.Adapters.JoinRequestCard;
+import com.myapp.organizeteam.Adapters.JoinToTeamFragment;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.InputManagement;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.Authorization;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
-import com.myapp.organizeteam.DataManagement.IRegister;
+import com.myapp.organizeteam.DataManagement.DataPass;
 import com.myapp.organizeteam.DataManagement.ISavable;
 import com.myapp.organizeteam.Resources.Image;
 import com.myapp.organizeteam.Resources.Loading;
 import com.myapp.organizeteam.Resources.Stepper;
-import com.myapp.organizeteam.Resources.Transformation;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.StepperLayout;
 import com.stepstone.stepper.VerificationError;
 
-import java.io.Serializable;
 import java.util.Map;
-
-import static android.app.Activity.RESULT_OK;
 
 public class StepFiveRegisterFragment extends Fragment implements Step {
 
@@ -89,7 +62,7 @@ public class StepFiveRegisterFragment extends Fragment implements Step {
         transformation = new ActivityTransition();
 
         tv_prevStep = v.findViewById(R.id.tv_prevStep);
-        tv_name = v.findViewById(R.id.tv_userName);
+        tv_name = v.findViewById(R.id.tv_roleName);
         tv_email = v.findViewById(R.id.tv_userEmail);
         tv_phone = v.findViewById(R.id.tv_userPhone);
         mv_userLogo = v.findViewById(R.id.mv_userLogo);
@@ -123,7 +96,6 @@ public class StepFiveRegisterFragment extends Fragment implements Step {
      * @param user A user object used to update the ui.
      */
     private void updateUserData(User user) {
-        Log.i("FUCK YOU",tv_name + "   "+ user);
         if(user == null) return;
         if(user.getFullName() != null)
         {

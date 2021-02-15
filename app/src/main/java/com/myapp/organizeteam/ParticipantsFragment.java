@@ -1,21 +1,19 @@
 package com.myapp.organizeteam;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.app.Fragment;
 
-import com.myapp.organizeteam.Adapters.UsersListAdapter;
-import com.myapp.organizeteam.Core.ActivityTransition;
+import com.myapp.organizeteam.Adapters.UsersRequestsListAdapter;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
@@ -33,7 +31,7 @@ public class ParticipantsFragment extends Fragment{
     ImageView mv_managerLogo;
 
     ListView lv_users;
-    UsersListAdapter adapter;
+    UsersRequestsListAdapter adapter;
 
     User manager;
     Team team;
@@ -52,8 +50,8 @@ public class ParticipantsFragment extends Fragment{
 
         image = new Image ();
 
-        tv_managerName = v.findViewById ( R.id.tv_managerName );
-        mv_managerLogo = v.findViewById ( R.id.mv_managerLogo );
+        tv_managerName = v.findViewById ( R.id.tv_userName);
+        mv_managerLogo = v.findViewById ( R.id.mv_userLogo);
         lv_users = v.findViewById(R.id.lv_users);
 
         args = getArguments();
@@ -88,7 +86,6 @@ public class ParticipantsFragment extends Fragment{
         image.setImageUri (manager.getLogo(), mv_managerLogo );
     }
 
-
     private void createUsersList()
     {
         final DataExtraction dataExtraction = new DataExtraction();
@@ -102,17 +99,6 @@ public class ParticipantsFragment extends Fragment{
                                 usersList = (ArrayList<User>)save;
                                 requestsList.addAll(usersList);
                                 requestsList.addAll(usersList);
-                                requestsList.addAll(usersList);
-                                requestsList.addAll(usersList);
-                                requestsList.addAll(usersList);requestsList.addAll(usersList);
-                                requestsList.addAll(usersList);
-                                requestsList.addAll(usersList);
-                                requestsList.addAll(usersList);
-                                requestsList.addAll(usersList);
-                                requestsList.addAll(usersList);
-
-
-
                                 setAdapter(requestsList);
                             }
                         });
@@ -122,7 +108,7 @@ public class ParticipantsFragment extends Fragment{
     }
 
     private void setAdapter(ArrayList<User> users) {
-        adapter = new UsersListAdapter(inflater.getContext(),R.layout.adapter_users_list,users,team.getKeyID());
+        adapter = new UsersRequestsListAdapter(inflater.getContext(),R.layout.adapter_users_request_list,users,team.getKeyID());
         lv_users.setAdapter ( adapter );
     }
 

@@ -1,5 +1,6 @@
 package com.myapp.organizeteam;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlarmManager;
@@ -8,9 +9,6 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -21,13 +19,13 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.myapp.organizeteam.Adapters.UsersListAdapter;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Date;
 import com.myapp.organizeteam.Core.Hour;
 import com.myapp.organizeteam.Core.InputManagement;
 import com.myapp.organizeteam.Core.Meeting;
+import com.myapp.organizeteam.Core.Role;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
@@ -38,7 +36,6 @@ import com.myapp.organizeteam.MyService.Data;
 import com.myapp.organizeteam.MyService.Notification;
 import com.myapp.organizeteam.MyService.Sender;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -50,13 +47,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.myapp.organizeteam.Core.Meeting.FLAG_MEETING_BOOKED;
-import static com.myapp.organizeteam.Core.Meeting.FLAG_MEETING_STARTED;
 
 
 public class CreateMeetingActivity extends AppCompatActivity{
 
     InputManagement inputManagement;
     DataExtraction dataExtraction;
+    ActivityTransition activityTransition;
 
     EditText ed_meetingName,ed_meetingDescription,ed_meetingDate, ed_meetingHour;
 
@@ -74,6 +71,8 @@ public class CreateMeetingActivity extends AppCompatActivity{
 
     private final String CHANNEL_ID = "2";
 
+    View view;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,10 +80,11 @@ public class CreateMeetingActivity extends AppCompatActivity{
 
         inputManagement = new InputManagement();
         dataExtraction = new DataExtraction();
+        activityTransition = new ActivityTransition();
 
         ed_meetingDate = findViewById(R.id.ed_meetingDate);
-        ed_meetingDescription = findViewById(R.id.ed_meetingDescription);
-        ed_meetingName = findViewById(R.id.ed_meetingName);
+        ed_meetingDescription = findViewById(R.id.ed_roleDescription);
+        ed_meetingName = findViewById(R.id.ed_roleName);
         ed_meetingHour = findViewById(R.id.ed_meetingHour);
 
         intent = getIntent();
@@ -161,29 +161,13 @@ public class CreateMeetingActivity extends AppCompatActivity{
         if(inputManagement.isInputEmpty(ed_meetingName)) return;
         if(inputManagement.isInputEmpty(ed_meetingDate) && inputManagement.isInputEmpty(ed_meetingHour)) return;
 
-        String meetingName, meetingDescription;
+        this.view = view;
 
-        meetingName = inputManagement.getInput(ed_meetingName);
-        meetingDescription = inputManagement.getInput(ed_meetingDescription);
-
-        Date meetingDate = new Date(m_year,m_month,m_day);
-        Hour meetingTime = new Hour(m_hour,m_minute);
-
-        String keyID = team.getKeyID();
-
-        DataExtraction dataExtraction = new DataExtraction();
-
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance ().getReference ( ConstantNames.MEETINGS_PATH).child(keyID);
-        String meetingID = mDatabase.push ().getKey ();
-
-        Meeting meeting = new Meeting(meetingID,team.getKeyID(),meetingName,meetingDescription,meetingDate,meetingTime,FLAG_MEETING_BOOKED);
-        dataExtraction.setObject(ConstantNames.MEETINGS_PATH,keyID,meetingID,meeting);
-        setAlarm(calendar,meeting);
-        ActivityTransition activityTransition = new ActivityTransition();
         Map<String,Object> save = new HashMap<>();
-        save.put(ConstantNames.MEETING,meeting);
-        activityTransition.back(this,save);
-        sendNotification(view);
+        save.put(ConstantNames.TEAM_KEY_ID,team.getKeyID());
+        save.put(ConstantNames.USER_PERMISSIONS_MEETING,intent.getSerializableExtra(ConstantNames.USER_PERMISSIONS_MEETING));
+        activityTransition.goToWithResult(CreateMeetingActivity.this,RoleSelectionActivity.class,314,save,null);
+
     }
 
     private void setAlarm(Calendar target, Meeting meeting){
@@ -201,42 +185,35 @@ public class CreateMeetingActivity extends AppCompatActivity{
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, target.getTimeInMillis(), pendingIntent);
     }
 
-    private void sendNotification(final View view) {
+    private void sendNotification(final View view, final ArrayList<String> usersID) {
         final String id = user.getKeyID();
         final String name = user.getFullName();
-        dataExtraction.getAllUsersByTeam(team.getKeyID(), ConstantNames.DATA_USERS_AT_TEAM, new ISavable() {
-            @Override
-            public void onDataRead(Object save) {
-                ArrayList<User> users = ( ArrayList<User>)save;
-                for(final User user : users)
-                {
-                    final String keyID = user.getKeyID();
-                    dataExtraction.getToken(keyID, new ISavable() {
+        for(String userID : usersID)
+        {
+            dataExtraction.getToken(userID, new ISavable() {
+                @Override
+                public void onDataRead(Object token) {
+                    String userToken = (String)token;
+                    String body = name + " created a new meeting booked on " + m_day+"/"+m_month+"/"+m_year+ " .";
+                    Data data = new Data (id,body,"New meeting",user.getKeyID());
+                    Sender sender = new Sender (data,userToken);
+
+                    //Send notification to device
+                    APIService apiService = getAPIService(view);
+                    apiService.sendNotification ( sender ).enqueue ( new Callback<ResponseBody>() {
                         @Override
-                        public void onDataRead(Object token) {
-                            String userToken = (String)token;
-                            String body = name + " created a new meeting booked on " + m_day+"/"+m_month+"/"+m_year+ " .";
-                            Data data = new Data (id,body,"New meeting",user.getKeyID());
-                            Sender sender = new Sender (data,userToken);
-
-                            //Send notification to device
-                            APIService apiService = getAPIService(view);
-                            apiService.sendNotification ( sender ).enqueue ( new Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    Toast.makeText(view.getContext(),""+response,Toast.LENGTH_LONG).show();
-                                }
-
-                                @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                    Toast.makeText(view.getContext(),""+t,Toast.LENGTH_LONG).show();
-                                }
-                            } );
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            Toast.makeText(view.getContext(),""+response,Toast.LENGTH_LONG).show();
                         }
-                    });
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Toast.makeText(view.getContext(),""+t,Toast.LENGTH_LONG).show();
+                        }
+                    } );
                 }
-            }
-        });
+            });
+        }
     }
 
     private APIService getAPIService(View view) {
@@ -247,5 +224,65 @@ public class CreateMeetingActivity extends AppCompatActivity{
         return notification.createClient ();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(data == null) return;
+        if(resultCode == RESULT_OK && requestCode == 314)
+        {
+            //Get a list of roles that will be defined within the cloud as roles to which meetings will be posted
+            ArrayList<Role> rolesList = (ArrayList<Role>) data.getSerializableExtra(ConstantNames.ROLES_LIST);
+            ArrayList<String> rolesID = new ArrayList<>();
+            for (Role r : rolesList)
+            {
+                String keyID = r.getKeyID();
+                rolesID.add(keyID);
+            }
+
+            //Get inputs
+            String meetingName = inputManagement.getInput(ed_meetingName);
+            String meetingDescription = inputManagement.getInput(ed_meetingDescription);
+            Date meetingDate = new Date(m_year,m_month,m_day);
+            Hour meetingTime = new Hour(m_hour,m_minute);
+
+            final String teamID = team.getKeyID();
+            DataExtraction dataExtraction = new DataExtraction();
+
+            //Create to meeting keyID
+            DatabaseReference mDatabase = FirebaseDatabase.getInstance ().getReference ( ConstantNames.MEETINGS_PATH).child(teamID);
+            final String meetingID = mDatabase.push ().getKey ();
+
+            //Add meeting into firebase
+            final Meeting meeting = new Meeting(meetingID,teamID,meetingName,meetingDescription,meetingDate,meetingTime,FLAG_MEETING_BOOKED);
+            dataExtraction.setObject(ConstantNames.MEETINGS_PATH,teamID,meetingID,meeting);
+
+            //Add to cloud all selected roles to which the meeting will be published
+            for(String id : rolesID)
+            {
+                DatabaseReference rolesDatabase = FirebaseDatabase.getInstance ().getReference ( ConstantNames.MEETINGS_PATH).child(teamID);
+                rolesDatabase.child(meetingID).child(ConstantNames.DATA_MEETING_PUBLISH_TO).push().setValue(id);
+            }
+
+            dataExtraction.getUsersByRoles(rolesID, teamID, new ISavable() {
+                @Override
+                public void onDataRead(Object usersList) {
+                    ArrayList<String> usersID = (ArrayList<String>) usersList;
+                    DatabaseReference meetingDatabase = FirebaseDatabase.getInstance ().getReference (ConstantNames.USER_ACTIVITY_PATH).child(teamID);
+                    for(String id : usersID)
+                    {
+                        meetingDatabase.child(id).child(ConstantNames.DATA_USER_MEETINGS).push().setValue(meetingID);
+                    }
+                    setAlarm(calendar,meeting);
+                    Map<String,Object> save = new HashMap<>();
+                    save.put(ConstantNames.MEETING,meeting);
+                    activityTransition.back(CreateMeetingActivity.this,save);
+                    sendNotification(view,usersID);
+                }
+            });
+
+
+        }
+    }
 }
 

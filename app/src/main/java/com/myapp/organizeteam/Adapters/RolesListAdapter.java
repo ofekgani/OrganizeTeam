@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.myapp.organizeteam.Core.Role;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.R;
 import com.myapp.organizeteam.Resources.Image;
@@ -24,21 +25,19 @@ import java.util.ArrayList;
  * @version 1.0
  * @since 30-07-2020
  */
-public class UsersListAdapter extends ArrayAdapter<User> {
+public class RolesListAdapter extends ArrayAdapter<Role> {
 
     private Context mContext;
     private int mResource;
 
-    private UserSelectedListener listener;
+    private RoleSelectedListener listener;
 
-    Image image = new Image ();
-
-    public UsersListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<User> objects) {
+    public RolesListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Role> objects) {
         super ( context, resource, objects );
         mContext = context;
         mResource = resource;
         try {
-            listener = (UserSelectedListener) context;
+            listener = (RoleSelectedListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement MyInterface");
         }
@@ -47,36 +46,31 @@ public class UsersListAdapter extends ArrayAdapter<User> {
     @NonNull
     @Override
     public View getView(final int position, @Nullable View convertView, @NonNull final ViewGroup parent) {
-        String name = getItem ( position ).getFullName ();
-        String logo = getItem ( position ).getLogo ();
+        String name = getItem ( position ).getName ();
+        String description = getItem ( position ).getDescription ();
 
         final LayoutInflater inflater = LayoutInflater.from ( mContext );
         convertView = inflater.inflate ( mResource,parent,false );
 
         TextView tv_name = convertView.findViewById ( R.id.tv_roleName);
-        ImageView mv_logo = convertView.findViewById ( R.id.mv_userLogo);
+        TextView tv_description = convertView.findViewById ( R.id.tv_roleDescription);
         final CheckBox checkBox = convertView.findViewById(R.id.checkBox);
 
-        //if to the team has logo, set it to image view resource.
-        if( logo != null && !logo.equals ( "" ))
-        {
-            image.setImageUri ( logo,mv_logo );
-        }
-
         tv_name.setText ( name );
+        tv_description.setText ( description );
 
         checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.userSelected(getItem(position),checkBox.isChecked());
+                listener.roleSelected(getItem(position),checkBox.isChecked());
             }
         });
 
         return convertView;
     }
 
-    public interface UserSelectedListener
+    public interface RoleSelectedListener
     {
-        void userSelected(User user, boolean check);
+        void roleSelected(Role role, boolean check);
     }
 }

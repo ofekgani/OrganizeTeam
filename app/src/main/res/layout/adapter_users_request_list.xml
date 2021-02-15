@@ -38,23 +38,28 @@
         android:textSize="18dp"
         android:textStyle="bold" />
 
-    <CheckBox
-        android:id="@+id/checkBox"
+    <ImageButton
+        android:id="@+id/mb_confirm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/tv_roleName"
-        android:layout_alignBottom="@+id/tv_roleName"
-        android:layout_marginStart="-50dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="67dp"
-        android:layout_marginBottom="1dp"
-        android:layout_toEndOf="@+id/tv_roleName"
-        android:theme="@style/CheckBox"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/ed_roleDescription"
-        app:layout_constraintTop_toBottomOf="@+id/ed_roleDescription"
-        app:layout_constraintVertical_bias="0.0" />
+        android:layout_alignBottom="@+id/mv_userLogo"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="83dp"
+        android:layout_marginBottom="10dp"
+        app:srcCompat="?android:attr/textCheckMarkInverse" />
+
+    <ImageButton
+        android:id="@+id/mb_dismiss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/mb_confirm"
+        android:layout_alignBottom="@+id/mb_confirm"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginBottom="-1dp"
+        app:srcCompat="@android:drawable/ic_delete" />
 
 </RelativeLayout>

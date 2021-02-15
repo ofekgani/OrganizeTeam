@@ -4,19 +4,14 @@ import android.app.Activity;
 
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.myapp.organizeteam.Core.ConstantNames;
-import com.myapp.organizeteam.Core.InputManagement;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.MainActivity;
-import com.myapp.organizeteam.Resources.Loading;
-import com.myapp.organizeteam.Resources.Transformation;
 import com.myapp.organizeteam.TeamPageActivity;
-import com.myapp.organizeteam.WelcomeActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -36,18 +31,7 @@ public class Authorization {
     DataExtraction dataExtraction = new DataExtraction ();
     ActivityTransition activityTransition = new ActivityTransition ();
 
-    /**
-     * Extracts all teams from the cloud and saves them to next activity.
-     */
-    public void getAllTeams(final ISavable iSavable) {
-        dataExtraction.getTeams ( new ISavable () {
-            @Override
-            public void onDataRead( Object stat) {
-                ArrayList<Team> teamsSave = (ArrayList<Team>)stat;
-                iSavable.onDataRead(teamsSave);
-            }
-        } );
-    }
+    public static boolean isManager;
 
     /**
      * Send the user to new activity.
@@ -274,57 +258,6 @@ public class Authorization {
                         }
                     }
                 });
-    }
-
-    /**
-     * This function use to handle all the user`s information and connect him to right activity.
-     * @param context The activity from which you perform this function.
-     */
-    public void connectUserToSystem(final Activity context) {
-        if(isEmailVerified ( ))
-        {
-            //get all user information
-            dataExtraction.getCurrentUserData(new ISavable () {
-                @Override
-                public void onDataRead(Object stat) {
-
-                    //put user`s information into map
-                    final Map<String, Object> data = (Map<String, Object>)stat;
-
-                    //get user`s id
-                    final User user = (User)data.get ( ConstantNames.USER );
-                    String id = user.getKeyID ();
-
-                    //check if to user has team
-                    dataExtraction.hasChild ( ConstantNames.USER_PATH, id,ConstantNames.DATA_USER_TEAMS, new ISavable () {
-                        @Override
-                        public void onDataRead(Object exist) {
-                            if(!(boolean)exist)
-                            {
-                                sendTo( context, WelcomeActivity.class,data );
-                            }
-                            else
-                            {
-                                //if to user has team, go to team page.
-                                final Team team = (Team) data.get ( ConstantNames.TEAM );
-                                dataExtraction.getUserDataByID(team.getHost(), new ISavable() {
-                                    @Override
-                                    public void onDataRead(Object save) {
-                                        data.put(ConstantNames.TEAM_HOST,save);
-                                        sendTo( context, TeamPageActivity.class,data );
-                                    }
-                                });
-
-                            }
-                        }
-                    } );
-                }
-            } );
-        }
-        else
-        {
-            Toast.makeText ( context,"Email is not verified. Please verify your email address. ",Toast.LENGTH_SHORT ).show ();
-        }
     }
 
     /**

@@ -1,8 +1,6 @@
 package com.myapp.organizeteam;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -18,7 +16,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
@@ -30,9 +27,9 @@ import com.myapp.organizeteam.Core.InputManagement;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.Authorization;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
+import com.myapp.organizeteam.DataManagement.DataPass;
 import com.myapp.organizeteam.DataManagement.IRegister;
 import com.myapp.organizeteam.DataManagement.ISavable;
-import com.myapp.organizeteam.Dialogs.RequestJoinDialog;
 import com.myapp.organizeteam.Resources.Image;
 import com.myapp.organizeteam.Resources.Loading;
 import com.myapp.organizeteam.Resources.Stepper;
@@ -41,8 +38,6 @@ import com.stepstone.stepper.StepperLayout;
 import com.stepstone.stepper.VerificationError;
 import com.yalantis.ucrop.UCrop;
 
-import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;

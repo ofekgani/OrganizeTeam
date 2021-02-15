@@ -52,4 +52,18 @@ public class ConstantNames {
     public static final String MEETING = "meeting";
     public static final String DATA_MEETING_STATUS = "status";
     public static final String MEETING_KEY_ID = "meetingID";
+    public static final String ROLE_PATH = "role";
+    public static final String ROLE_NAME = "roleName";
+    public static final String ROLE_DESCRIPTION = "roleDescription";
+    public static final String DATA_USERS_SELECTED = "users";
+    public static final String DATA_USER_ROLES = "roles";
+    public static final String ROLES_LIST = "rulesList";
+    public static final String DATA_ROLE_MEETING_PERMISSION  = "meeting";
+    public static final String ROLE_MEETING_PERMISSION = "meetingPermission";
+    public static final String USER_ROLES = "rolesList";
+    public static final String USER_PERMISSIONS_MEETING = "userPermissionMeetings";
+    public static final String DATA_MEETING_PUBLISH_TO = "publishTo";
+    public static final String USER_ACTIVITY_PATH = "userActivity";
+    public static final String DATA_USER_MEETINGS = "meetings";
+    public static final String USERS_LIST = "usersList";
 }

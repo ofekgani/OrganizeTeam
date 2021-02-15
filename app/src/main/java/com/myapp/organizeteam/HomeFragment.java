@@ -8,39 +8,43 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Fragment;
 import android.widget.ListView;
-import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.myapp.organizeteam.Adapters.MeetingsListAdapter;
-import com.myapp.organizeteam.Adapters.MyStepperAdapter;
-import com.myapp.organizeteam.Adapters.UsersListAdapter;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Meeting;
+import com.myapp.organizeteam.Core.Role;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.ISavable;
 
 import java.util.ArrayList;
-import java.util.zip.Inflater;
-
-import javax.xml.transform.Result;
 
 import static android.app.Activity.RESULT_OK;
+import static com.myapp.organizeteam.DataManagement.Authorization.isManager;
 
 public class HomeFragment extends Fragment{
+
+    DataExtraction dataExtraction;
 
     ListView lv_meetingList;
     MeetingsListAdapter adapter;
     Bundle bundle;
 
     ArrayList<Meeting> meetingsList;
+    ArrayList<Role> rolesList;
     LayoutInflater inflater;
 
     Team team;
+    User user;
 
     @Nullable
     @Override
@@ -48,26 +52,72 @@ public class HomeFragment extends Fragment{
         View v = inflater.inflate(R.layout.fragment_home, container, false);
         this.inflater = inflater;
 
+        dataExtraction = new DataExtraction();
+
         lv_meetingList = v.findViewById(R.id.lv_meeting);
 
         bundle = getArguments();
         team = (Team) bundle.getSerializable ( ConstantNames.TEAM );
+        user = (User) bundle.getSerializable ( ConstantNames.USER );
+        rolesList = (ArrayList<Role>) bundle.getSerializable ( ConstantNames.USER_ROLES );
 
-        createMeetingsList();
+        DatabaseReference meetingsDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.MEETINGS_PATH).child(team.getKeyID());
+        meetingsDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                createMeetingsList();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         return v;
     }
 
     private void createMeetingsList()
     {
-        DataExtraction dataExtraction = new DataExtraction();
-        dataExtraction.getAllMeetingsByTeam(team.getKeyID() ,new ISavable() {
-            @Override
-            public void onDataRead(Object save) {
-                meetingsList = (ArrayList<Meeting>)save;
-                setAdapter(meetingsList);
-            }
-        });
+        if(isManager)
+        {
+            dataExtraction.getAllMeetingsByTeam(team.getKeyID() ,new ISavable() {
+                @Override
+                public void onDataRead(Object save) {
+                    meetingsList = (ArrayList<Meeting>)save;
+                    setAdapter();
+                }
+            });
+        }
+        else
+        {
+            dataExtraction.getMeetingsByUser(user.getKeyID(), team.getKeyID(), new ISavable() {
+                @Override
+                public void onDataRead(Object save) {
+                    ArrayList<String> meetingsID = (ArrayList<String>) save;
+                    dataExtraction.getMeetingsByID(meetingsID,team.getKeyID(), user.getKeyID() ,new ISavable() {
+                        @Override
+                        public void onDataRead(Object save) {
+                            meetingsList = (ArrayList<Meeting>)save;
+                            setAdapter();
+                        }
+                    });
+                }
+            });
+
+        }
+
+    }
+
+    private void setAdapter() {
+        if (adapter != null)
+        {
+            adapter.notifyDataSetChanged();
+        }
+        else
+        {
+            setAdapter(meetingsList);
+        }
     }
 
     private void setAdapter(ArrayList<Meeting> meetings) {

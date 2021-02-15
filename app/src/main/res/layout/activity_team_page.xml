@@ -3,6 +3,7 @@
     android:id="@+id/drawer_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -66,7 +67,7 @@
                 app:expandedTitleGravity="bottom"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 app:scrimAnimationDuration="300"
-                app:title="Electro Bunny">
+                app:title="Team name">
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -79,32 +80,78 @@
                     android:id="@+id/main_toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    app:layout_collapseMode="pin"
-                    app:title="Electro Bunny the best" />
+                    app:layout_collapseMode="pin" />
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+        <com.github.clans.fab.FloatingActionMenu
+            android:id="@+id/floatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            app:menu_colorNormal="@color/secondaryColor"
+            app:menu_colorPressed="@color/secondaryDarkColor"
+            app:menu_colorRipple="@color/secondaryLightColor"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/secondaryColor"
-        android:clickable="true"
-        app:backgroundTint="#00B0FF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/plus"
-        android:onClick="oc_createMeeting"/>
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fb_createRole"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_colorNormal="@color/secondaryColor"
+                app:fab_colorPressed="@color/secondaryDarkColor"
+                app:fab_colorRipple="@color/secondaryLightColor"
+                android:src="@drawable/ic_users"
+                android:drawableTint="@color/primaryTextColor"
+                android:tint="@color/primaryTextColor"
+                app:fab_size="mini"
+                app:fab_label="Create role"></com.github.clans.fab.FloatingActionButton>
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fb_createMeeting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_colorNormal="@color/secondaryColor"
+                app:fab_colorPressed="@color/secondaryDarkColor"
+                app:fab_colorRipple="@color/secondaryLightColor"
+                android:src="@drawable/ic_date_white"
+                app:fab_size="mini"
+                app:fab_label="Create meeting"></com.github.clans.fab.FloatingActionButton>
+
+            <com.github.clans.fab.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_colorNormal="@color/secondaryColor"
+                app:fab_colorPressed="@color/secondaryDarkColor"
+                app:fab_colorRipple="@color/secondaryLightColor"
+                android:src="@drawable/ic_task_white"
+                android:drawableTint="@color/primaryTextColor"
+                android:tint="@color/primaryTextColor"
+                app:fab_size="mini"
+                app:fab_label="Create task"></com.github.clans.fab.FloatingActionButton>
+
+            <com.github.clans.fab.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_colorNormal="@color/secondaryColor"
+                app:fab_colorPressed="@color/secondaryDarkColor"
+                app:fab_colorRipple="@color/secondaryLightColor"
+                android:src="@drawable/ic_post_white"
+                android:drawableTint="@color/primaryTextColor"
+                android:tint="@color/primaryTextColor"
+                app:fab_size="mini"
+                app:fab_label="Create post"></com.github.clans.fab.FloatingActionButton>
+
+        </com.github.clans.fab.FloatingActionMenu>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

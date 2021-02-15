@@ -19,4 +19,9 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+    
+    <style name="CheckBox">
+        <item name="colorAccent">@color/secondaryColor</item>
+        <item name="colorControlNormal">@color/secondaryLightColor</item>
+    </style>
 </resources>
