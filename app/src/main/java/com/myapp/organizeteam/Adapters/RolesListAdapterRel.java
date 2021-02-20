@@ -42,13 +42,11 @@ public class RolesListAdapterRel extends RecyclerView.Adapter<RolesListAdapterRe
 
         TextView tv_name;
         RecyclerView lv_users;
-        ProgressBar progressBar;
 
         public ExampleViewHolder(View itemView) {
             super(itemView);
             tv_name = itemView.findViewById(R.id.tv_rollName);
             lv_users = itemView.findViewById(R.id.lv_usersList);
-            progressBar = itemView.findViewById(R.id.progress_bar);
         }
     }
 
@@ -68,9 +66,6 @@ public class RolesListAdapterRel extends RecyclerView.Adapter<RolesListAdapterRe
     @Override
     public void onBindViewHolder(@NonNull final ExampleViewHolder holder, final int position) {
         Role currentItem = mExampleList.get(position);
-
-        final Loading loading = new Loading();
-        loading.setVisible(holder.progressBar,true);
 
         String name = currentItem.getName ();
         holder.tv_name.setText ( name );

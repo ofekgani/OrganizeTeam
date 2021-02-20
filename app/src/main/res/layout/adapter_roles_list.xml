@@ -33,28 +33,4 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:nestedScrollingEnabled="false"></androidx.recyclerview.widget.RecyclerView>
-
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/lv_usersList"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="176dp"
-        android:layout_marginEnd="187dp"
-        android:layout_marginBottom="-2dp"
-        android:indeterminateDrawable="@drawable/progressbar"
-        android:progress="50"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/lv_roles"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.554" />
-
-
 </RelativeLayout>
