@@ -110,18 +110,7 @@ public class HomeFragment extends Fragment{
     }
 
     private void setAdapter() {
-        if (adapter != null)
-        {
-            adapter.notifyDataSetChanged();
-        }
-        else
-        {
-            setAdapter(meetingsList);
-        }
-    }
-
-    private void setAdapter(ArrayList<Meeting> meetings) {
-        adapter = new MeetingsListAdapter(inflater.getContext(),R.layout.adapter_meetings_list,meetings);
+        adapter = new MeetingsListAdapter(inflater.getContext(),R.layout.adapter_meetings_list,meetingsList);
         lv_meetingList.setAdapter ( adapter );
         adapter.notifyDataSetChanged();
     }

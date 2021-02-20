@@ -1,7 +1,6 @@
 package com.myapp.organizeteam;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +61,7 @@ public class StepFiveRegisterFragment extends Fragment implements Step {
         transformation = new ActivityTransition();
 
         tv_prevStep = v.findViewById(R.id.tv_prevStep);
-        tv_name = v.findViewById(R.id.tv_roleName);
+        tv_name = v.findViewById(R.id.tv_userName);
         tv_email = v.findViewById(R.id.tv_userEmail);
         tv_phone = v.findViewById(R.id.tv_userPhone);
         mv_userLogo = v.findViewById(R.id.mv_userLogo);

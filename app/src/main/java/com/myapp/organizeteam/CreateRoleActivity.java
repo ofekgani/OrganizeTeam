@@ -185,18 +185,17 @@ public class CreateRoleActivity extends AppCompatActivity implements AdapterView
             String name = inputManagement.getInput(ed_roleName);
             String description = inputManagement.getInput(ed_roleDescription);
 
-            DatabaseReference userDatabase = FirebaseDatabase.getInstance ().getReference ( ConstantNames.USER_ACTIVITY_PATH).child(teamID);
             DatabaseReference rollDatabase = FirebaseDatabase.getInstance ().getReference ( ConstantNames.ROLE_PATH).child(teamID);
             String roleID = rollDatabase.push ().getKey ();
 
-            Role role = new Role(roleID,teamID,name,description);
-            dataExtraction.setObject(ConstantNames.ROLE_PATH,teamID,roleID,role);
-
+            ArrayList<String> usersID = new ArrayList<>();
             for(User user : selectedUsers)
             {
-                rollDatabase.child(roleID).child(ConstantNames.DATA_USERS_SELECTED).push().setValue(user.getKeyID());
-                userDatabase.child(user.getKeyID()).child(ConstantNames.DATA_USER_ROLES).push().setValue(roleID);
+                usersID.add(user.getKeyID());
             }
+
+            Role role = new Role(roleID,teamID,name,description,usersID);
+            dataExtraction.setObject(ConstantNames.ROLE_PATH,teamID,roleID,role);
 
             if(rolesPermission != null)
             {
@@ -210,7 +209,9 @@ public class CreateRoleActivity extends AppCompatActivity implements AdapterView
                 rollDatabase.child(roleID).child(ConstantNames.DATA_ROLE_MEETING_PERMISSION).setValue("All");
             }
 
-            finish();
+            Map<String,Object> saveRole = new HashMap<>();
+            saveRole.put(ConstantNames.ROLE,role);
+            activityTransition.back(CreateRoleActivity.this,saveRole);
         }
 
     }

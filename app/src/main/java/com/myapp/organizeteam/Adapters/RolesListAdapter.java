@@ -6,16 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.myapp.organizeteam.Core.Role;
-import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.R;
-import com.myapp.organizeteam.Resources.Image;
 
 import java.util.ArrayList;
 
@@ -52,7 +49,7 @@ public class RolesListAdapter extends ArrayAdapter<Role> {
         final LayoutInflater inflater = LayoutInflater.from ( mContext );
         convertView = inflater.inflate ( mResource,parent,false );
 
-        TextView tv_name = convertView.findViewById ( R.id.tv_roleName);
+        TextView tv_name = convertView.findViewById ( R.id.tv_userName);
         TextView tv_description = convertView.findViewById ( R.id.tv_roleDescription);
         final CheckBox checkBox = convertView.findViewById(R.id.checkBox);
 

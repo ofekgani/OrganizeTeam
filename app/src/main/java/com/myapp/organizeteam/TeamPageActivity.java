@@ -22,7 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.myapp.organizeteam.Adapters.MeetingsListAdapter;
-import com.myapp.organizeteam.Adapters.UsersRequestsListAdapter;
+import com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Role;
@@ -40,7 +40,7 @@ import java.util.Map;
 
 import static com.myapp.organizeteam.DataManagement.Authorization.isManager;
 
-public class TeamPageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, UsersRequestsListAdapter.AdapterListener, MeetingsListAdapter.AdapterListener {
+public class TeamPageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, UsersRequestsListAdapterRel.AdapterListener, MeetingsListAdapter.AdapterListener {
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;
@@ -56,7 +56,9 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
     User user, manager;
     Team team;
     ArrayList<Role> meetingsPer;
-    ArrayList<Role> userRoles;
+    ArrayList<Role> userRoles,roles;
+
+    ArrayList<User> users,requests;
 
     Bundle bundle;
 
@@ -118,7 +120,7 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
         bundle.putSerializable(ConstantNames.TEAM_HOST, (User)intent.getSerializableExtra ( ConstantNames.TEAM_HOST ));
         bundle.putSerializable(ConstantNames.TEAM, (Team)intent.getSerializableExtra ( ConstantNames.TEAM ));
         bundle.putSerializable(ConstantNames.USER, (User)intent.getSerializableExtra ( ConstantNames.USER ));
-        bundle.putSerializable(ConstantNames.USER_ROLES, intent.getSerializableExtra ( ConstantNames.USER_ROLES ));
+        bundle.putSerializable(ConstantNames.USER_ROLES, userRoles);
 
         if (savedInstanceState == null) {
             HomeFragment fragment = new HomeFragment();
@@ -135,7 +137,7 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
                 Map<String,Object> save = new HashMap<>();
                 save.put(ConstantNames.TEAM,team);
                 save.put(ConstantNames.USER,intent.getSerializableExtra ( ConstantNames.USER ));
-                save.put(ConstantNames.USER_PERMISSIONS_MEETING,intent.getSerializableExtra ( ConstantNames.USER_PERMISSIONS_MEETING ));
+                save.put(ConstantNames.USER_PERMISSIONS_MEETING,meetingsPer);
                 activityTransition.goToWithResult(TeamPageActivity.this,CreateMeetingActivity.class,976,save,null);
             }
         });
@@ -147,7 +149,7 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
 
                 Map<String,Object> save = new HashMap<>();
                 save.put(ConstantNames.TEAM_KEY_ID,team.getKeyID());
-                activityTransition.goTo(TeamPageActivity.this,CreateRoleActivity.class,false,save,null);
+                activityTransition.goToWithResult(TeamPageActivity.this,CreateRoleActivity.class,999,save,null);
             }
         });
 
@@ -193,6 +195,49 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
                         });
                     }
                 });
+
+                dataExtraction.getAllRolesByTeam(team.getKeyID(), new ISavable() {
+                    @Override
+                    public void onDataRead(Object save) {
+                        roles = (ArrayList<Role>)save;
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        DatabaseReference usersDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TEAM_PATH).child(team.getKeyID()).child(ConstantNames.DATA_USERS_AT_TEAM);
+        usersDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                dataExtraction.getAllUsersByTeam(team.getKeyID(), ConstantNames.DATA_USERS_AT_TEAM, new ISavable() {
+                    @Override
+                    public void onDataRead(Object save) {
+                        users = (ArrayList<User>) save;
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        DatabaseReference joinRequestsDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TEAM_PATH).child(team.getKeyID()).child(ConstantNames.DATA_REQUEST_TO_JOIN);
+        joinRequestsDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                dataExtraction.getAllUsersByTeam(team.getKeyID(), ConstantNames.DATA_REQUEST_TO_JOIN, new ISavable() {
+                    @Override
+                    public void onDataRead(Object save) {
+                        requests = (ArrayList<User>) save;
+                    }
+                });
             }
 
             @Override
@@ -201,6 +246,7 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
             }
         });
     }
+
 
     private void accessPermissions() {
 
@@ -243,6 +289,9 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
                 break;
 
             case R.id.btn_participants:
+                bundle.putSerializable(ConstantNames.USERS_LIST, users);
+                bundle.putSerializable(ConstantNames.REQUESTS_LIST, requests);
+                bundle.putSerializable(ConstantNames.ROLES_LIST, roles);
                 ParticipantsFragment toFragment = new ParticipantsFragment();
                 toFragment.setArguments(bundle);
                 getFragmentManager().beginTransaction().replace(R.id.fragment_container, toFragment,"participantsFragment").commit();
@@ -264,9 +313,9 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     public void updateList(boolean accept, int position) {
-        ParticipantsFragment participantsFragment = (ParticipantsFragment) getFragmentManager().findFragmentByTag("participantsFragment");
-        if(participantsFragment != null)
-            participantsFragment.updateList(accept, position);
+        UsersListFragment usersListFragment = (UsersListFragment) getFragmentManager().findFragmentByTag("usersListFragment");
+        if(usersListFragment != null)
+            usersListFragment.updateList(accept, position);
     }
 
     @Override
@@ -276,6 +325,10 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
         HomeFragment homeFragment = (HomeFragment) getFragmentManager().findFragmentByTag("homeFragment");
         if(homeFragment != null)
             homeFragment.onActivityResult(requestCode,resultCode,data);
+
+        RollsListFragment rollsListFragment = (RollsListFragment) getFragmentManager().findFragmentByTag("rollsListFragment");
+        if(rollsListFragment != null)
+            rollsListFragment.onActivityResult(requestCode,resultCode,data);
     }
 
     @Override

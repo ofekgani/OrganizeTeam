@@ -47,7 +47,6 @@ public class ConstantNames {
     public static final String TOKEN = "token"; //save token object
     public static final String USER_TOKEN = "userToken";
 
-
     public static final String DATA_USER_PHONE = "phone";
     public static final String MEETING = "meeting";
     public static final String DATA_MEETING_STATUS = "status";
@@ -66,4 +65,6 @@ public class ConstantNames {
     public static final String USER_ACTIVITY_PATH = "userActivity";
     public static final String DATA_USER_MEETINGS = "meetings";
     public static final String USERS_LIST = "usersList";
+    public static final String REQUESTS_LIST = "requestsList";
+    public static final String ROLE = "role";
 }

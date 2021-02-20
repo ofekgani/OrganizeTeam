@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -87,7 +86,7 @@ public class RoleSelectionActivity extends AppCompatActivity implements RolesLis
     }
 
     private void setAdapter(ArrayList<Role> roles) {
-        adapterRoles = new RolesListAdapter(this,R.layout.adapter_roles_list,roles);
+        adapterRoles = new RolesListAdapter(this,R.layout.adapter_roles_selection_list,roles);
         lv_roles.setAdapter (adapterRoles);
     }
 

@@ -53,7 +53,7 @@ public class UsersListAdapter extends ArrayAdapter<User> {
         final LayoutInflater inflater = LayoutInflater.from ( mContext );
         convertView = inflater.inflate ( mResource,parent,false );
 
-        TextView tv_name = convertView.findViewById ( R.id.tv_roleName);
+        TextView tv_name = convertView.findViewById ( R.id.tv_userName);
         ImageView mv_logo = convertView.findViewById ( R.id.mv_userLogo);
         final CheckBox checkBox = convertView.findViewById(R.id.checkBox);
 
