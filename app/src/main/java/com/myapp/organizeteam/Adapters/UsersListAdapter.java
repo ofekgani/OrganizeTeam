@@ -55,7 +55,7 @@ public class UsersListAdapter extends ArrayAdapter<User> {
 
         TextView tv_name = convertView.findViewById ( R.id.tv_userName);
         ImageView mv_logo = convertView.findViewById ( R.id.mv_userLogo);
-        final CheckBox checkBox = convertView.findViewById(R.id.checkBox);
+        final CheckBox checkBox = convertView.findViewById(R.id.cb_createMeeting);
 
         //if to the team has logo, set it to image view resource.
         if( logo != null && !logo.equals ( "" ))

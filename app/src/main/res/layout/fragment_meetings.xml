@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ParticipantsFragment">
+    tools:context=".MeetingsFragment">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/mv_userLogo"
@@ -55,6 +55,5 @@
             app:layout_constraintTop_toTopOf="parent"
             android:nestedScrollingEnabled="true"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

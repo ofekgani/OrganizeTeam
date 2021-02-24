@@ -5,9 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,12 +18,10 @@ import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Date;
 import com.myapp.organizeteam.Core.Hour;
 import com.myapp.organizeteam.Core.Meeting;
-import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.DataListener;
 import com.myapp.organizeteam.DataManagement.ISavable;
 import com.myapp.organizeteam.R;
-import com.myapp.organizeteam.Resources.Image;
 
 import java.util.ArrayList;
 
@@ -69,8 +65,8 @@ public class MeetingsListAdapter extends ArrayAdapter<Meeting> {
         final String meetingID = getItem(position).getKeyID();
         final String teamID = getItem(position).getTeamID();
 
-        TextView tv_name = convertView.findViewById ( R.id.tv_meetingName );
-        TextView tv_description = convertView.findViewById ( R.id.tv_meetingDescription );
+        TextView tv_name = convertView.findViewById ( R.id.tv_meetingName);
+        TextView tv_description = convertView.findViewById ( R.id.tv_meetingDescription);
         TextView tv_date = convertView.findViewById ( R.id.tv_meetingDate);
         final TextView btn_endMeeting = convertView.findViewById ( R.id.tv_btn_endMeeting);
 

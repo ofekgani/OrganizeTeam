@@ -88,67 +88,68 @@
 
         <com.github.clans.fab.FloatingActionMenu
             android:id="@+id/floatingActionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="180dp"
+            android:layout_height="277dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
-            app:menu_colorNormal="@color/secondaryColor"
-            app:menu_colorPressed="@color/secondaryDarkColor"
-            app:menu_colorRipple="@color/secondaryLightColor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0">
+            app:layout_constraintVertical_bias="1.0"
+            app:menu_colorNormal="@color/secondaryColor"
+            app:menu_colorPressed="@color/secondaryDarkColor"
+            app:menu_colorRipple="@color/secondaryLightColor">
 
             <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/fb_createRole"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:drawableTint="@color/primaryTextColor"
+                android:src="@drawable/ic_users"
+                android:tint="@color/primaryTextColor"
                 app:fab_colorNormal="@color/secondaryColor"
                 app:fab_colorPressed="@color/secondaryDarkColor"
                 app:fab_colorRipple="@color/secondaryLightColor"
-                android:src="@drawable/ic_users"
-                android:drawableTint="@color/primaryTextColor"
-                android:tint="@color/primaryTextColor"
-                app:fab_size="mini"
-                app:fab_label="Create role"></com.github.clans.fab.FloatingActionButton>
+                app:fab_label="Create role"
+                app:fab_size="mini"></com.github.clans.fab.FloatingActionButton>
 
             <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/fb_createMeeting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:fab_colorNormal="@color/secondaryColor"
-                app:fab_colorPressed="@color/secondaryDarkColor"
-                app:fab_colorRipple="@color/secondaryLightColor"
                 android:src="@drawable/ic_date_white"
-                app:fab_size="mini"
-                app:fab_label="Create meeting"></com.github.clans.fab.FloatingActionButton>
-
-            <com.github.clans.fab.FloatingActionButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 app:fab_colorNormal="@color/secondaryColor"
                 app:fab_colorPressed="@color/secondaryDarkColor"
                 app:fab_colorRipple="@color/secondaryLightColor"
+                app:fab_label="Create meeting"
+                app:fab_size="mini"></com.github.clans.fab.FloatingActionButton>
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fb_createTask"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableTint="@color/primaryTextColor"
                 android:src="@drawable/ic_task_white"
-                android:drawableTint="@color/primaryTextColor"
                 android:tint="@color/primaryTextColor"
-                app:fab_size="mini"
-                app:fab_label="Create task"></com.github.clans.fab.FloatingActionButton>
+                app:fab_colorNormal="@color/secondaryColor"
+                app:fab_colorPressed="@color/secondaryDarkColor"
+                app:fab_colorRipple="@color/secondaryLightColor"
+                app:fab_label="Create task"
+                app:fab_size="mini"></com.github.clans.fab.FloatingActionButton>
 
             <com.github.clans.fab.FloatingActionButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:drawableTint="@color/primaryTextColor"
+                android:src="@drawable/ic_post_white"
+                android:tint="@color/primaryTextColor"
                 app:fab_colorNormal="@color/secondaryColor"
                 app:fab_colorPressed="@color/secondaryDarkColor"
                 app:fab_colorRipple="@color/secondaryLightColor"
-                android:src="@drawable/ic_post_white"
-                android:drawableTint="@color/primaryTextColor"
-                android:tint="@color/primaryTextColor"
-                app:fab_size="mini"
-                app:fab_label="Create post"></com.github.clans.fab.FloatingActionButton>
+                app:fab_label="Create post"
+                app:fab_size="mini"></com.github.clans.fab.FloatingActionButton>
 
         </com.github.clans.fab.FloatingActionMenu>
 

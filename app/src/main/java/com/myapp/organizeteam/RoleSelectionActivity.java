@@ -60,7 +60,7 @@ public class RoleSelectionActivity extends AppCompatActivity implements RolesLis
 
         intent = getIntent();
         teamID = intent.getStringExtra(ConstantNames.TEAM_KEY_ID);
-        permissionToPublish = (ArrayList<Role>) intent.getSerializableExtra(ConstantNames.USER_PERMISSIONS_MEETING);
+        permissionToPublish = (ArrayList<Role>) intent.getSerializableExtra(ConstantNames.USER_PERMISSIONS);
 
         createUsersList();
     }

@@ -46,7 +46,7 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
     NavigationView navigationView;
     OpenMenu openMenu;
     ImageView nav_logo;
-    FloatingActionButton fab_createMeeting,fab_createRole;
+    FloatingActionButton fab_createMeeting,fab_createRole, fab_createTask;
 
     Image image;
     DataExtraction dataExtraction;
@@ -72,6 +72,7 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
         navigationView = findViewById ( R.id.nav_view );
         fab_createMeeting = findViewById(R.id.fb_createMeeting);
         fab_createRole = findViewById(R.id.fb_createRole);
+        fab_createTask = findViewById(R.id.fb_createTask);
 
         openMenu = new OpenMenu(R.id.main_toolbar);
 
@@ -123,10 +124,10 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
         bundle.putSerializable(ConstantNames.USER_ROLES, userRoles);
 
         if (savedInstanceState == null) {
-            HomeFragment fragment = new HomeFragment();
+            MeetingsFragment fragment = new MeetingsFragment();
             fragment.setArguments(bundle);
             getFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment,"homeFragment").commit();
-            openMenu.setCheckedItem(navigationView, R.id.btn_home);
+            openMenu.setCheckedItem(navigationView, R.id.btn_meetings);
         }
 
         fab_createMeeting.setOnClickListener(new View.OnClickListener() {
@@ -137,7 +138,7 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
                 Map<String,Object> save = new HashMap<>();
                 save.put(ConstantNames.TEAM,team);
                 save.put(ConstantNames.USER,intent.getSerializableExtra ( ConstantNames.USER ));
-                save.put(ConstantNames.USER_PERMISSIONS_MEETING,meetingsPer);
+                save.put(ConstantNames.USER_PERMISSIONS,meetingsPer);
                 activityTransition.goToWithResult(TeamPageActivity.this,CreateMeetingActivity.class,976,save,null);
             }
         });
@@ -150,6 +151,19 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
                 Map<String,Object> save = new HashMap<>();
                 save.put(ConstantNames.TEAM_KEY_ID,team.getKeyID());
                 activityTransition.goToWithResult(TeamPageActivity.this,CreateRoleActivity.class,999,save,null);
+            }
+        });
+
+        fab_createTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActivityTransition activityTransition = new ActivityTransition();
+
+                Map<String,Object> save = new HashMap<>();
+                save.put(ConstantNames.TEAM,team);
+                save.put(ConstantNames.USER,intent.getSerializableExtra ( ConstantNames.USER ));
+                save.put(ConstantNames.USER_PERMISSIONS,meetingsPer);
+                activityTransition.goToWithResult(TeamPageActivity.this,CreateTaskActivity.class,979,save,null);
             }
         });
 
@@ -299,13 +313,20 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
                 openMenu.setCheckedItem(navigationView,R.id.btn_participants);
                 break;
 
-            case R.id.btn_home:
-                HomeFragment fragment = new HomeFragment();
+            case R.id.btn_meetings:
+                MeetingsFragment fragment = new MeetingsFragment();
                 fragment.setArguments(bundle);
                 getFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment,"homeFragment").commit();
 
-                openMenu.setCheckedItem(navigationView,R.id.btn_home);
+                openMenu.setCheckedItem(navigationView,R.id.btn_meetings);
                 break;
+
+            case R.id.btn_tasks:
+                TasksFragment tasksFragment = new TasksFragment();
+                tasksFragment.setArguments(bundle);
+                getFragmentManager().beginTransaction().replace(R.id.fragment_container, tasksFragment,"tasksFragment").commit();
+
+                openMenu.setCheckedItem(navigationView,R.id.btn_tasks);
         }
         openMenu.closeMenu ( drawerLayout );
         return true;
@@ -322,19 +343,23 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        HomeFragment homeFragment = (HomeFragment) getFragmentManager().findFragmentByTag("homeFragment");
-        if(homeFragment != null)
-            homeFragment.onActivityResult(requestCode,resultCode,data);
+        MeetingsFragment meetingsFragment = (MeetingsFragment) getFragmentManager().findFragmentByTag("homeFragment");
+        if(meetingsFragment != null)
+            meetingsFragment.onActivityResult(requestCode,resultCode,data);
 
         RollsListFragment rollsListFragment = (RollsListFragment) getFragmentManager().findFragmentByTag("rollsListFragment");
         if(rollsListFragment != null)
             rollsListFragment.onActivityResult(requestCode,resultCode,data);
+
+        TasksFragment tasksFragment = (TasksFragment) getFragmentManager().findFragmentByTag("tasksFragment");
+        if(tasksFragment != null)
+            tasksFragment.onActivityResult(requestCode,resultCode,data);
     }
 
     @Override
     public void updateList(int position) {
-        HomeFragment homeFragment = (HomeFragment) getFragmentManager().findFragmentByTag("homeFragment");
-        if(homeFragment != null)
-            homeFragment.updateList(position);
+        MeetingsFragment meetingsFragment = (MeetingsFragment) getFragmentManager().findFragmentByTag("homeFragment");
+        if(meetingsFragment != null)
+            meetingsFragment.updateList(position);
     }
 }

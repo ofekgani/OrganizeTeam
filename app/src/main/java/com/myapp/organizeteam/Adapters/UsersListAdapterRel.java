@@ -1,6 +1,5 @@
 package com.myapp.organizeteam.Adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +37,7 @@ public class UsersListAdapterRel extends RecyclerView.Adapter<UsersListAdapterRe
             super(itemView);
             tv_name = itemView.findViewById(R.id.tv_userName);
             mv_logo = itemView.findViewById(R.id.mv_userLogo);
-            checkBox = itemView.findViewById(R.id.checkBox);
+            checkBox = itemView.findViewById(R.id.cb_createMeeting);
         }
     }
 

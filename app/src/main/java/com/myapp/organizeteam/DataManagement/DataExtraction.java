@@ -11,6 +11,7 @@ import com.google.firebase.database.Query;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Meeting;
+import com.myapp.organizeteam.Core.Mission;
 import com.myapp.organizeteam.Core.Role;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
@@ -34,7 +35,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -834,6 +834,7 @@ public class DataExtraction
 
     public void getPermissions(final String teamID, final ArrayList<Role> roles, final ISavable iSavable)
     {
+        final Map<String,Object> permissions = new HashMap<>();
         final ArrayList<Role> meetingPermissions = new ArrayList<>();
         final ArrayList<String> rolesID = new ArrayList<>();
 
@@ -855,6 +856,25 @@ public class DataExtraction
                                     public void onDataRead(Object save) {
                                         ArrayList<Role> meetingPermissions = (ArrayList<Role>) save;
                                         iSavable.onDataRead(meetingPermissions);
+                                    }
+                                });
+                                return;
+                            }
+                            else if(ds.hasChild(ConstantNames.DATA_ROLE_MEETING_PERMISSION))
+                            {
+                                for(DataSnapshot id : ds.child(ConstantNames.DATA_ROLE_MEETING_PERMISSION).getChildren())
+                                {
+                                    rolesID.add(id.getValue().toString());
+                                }
+                            }
+                            if(ds.hasChild(ConstantNames.DATA_ROLE_TASK_PERMISSION) && ds.child(ConstantNames.DATA_ROLE_TASK_PERMISSION).getValue().equals("All"))
+                            {
+                                getAllRolesByTeam(teamID, new ISavable() {
+                                    @Override
+                                    public void onDataRead(Object save) {
+                                        ArrayList<Role> taskPermissions = (ArrayList<Role>) save;
+                                        permissions.put(ConstantNames.USER_PERMISSIONS_TASK,taskPermissions);
+                                        iSavable.onDataRead(taskPermissions);
                                     }
                                 });
                                 return;
@@ -1006,6 +1026,47 @@ public class DataExtraction
                     meetings.add(ds.getValue().toString());
                 }
                 iSavable.onDataRead(meetings);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void getAllTasksByTeam(String keyID, final ISavable iSavable) {
+        final ArrayList<Mission> tasks = new ArrayList<>();
+
+        final DatabaseReference mDatabase =  getDatabaseReference(ConstantNames.TASK_PATH).child ( keyID );
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds : snapshot.getChildren()) {
+                    Mission task = (Mission) getValue ( ds,Mission.class );
+                    tasks.add(task);
+                }
+                iSavable.onDataRead(tasks);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void getTasksByUser(String userID, String teamID, final ISavable iSavable) {
+        final ArrayList<String> tasks = new ArrayList<>();
+
+        final DatabaseReference mDatabase = getDatabaseReference(ConstantNames.USER_ACTIVITY_PATH).child(teamID).child(userID).child(ConstantNames.DATA_USER_TASKS);
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    tasks.add(ds.getValue().toString());
+                }
+                iSavable.onDataRead(tasks);
             }
 
             @Override

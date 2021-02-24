@@ -40,7 +40,7 @@
         android:textSize="15dp" />
 
     <CheckBox
-        android:id="@+id/checkBox"
+        android:id="@+id/cb_createMeeting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/tv_userName"

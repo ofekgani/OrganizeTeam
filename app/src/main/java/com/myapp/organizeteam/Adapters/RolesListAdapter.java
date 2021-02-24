@@ -51,7 +51,7 @@ public class RolesListAdapter extends ArrayAdapter<Role> {
 
         TextView tv_name = convertView.findViewById ( R.id.tv_userName);
         TextView tv_description = convertView.findViewById ( R.id.tv_roleDescription);
-        final CheckBox checkBox = convertView.findViewById(R.id.checkBox);
+        final CheckBox checkBox = convertView.findViewById(R.id.cb_createMeeting);
 
         tv_name.setText ( name );
         tv_description.setText ( description );

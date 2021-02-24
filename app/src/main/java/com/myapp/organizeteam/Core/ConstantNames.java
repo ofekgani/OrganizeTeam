@@ -7,6 +7,7 @@ public class ConstantNames {
     public static final String TEAM_PATH  = "team";
     public static final String TOKEN_PATH = "tokens";
     public static final String MEETINGS_PATH = "meeting";
+    public static final String TASK_PATH = "task";
 
     //Keys in firebase
     //if you want to save data in firebase
@@ -57,14 +58,19 @@ public class ConstantNames {
     public static final String DATA_USERS_SELECTED = "users";
     public static final String DATA_USER_ROLES = "roles";
     public static final String ROLES_LIST = "rulesList";
-    public static final String DATA_ROLE_MEETING_PERMISSION  = "meeting";
+    public static final String DATA_ROLE_MEETING_PERMISSION  = "meetingPermission";
     public static final String ROLE_MEETING_PERMISSION = "meetingPermission";
     public static final String USER_ROLES = "rolesList";
     public static final String USER_PERMISSIONS_MEETING = "userPermissionMeetings";
-    public static final String DATA_MEETING_PUBLISH_TO = "publishTo";
+    public static final String DATA_PUBLISH_TO = "publishTo";
     public static final String USER_ACTIVITY_PATH = "userActivity";
     public static final String DATA_USER_MEETINGS = "meetings";
     public static final String USERS_LIST = "usersList";
     public static final String REQUESTS_LIST = "requestsList";
     public static final String ROLE = "role";
+    public static final String USER_PERMISSIONS_TASK = "userPermissionTasks";
+    public static final String USER_PERMISSIONS = "userPermissions";
+    public static final String TASK = "task";
+    public static final String DATA_USER_TASKS = "tasks";
+    public static final String DATA_ROLE_TASK_PERMISSION = "tasksPermission";
 }

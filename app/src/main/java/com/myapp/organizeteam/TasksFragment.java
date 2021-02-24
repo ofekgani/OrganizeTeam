@@ -1,26 +1,20 @@
 package com.myapp.organizeteam;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import android.app.Fragment;
-import android.widget.ListView;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.myapp.organizeteam.Adapters.MeetingsListAdapter;
+import com.myapp.organizeteam.Adapters.TasksListAdapter;
 import com.myapp.organizeteam.Core.ConstantNames;
-import com.myapp.organizeteam.Core.Meeting;
 import com.myapp.organizeteam.Core.Role;
+import com.myapp.organizeteam.Core.Mission;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
@@ -31,15 +25,15 @@ import java.util.ArrayList;
 import static android.app.Activity.RESULT_OK;
 import static com.myapp.organizeteam.DataManagement.Authorization.isManager;
 
-public class HomeFragment extends Fragment{
+public class TasksFragment extends Fragment{
 
     DataExtraction dataExtraction;
 
-    ListView lv_meetingList;
-    MeetingsListAdapter adapter;
+    ListView lv_taskList;
+    TasksListAdapter adapter;
     Bundle bundle;
 
-    ArrayList<Meeting> meetingsList;
+    ArrayList<Mission> tasksList;
     ArrayList<Role> rolesList;
     LayoutInflater inflater;
 
@@ -49,30 +43,19 @@ public class HomeFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_home, container, false);
+        View v = inflater.inflate(R.layout.fragment_tasks, container, false);
         this.inflater = inflater;
 
         dataExtraction = new DataExtraction();
 
-        lv_meetingList = v.findViewById(R.id.lv_meeting);
+        lv_taskList = v.findViewById(R.id.lv_tasks);
 
         bundle = getArguments();
         team = (Team) bundle.getSerializable ( ConstantNames.TEAM );
         user = (User) bundle.getSerializable ( ConstantNames.USER );
         rolesList = (ArrayList<Role>) bundle.getSerializable ( ConstantNames.USER_ROLES );
 
-        DatabaseReference meetingsDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.MEETINGS_PATH).child(team.getKeyID());
-        meetingsDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                createMeetingsList();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+        createMeetingsList();
 
         return v;
     }
@@ -81,24 +64,24 @@ public class HomeFragment extends Fragment{
     {
         if(isManager)
         {
-            dataExtraction.getAllMeetingsByTeam(team.getKeyID() ,new ISavable() {
+            dataExtraction.getAllTasksByTeam(team.getKeyID() ,new ISavable() {
                 @Override
                 public void onDataRead(Object save) {
-                    meetingsList = (ArrayList<Meeting>)save;
+                    tasksList = (ArrayList<Mission>)save;
                     setAdapter();
                 }
             });
         }
         else
         {
-            dataExtraction.getMeetingsByUser(user.getKeyID(), team.getKeyID(), new ISavable() {
+            dataExtraction.getTasksByUser(user.getKeyID(), team.getKeyID(), new ISavable() {
                 @Override
                 public void onDataRead(Object save) {
                     ArrayList<String> meetingsID = (ArrayList<String>) save;
                     dataExtraction.getMeetingsByID(meetingsID,team.getKeyID(), user.getKeyID() ,new ISavable() {
                         @Override
                         public void onDataRead(Object save) {
-                            meetingsList = (ArrayList<Meeting>)save;
+                            tasksList = (ArrayList<Mission>)save;
                             setAdapter();
                         }
                     });
@@ -110,8 +93,8 @@ public class HomeFragment extends Fragment{
     }
 
     private void setAdapter() {
-        adapter = new MeetingsListAdapter(inflater.getContext(),R.layout.adapter_meetings_list,meetingsList);
-        lv_meetingList.setAdapter ( adapter );
+        adapter = new TasksListAdapter(inflater.getContext(),R.layout.adapter_tasks_list, tasksList);
+        lv_taskList.setAdapter ( adapter );
         adapter.notifyDataSetChanged();
     }
 
@@ -119,17 +102,12 @@ public class HomeFragment extends Fragment{
     {
         if(data != null)
         {
-            if(resultCode == RESULT_OK && requestCode == 976)
+            if(resultCode == RESULT_OK && requestCode == 979)
             {
-                Meeting meeting = (Meeting) data.getSerializableExtra(ConstantNames.MEETING);
-                meetingsList.add(meeting);
+                Mission task = (Mission) data.getSerializableExtra(ConstantNames.TASK);
+                tasksList.add(task);
                 adapter.notifyDataSetChanged();
             }
         }
-    }
-
-    public void updateList(int position) {
-        meetingsList.remove(position);
-        adapter.notifyDataSetChanged();
     }
 }

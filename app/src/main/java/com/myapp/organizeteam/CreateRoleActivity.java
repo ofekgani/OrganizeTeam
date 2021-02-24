@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -25,7 +24,6 @@ import com.myapp.organizeteam.Core.InputManagement;
 import com.myapp.organizeteam.Core.Role;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
-import com.myapp.organizeteam.DataManagement.ISavable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,22 +35,22 @@ public class CreateRoleActivity extends AppCompatActivity implements AdapterView
     DataExtraction dataExtraction;
     ActivityTransition activityTransition;
 
-    Spinner spinner;
-    ConstraintLayout meetingSettings;
-    CheckBox checkBox;
+    Spinner sp_createMeetingTo,sp_createTaskTo;
+    ConstraintLayout meetingSettings,taskSettings;
+    CheckBox cb_createMeeting,cb_createTask;
     EditText ed_roleName, ed_roleDescription;
-    TextView btn_selectRolesPermission;
-
+    TextView btn_selectRolesPermissionMeeting, btn_selectRolesPermissionTask;
     Toolbar toolbar;
 
     Intent intent;
 
-    int spinnerChoice;
-    ArrayList<Role> teamRules;
+    int meetingSpinnerChoice,taskSpinnerChoice;
     String teamID;
     boolean rulesSelected;
 
     Map<String,Object> save = new HashMap<>();
+
+    ArrayList<Role> rolesPublishMeetings,rolesPublishTasks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,55 +61,38 @@ public class CreateRoleActivity extends AppCompatActivity implements AdapterView
         dataExtraction = new DataExtraction();
         activityTransition = new ActivityTransition();
 
-        spinner = findViewById(R.id.spinner);
+        sp_createMeetingTo = findViewById(R.id.sp_createMeetingTo);
         meetingSettings = findViewById(R.id.meetingSettings);
-        checkBox = findViewById(R.id.checkBox);
+        cb_createMeeting = findViewById(R.id.cb_createMeeting);
         ed_roleName = findViewById(R.id.ed_roleName);
         ed_roleDescription = findViewById(R.id.ed_roleDescription);
-        btn_selectRolesPermission = findViewById(R.id.tv_btn_select);
+        btn_selectRolesPermissionMeeting = findViewById(R.id.tv_btn_select_meeting);
+        sp_createTaskTo = findViewById(R.id.sp_createTaskTo);
+        taskSettings = findViewById(R.id.taskSettings);
+        cb_createTask = findViewById(R.id.cb_createTask);
+        btn_selectRolesPermissionTask = findViewById(R.id.tv_btn_select_task);
 
         toolbar = findViewById(R.id.appBarLayout);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         intent = getIntent();
         teamID = intent.getStringExtra(ConstantNames.TEAM_KEY_ID);
-
         save = new HashMap<>();
 
-        meetingSettings.setVisibility(View.GONE);
-        checkBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(checkBox.isChecked())
-                {
-                    meetingSettings.setVisibility(View.VISIBLE);
-                }
-                else
-                {
-                    meetingSettings.setVisibility(View.GONE);
-                }
-            }
-        });
+        configuringSetting(meetingSettings, cb_createMeeting);
+        configuringSetting(taskSettings, cb_createTask);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.publishTo, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(this);
-        spinnerChoice = 0;
+        configuringSpinner(sp_createMeetingTo);
+        meetingSpinnerChoice = 0;
+        checkSpinnerChoice(meetingSpinnerChoice, btn_selectRolesPermissionMeeting);
 
-        if(spinnerChoice == 0)
-        {
-            btn_selectRolesPermission.setVisibility(View.GONE);
-        }
-        else
-        {
-            btn_selectRolesPermission.setVisibility(View.VISIBLE);
-        }
+        configuringSpinner(sp_createTaskTo);
+        taskSpinnerChoice = 0;
+        checkSpinnerChoice(taskSpinnerChoice, btn_selectRolesPermissionTask);
 
-        btn_selectRolesPermission.setOnClickListener(new View.OnClickListener() {
+        btn_selectRolesPermissionMeeting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Map<String,Object> save = new HashMap<>();
@@ -119,19 +100,61 @@ public class CreateRoleActivity extends AppCompatActivity implements AdapterView
                 activityTransition.goToWithResult(CreateRoleActivity.this,RoleSelectionActivity.class,313,save,null);
             }
         });
+
+        btn_selectRolesPermissionTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Map<String,Object> save = new HashMap<>();
+                save.put(ConstantNames.TEAM_KEY_ID,teamID);
+                activityTransition.goToWithResult(CreateRoleActivity.this,RoleSelectionActivity.class,314,save,null);
+            }
+        });
+    }
+
+    private void checkSpinnerChoice(int spinnerChoice, TextView textView) {
+        if (spinnerChoice == 0) {
+            textView.setVisibility(View.INVISIBLE);
+        } else {
+            textView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void configuringSpinner(Spinner spinner) {
+        ArrayAdapter<CharSequence> sp_meetingAdapter = ArrayAdapter.createFromResource(this, R.array.publishTo, android.R.layout.simple_spinner_item);
+        sp_meetingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(sp_meetingAdapter);
+        spinner.setOnItemSelectedListener(this);
+    }
+
+    private void configuringSetting(final ConstraintLayout constraintLayout, final CheckBox checkBox) {
+        constraintLayout.setVisibility(View.INVISIBLE);
+        checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (checkBox.isChecked()) {
+                    constraintLayout.setVisibility(View.VISIBLE);
+                } else {
+                    constraintLayout.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
     }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        spinnerChoice = i;
-        if(spinnerChoice == 0)
+        switch (adapterView.getId())
         {
-            btn_selectRolesPermission.setVisibility(View.GONE);
+            case R.id.sp_createMeetingTo:
+                meetingSpinnerChoice = i;
+                checkSpinnerChoice(meetingSpinnerChoice, btn_selectRolesPermissionMeeting);
+                break;
+
+            case R.id.sp_createTaskTo:
+                taskSpinnerChoice = i;
+                checkSpinnerChoice(taskSpinnerChoice, btn_selectRolesPermissionTask);
+                break;
         }
-        else
-        {
-            btn_selectRolesPermission.setVisibility(View.VISIBLE);
-        }
+
     }
 
     @Override
@@ -172,41 +195,51 @@ public class CreateRoleActivity extends AppCompatActivity implements AdapterView
         if(resultCode == RESULT_OK && requestCode == 313)
         {
             save.put(ConstantNames.ROLES_LIST,data.getSerializableExtra(ConstantNames.ROLES_LIST));
+            rolesPublishMeetings = (ArrayList<Role>) data.getSerializableExtra(ConstantNames.ROLES_LIST);
+            rulesSelected = true;
+        }
+        if(resultCode == RESULT_OK && requestCode == 314)
+        {
+            save.put(ConstantNames.ROLES_LIST,data.getSerializableExtra(ConstantNames.ROLES_LIST));
+            rolesPublishTasks = (ArrayList<Role>) data.getSerializableExtra(ConstantNames.ROLES_LIST);
             rulesSelected = true;
         }
 
         if(resultCode == RESULT_OK && requestCode == 319)
         {
-
+            //List of users selected for this role
             ArrayList<User> selectedUsers = (ArrayList<User>)data.getSerializableExtra(ConstantNames.USERS_LIST);
-            ArrayList<Role> rolesPermission = (ArrayList<Role>)data.getSerializableExtra(ConstantNames.ROLES_LIST);
-            if(selectedUsers.size() == 0) return;
 
+            //Check if users are selected.
+            if(selectedUsers.isEmpty() || selectedUsers == null) return;
+
+            //Get user`s input
             String name = inputManagement.getInput(ed_roleName);
             String description = inputManagement.getInput(ed_roleDescription);
 
+            //Create key to role
             DatabaseReference rollDatabase = FirebaseDatabase.getInstance ().getReference ( ConstantNames.ROLE_PATH).child(teamID);
             String roleID = rollDatabase.push ().getKey ();
 
+            //Get users`s keysID to save into the firebase.
             ArrayList<String> usersID = new ArrayList<>();
             for(User user : selectedUsers)
             {
                 usersID.add(user.getKeyID());
             }
 
+            //Create role and add its to firebase
             Role role = new Role(roleID,teamID,name,description,usersID);
             dataExtraction.setObject(ConstantNames.ROLE_PATH,teamID,roleID,role);
 
-            if(rolesPermission != null)
+            //Check if to this role has permission to publish meetings, if has, add all the roles that can be published to
+            addPermissions(rollDatabase, roleID, rolesPublishMeetings, ConstantNames.DATA_ROLE_MEETING_PERMISSION, cb_createMeeting, meetingSpinnerChoice);
+            addPermissions(rollDatabase, roleID, rolesPublishTasks, ConstantNames.DATA_ROLE_TASK_PERMISSION, cb_createTask, taskSpinnerChoice);
+
+            DatabaseReference userDatabase = FirebaseDatabase.getInstance ().getReference ( ConstantNames.USER_ACTIVITY_PATH).child(teamID);
+            for(String id : usersID)
             {
-                for(Role r : rolesPermission)
-                {
-                    rollDatabase.child(roleID).child(ConstantNames.DATA_ROLE_MEETING_PERMISSION).push().setValue(r.getKeyID());
-                }
-            }
-            else if(checkBox.isChecked() && spinnerChoice == 0)
-            {
-                rollDatabase.child(roleID).child(ConstantNames.DATA_ROLE_MEETING_PERMISSION).setValue("All");
+                userDatabase.child(id).child(ConstantNames.DATA_USER_ROLES).push().setValue(roleID);
             }
 
             Map<String,Object> saveRole = new HashMap<>();
@@ -214,5 +247,15 @@ public class CreateRoleActivity extends AppCompatActivity implements AdapterView
             activityTransition.back(CreateRoleActivity.this,saveRole);
         }
 
+    }
+
+    private void addPermissions(DatabaseReference databaseReference, String roleID, ArrayList<Role> roles, String path, CheckBox checkBox, int spinnerChoice) {
+        if (roles != null && !roles.isEmpty()) {
+            for (Role r : roles) {
+                databaseReference.child(roleID).child(path).push().setValue(r.getKeyID());
+            }
+        } else if (checkBox.isChecked() && spinnerChoice == 0) {
+            databaseReference.child(roleID).child(path).setValue("All");
+        }
     }
 }
