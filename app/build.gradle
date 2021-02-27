@@ -53,6 +53,7 @@ dependencies {
 
     implementation 'com.stepstone.stepper:material-stepper:4.3.1'
     implementation 'com.hbb20:ccp:2.4.2'
+    implementation 'com.google.firebase:firebase-config:20.0.3'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

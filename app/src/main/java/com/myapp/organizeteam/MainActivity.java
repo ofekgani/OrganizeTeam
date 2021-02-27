@@ -250,14 +250,21 @@ public class MainActivity extends AppCompatActivity {
                         userInfo.put(ConstantNames.USER_ROLES,save);
 
                         //Get user`s permissions
-                        dataExtraction.getPermissions(team.getKeyID(), (ArrayList<Role>) save, new ISavable() {
-                            @Override
-                            public void onDataRead(Object save) {
-                                userInfo.put(ConstantNames.USER_PERMISSIONS_MEETING,save);
-                                //Connect to team page
-                                activityTransition.goTo(MainActivity.this, TeamPageActivity.class,true,userInfo,null);
-                            }
-                        });
+                        if(authorization.isManager)
+                        {
+                            activityTransition.goTo(MainActivity.this, TeamPageActivity.class,true,userInfo,null);
+                        }
+                        else
+                        {
+                            dataExtraction.getPermissions(team.getKeyID(), (ArrayList<Role>) save, new ISavable() {
+                                @Override
+                                public void onDataRead(Object save) {
+                                    userInfo.putAll((Map<String, Object>) save);
+                                    //Connect to team page
+                                    activityTransition.goTo(MainActivity.this, TeamPageActivity.class,true,userInfo,null);
+                                }
+                            });
+                        }
                     }
                 });
 

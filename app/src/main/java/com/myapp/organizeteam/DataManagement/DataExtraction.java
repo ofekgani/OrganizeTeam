@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.Query;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
@@ -835,89 +837,132 @@ public class DataExtraction
     public void getPermissions(final String teamID, final ArrayList<Role> roles, final ISavable iSavable)
     {
         final Map<String,Object> permissions = new HashMap<>();
-        final ArrayList<Role> meetingPermissions = new ArrayList<>();
-        final ArrayList<String> rolesID = new ArrayList<>();
+
+        final ArrayList<String> meetingPermissions = new ArrayList<>();
+        final ArrayList<String> taskPermissions = new ArrayList<>();
 
         final DatabaseReference mDatabase =  getDatabaseReference(ConstantNames.ROLE_PATH).child ( teamID );
-        Query query = mDatabase.orderByChild(ConstantNames.DATA_ROLE_MEETING_PERMISSION).startAt("All");
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        final TaskCompletionSource<ArrayList<Role>> dbSourceMeetingAll = new TaskCompletionSource<>();
+        final Task dbPerMetingAll = dbSourceMeetingAll.getTask();
+        final TaskCompletionSource<ArrayList<Role>> dbSourceTaskAll = new TaskCompletionSource<>();
+        final Task dbPerTaskAll = dbSourceTaskAll.getTask();
+
+        getListPermissions(teamID, roles, meetingPermissions, mDatabase, dbSourceMeetingAll, dbPerMetingAll, ConstantNames.DATA_ROLE_MEETING_PERMISSION);
+        getListPermissions(teamID, roles, taskPermissions, mDatabase, dbSourceTaskAll, dbPerTaskAll, ConstantNames.DATA_ROLE_TASK_PERMISSION);
+
+        Tasks.whenAll(dbPerMetingAll,dbPerTaskAll).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                if(dbPerMetingAll.getResult() != null)
+                {
+                    permissions.put(ConstantNames.USER_PERMISSIONS_MEETING,dbPerMetingAll.getResult());
+                }
+                if(dbPerTaskAll.getResult() != null)
+                {
+                    permissions.put(ConstantNames.USER_PERMISSIONS_TASK,dbPerTaskAll.getResult());
+                }
+                if(dbPerMetingAll.getResult() != null && dbPerTaskAll.getResult() != null)
+                {
+                    iSavable.onDataRead(permissions);
+                }
+
+                final TaskCompletionSource<ArrayList<Role>> dbSourceMeeting = new TaskCompletionSource<>();
+                final Task dbMeeting = dbSourceMeeting.getTask();
+                getRolesResult(dbSourceMeeting, meetingPermissions, teamID);
+
+                final TaskCompletionSource<ArrayList<Role>> dbSourceTask = new TaskCompletionSource<>();
+                final Task dbTask = dbSourceTask.getTask();
+                getRolesResult(dbSourceTask, taskPermissions, teamID);
+
+                Task<Void> allTask = Tasks.whenAll(dbTask,dbMeeting);
+                allTask.addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        if(dbMeeting.getResult() != null)
+                        {
+                            permissions.put(ConstantNames.USER_PERMISSIONS_MEETING,dbMeeting.getResult());
+                        }
+                        if(dbTask.getResult() != null)
+                        {
+                            permissions.put(ConstantNames.USER_PERMISSIONS_TASK,dbTask.getResult());
+                        }
+                        iSavable.onDataRead(permissions);
+                    }
+                });
+                allTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // apologize profusely to the user!
+                    }
+                });
+
+            }
+        });
+
+    }
+
+    private void getRolesResult(final TaskCompletionSource<ArrayList<Role>> dbSource, final ArrayList<String> permissions, final String teamID) {
+        if (permissions != null && !permissions.isEmpty()) {
+            DatabaseReference refMeeting = FirebaseDatabase.getInstance().getReference(ConstantNames.ROLE_PATH).child(teamID);
+            refMeeting.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Collections.sort(permissions);
+                    ArrayList<String> nRolesID = removeDuplicateFromList(permissions);
+
+                    getRolesByID(teamID, nRolesID, new ISavable() {
+                        @Override
+                        public void onDataRead(Object save) {
+                            dbSource.setResult((ArrayList<Role>) save);
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    dbSource.setException(databaseError.toException());
+                }
+            });
+        } else {
+            dbSource.setResult(null);
+        }
+    }
+
+    private void getListPermissions(final String teamID, final ArrayList<Role> roles, final ArrayList<String> permissions, DatabaseReference mDatabase, final TaskCompletionSource<ArrayList<Role>> dbSource, final Task dbPer, final String order) {
+        Query queryT = mDatabase.orderByChild(order).startAt("All");
+        queryT.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot ds : snapshot.getChildren())
-                {
-                    for(Role r : roles)
-                    {
-                        if(r.getKeyID().equals(ds.getKey()))
-                        {
-                            if(ds.hasChild(ConstantNames.DATA_ROLE_MEETING_PERMISSION) && ds.child(ConstantNames.DATA_ROLE_MEETING_PERMISSION).getValue().equals("All"))
-                            {
-                                getAllRolesByTeam(teamID, new ISavable() {
-                                    @Override
-                                    public void onDataRead(Object save) {
-                                        ArrayList<Role> meetingPermissions = (ArrayList<Role>) save;
-                                        iSavable.onDataRead(meetingPermissions);
-                                    }
-                                });
-                                return;
-                            }
-                            else if(ds.hasChild(ConstantNames.DATA_ROLE_MEETING_PERMISSION))
-                            {
-                                for(DataSnapshot id : ds.child(ConstantNames.DATA_ROLE_MEETING_PERMISSION).getChildren())
-                                {
-                                    rolesID.add(id.getValue().toString());
-                                }
-                            }
-                            if(ds.hasChild(ConstantNames.DATA_ROLE_TASK_PERMISSION) && ds.child(ConstantNames.DATA_ROLE_TASK_PERMISSION).getValue().equals("All"))
-                            {
+                boolean wait = false;
+                outerLoop:
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    for (Role r : roles) {
+                        if (r.getKeyID().equals(ds.getKey())) {
+                            if (ds.hasChild(order) && ds.child(order).getValue().equals("All")) {
+                                wait = true;
                                 getAllRolesByTeam(teamID, new ISavable() {
                                     @Override
                                     public void onDataRead(Object save) {
                                         ArrayList<Role> taskPermissions = (ArrayList<Role>) save;
-                                        permissions.put(ConstantNames.USER_PERMISSIONS_TASK,taskPermissions);
-                                        iSavable.onDataRead(taskPermissions);
+                                        dbSource.setResult(taskPermissions);
                                     }
                                 });
-                                return;
-                            }
-                            else if(ds.hasChild(ConstantNames.DATA_ROLE_MEETING_PERMISSION))
-                            {
-                                for(DataSnapshot id : ds.child(ConstantNames.DATA_ROLE_MEETING_PERMISSION).getChildren())
-                                {
-                                    rolesID.add(id.getValue().toString());
+                                break outerLoop;
+                            } else if (ds.hasChild(order)) {
+                                for (DataSnapshot id : ds.child(order).getChildren()) {
+                                    permissions.add(id.getValue().toString());
                                 }
                             }
                             break;
                         }
                     }
                 }
+                if (!dbPer.isComplete() && wait == false) {
+                    dbSource.setResult(null);
+                }
 
-                Collections.sort(rolesID);
-                final ArrayList<String> nRolesID = removeDuplicateFromList(rolesID);
-
-                final DatabaseReference mDatabase = getDatabaseReference(ConstantNames.ROLE_PATH).child ( teamID );
-                mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot ds : snapshot.getChildren())
-                        {
-                            for(String id : nRolesID)
-                            {
-                                if(ds.getKey().equals(id))
-                                {
-                                    Role role = (Role) getValue ( ds,Role.class );
-                                    meetingPermissions.add(role);
-                                    break;
-                                }
-                            }
-                        }
-                        iSavable.onDataRead(meetingPermissions);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
             }
 
             @Override
@@ -925,7 +970,35 @@ public class DataExtraction
 
             }
         });
+    }
 
+    private void getRolesByID(String teamID, final ArrayList<String> rolesID, final ISavable iSavable) {
+        final ArrayList<Role> roles = new ArrayList<>();
+        final DatabaseReference mDatabase = getDatabaseReference(ConstantNames.ROLE_PATH).child ( teamID );
+
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren())
+                {
+                    for(String id : rolesID)
+                    {
+                        if(ds.getKey().equals(id))
+                        {
+                            Role role = (Role) getValue ( ds,Role.class );
+                            roles.add(role);
+                            break;
+                        }
+                    }
+                }
+                iSavable.onDataRead(roles);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private ArrayList<String> removeDuplicateFromList(ArrayList<String> list) {
@@ -1006,6 +1079,49 @@ public class DataExtraction
                     }
                 }
                 iSavable.onDataRead(meetings);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void getTasksByID(final ArrayList<String> tasksID, final String teamID, final String userID, final ISavable iSavable)
+    {
+        final ArrayList<Mission> tasks = new ArrayList<>();
+
+        final DatabaseReference mDatabase =  getDatabaseReference(ConstantNames.TASK_PATH).child ( teamID );
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds : snapshot.getChildren())
+                {
+                    for(String id : tasksID)
+                    {
+                        if(ds.getKey().equals(id))
+                        {
+                            Mission task = (Mission) getValue(ds,Mission.class);
+                            tasks.add(task);
+                            tasksID.remove(id);
+                            break;
+                        }
+                    }
+                }
+                if(tasksID.size() > 0)
+                {
+                    for(String id : tasksID)
+                    {
+                        deleteValue(ConstantNames.USER_ACTIVITY_PATH, teamID, userID, ConstantNames.DATA_USER_TASKS, id, new DataListener() {
+                            @Override
+                            public void onDataDelete() {
+
+                            }
+                        });
+                    }
+                }
+                iSavable.onDataRead(tasks);
             }
 
             @Override

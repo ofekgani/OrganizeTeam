@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.DialogFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,11 +26,13 @@ import com.myapp.organizeteam.Adapters.MeetingsListAdapter;
 import com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
+import com.myapp.organizeteam.Core.Mission;
 import com.myapp.organizeteam.Core.Role;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.DataManagement.Authorization;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.ISavable;
+import com.myapp.organizeteam.Dialogs.TaskDialog;
 import com.myapp.organizeteam.Resources.Image;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.Resources.OpenMenu;
@@ -55,7 +58,7 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
 
     User user, manager;
     Team team;
-    ArrayList<Role> meetingsPer;
+    ArrayList<Role> meetingsPer,tasksPer;
     ArrayList<Role> userRoles,roles;
 
     ArrayList<User> users,requests;
@@ -98,6 +101,15 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
         else
         {
             meetingsPer = new ArrayList<>();
+        }
+
+        if((ArrayList<Role>)intent.getSerializableExtra(ConstantNames.USER_PERMISSIONS_TASK) != null)
+        {
+            tasksPer = (ArrayList<Role>)intent.getSerializableExtra(ConstantNames.USER_PERMISSIONS_TASK);
+        }
+        else
+        {
+            tasksPer = new ArrayList<>();
         }
 
         accessPermissions();
@@ -178,7 +190,9 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
                         dataExtraction.getPermissions(team.getKeyID(), userRoles, new ISavable() {
                             @Override
                             public void onDataRead(Object save) {
-                                meetingsPer = (ArrayList<Role>) save;
+                                Map<String,Object> permissions = (Map<String, Object>) save;
+                                meetingsPer = (ArrayList<Role>) permissions.get(ConstantNames.USER_PERMISSIONS_MEETING);
+                                tasksPer = (ArrayList<Role>) permissions.get(ConstantNames.USER_PERMISSIONS_TASK);
                                 accessPermissions();
                             }
                         });
@@ -203,7 +217,9 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
                         dataExtraction.getPermissions(team.getKeyID(), userRoles, new ISavable() {
                             @Override
                             public void onDataRead(Object save) {
-                                meetingsPer = (ArrayList<Role>) save;
+                                Map<String,Object> permissions = (Map<String, Object>) save;
+                                meetingsPer = (ArrayList<Role>) permissions.get(ConstantNames.USER_PERMISSIONS_MEETING);
+                                tasksPer = (ArrayList<Role>) permissions.get(ConstantNames.USER_PERMISSIONS_TASK);
                                 accessPermissions();
                             }
                         });
@@ -263,25 +279,42 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
 
 
     private void accessPermissions() {
-
         fab_createMeeting.setVisibility(View.GONE);
         fab_createRole.setVisibility(View.GONE);
-        if((meetingsPer.size() > 0  && !meetingsPer.isEmpty()) || isManager)
-        {
-            fab_createMeeting.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            fab_createMeeting.setVisibility(View.GONE);
-        }
+        fab_createTask.setVisibility(View.GONE);
+
         if(isManager)
         {
+            fab_createMeeting.setVisibility(View.VISIBLE);
             fab_createRole.setVisibility(View.VISIBLE);
+            fab_createTask.setVisibility(View.VISIBLE);
+            return;
         }
-        else
+
+        if(meetingsPer != null)
         {
-            fab_createRole.setVisibility(View.GONE);
+            if(meetingsPer.size() > 0 && !meetingsPer.isEmpty())
+            {
+                fab_createMeeting.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                fab_createMeeting.setVisibility(View.GONE);
+            }
         }
+
+        if (tasksPer != null)
+        {
+            if(tasksPer.size() > 0  && !tasksPer.isEmpty())
+            {
+                fab_createTask.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                fab_createTask.setVisibility(View.GONE);
+            }
+        }
+
     }
 
     @Override
