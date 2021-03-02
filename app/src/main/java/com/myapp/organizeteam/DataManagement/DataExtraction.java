@@ -283,8 +283,6 @@ public class DataExtraction
         FirebaseStorage storage = FirebaseStorage.getInstance ();
         StorageReference storageReference = storage.getReference ();
 
-        final ActivityTransition activityTransition = new ActivityTransition ();
-
         //Create Progress Dialog to user.
         final Loading loading = new Loading ();
         final ProgressDialog pd = loading.getProgressDialog ( context,"Upload Image... ");
