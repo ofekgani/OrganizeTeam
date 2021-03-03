@@ -109,6 +109,7 @@ public class TasksFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(ConstantNames.TASK,tasksList.get(i));
+                bundle.putSerializable(ConstantNames.USER,user);
                 DialogFragment taskDialog = new TaskDialog();
                 taskDialog.setArguments ( bundle );
 

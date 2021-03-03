@@ -26,16 +26,26 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StreamDownloadTask;
 import com.google.firebase.storage.UploadTask;
+import com.myapp.organizeteam.Core.ConstantNames;
+import com.myapp.organizeteam.Core.Mission;
+import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.Resources.Loading;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.Serializable;
 
 public class SubmitAssignmentActivity extends AppCompatActivity {
 
     TextView tv_path;
+
+    Intent intent;
+    User user;
+    Mission mission;
+
+    Uri uriFile;
 
     private static final int PERMISSION_CODE = 1001;
 
@@ -45,6 +55,10 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_submit_assignment);
 
         tv_path = findViewById(R.id.tv_filePath);
+
+        intent = getIntent();
+        user = (User) intent.getSerializableExtra(ConstantNames.USER);
+        mission = (Mission) intent.getSerializableExtra(ConstantNames.TASK);
     }
 
     public void oc_getPath(View view) {
@@ -76,38 +90,8 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
 
         if(resultCode == RESULT_OK && requestCode == 190)
         {
-            // Create a storage reference from our app
-            FirebaseStorage storage = FirebaseStorage.getInstance ();
-            StorageReference storageRef = storage.getReference();
-
-            final Loading loading = new Loading ();
-            final ProgressDialog pd = loading.getProgressDialog ( this,"Upload Image... ");
-
-            final StorageReference riversRef = storageRef.child("files/");
-
-            Uri stream = data.getData();
-
-            riversRef.putFile(stream).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    riversRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            pd.dismiss();
-                        }
-                    });
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    pd.dismiss ();
-                }
-            }).addOnProgressListener ( new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    loading.calculatePercent ( taskSnapshot, pd );
-                }
-            });
+            uriFile = data.getData();
+            tv_path.setText(uriFile.toString());
         }
     }
 
@@ -130,6 +114,44 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
                 }
 
                 break;
+        }
+    }
+
+    public void oc_submit(View view) {
+        boolean successUpload = true;
+        if(uriFile != null)
+        {
+            successUpload = false;
+            // Create a storage reference from our app
+            FirebaseStorage storage = FirebaseStorage.getInstance ();
+            StorageReference storageRef = storage.getReference();
+
+            final Loading loading = new Loading ();
+            final ProgressDialog pd = loading.getProgressDialog ( this,"Upload Image... ");
+
+            final StorageReference riversRef = storageRef.child("files/tasks"+mission.getKeyID()+"/"+user.getKeyID());
+
+            riversRef.putFile(uriFile).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    riversRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            pd.dismiss();
+                        }
+                    });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    pd.dismiss ();
+                }
+            }).addOnProgressListener ( new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    loading.calculatePercent ( taskSnapshot, pd );
+                }
+            });
         }
     }
 }

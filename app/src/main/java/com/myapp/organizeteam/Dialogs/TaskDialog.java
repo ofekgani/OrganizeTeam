@@ -20,6 +20,7 @@ import com.myapp.organizeteam.Core.Date;
 import com.myapp.organizeteam.Core.Hour;
 import com.myapp.organizeteam.Core.Mission;
 import com.myapp.organizeteam.Core.Team;
+import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.ISavable;
 import com.myapp.organizeteam.MyService.APIService;
@@ -28,6 +29,9 @@ import com.myapp.organizeteam.MyService.Notification;
 import com.myapp.organizeteam.MyService.Sender;
 import com.myapp.organizeteam.R;
 import com.myapp.organizeteam.SubmitAssignmentActivity;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -64,6 +68,7 @@ public class TaskDialog extends AppCompatDialogFragment{
         btn_submit = view.findViewById(R.id.btn_SubmitAssignment);
 
         Bundle bundle = getArguments ();
+        final User user = (User)bundle.getSerializable(ConstantNames.USER);
 
         task = (Mission) bundle.getSerializable(ConstantNames.TASK);
 
@@ -83,6 +88,9 @@ public class TaskDialog extends AppCompatDialogFragment{
         btn_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Map<String,Object> save = new HashMap<>();
+                save.put(ConstantNames.USER,user);
+                save.put(ConstantNames.TASK,task);
                 activityTransition.goToWithResult(getActivity(), SubmitAssignmentActivity.class,121,null,null);
             }
         });
