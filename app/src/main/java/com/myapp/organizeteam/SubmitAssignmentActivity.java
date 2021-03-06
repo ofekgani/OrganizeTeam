@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,8 +27,11 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StreamDownloadTask;
 import com.google.firebase.storage.UploadTask;
+import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
+import com.myapp.organizeteam.Core.InputManagement;
 import com.myapp.organizeteam.Core.Mission;
+import com.myapp.organizeteam.Core.Submitter;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.Resources.Loading;
 
@@ -39,7 +43,11 @@ import java.io.Serializable;
 
 public class SubmitAssignmentActivity extends AppCompatActivity {
 
+    ActivityTransition activityTransition;
+    InputManagement inputManagement;
+
     TextView tv_path;
+    EditText ed_title, ed_content;
 
     Intent intent;
     User user;
@@ -54,7 +62,13 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_submit_assignment);
 
+        activityTransition = new ActivityTransition();
+        inputManagement = new InputManagement();
+
         tv_path = findViewById(R.id.tv_filePath);
+
+        ed_title = findViewById(R.id.ed_title);
+        ed_content = findViewById(R.id.ed_content);
 
         intent = getIntent();
         user = (User) intent.getSerializableExtra(ConstantNames.USER);
@@ -118,10 +132,8 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
     }
 
     public void oc_submit(View view) {
-        boolean successUpload = true;
         if(uriFile != null)
         {
-            successUpload = false;
             // Create a storage reference from our app
             FirebaseStorage storage = FirebaseStorage.getInstance ();
             StorageReference storageRef = storage.getReference();
@@ -137,6 +149,10 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
                     riversRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                         @Override
                         public void onComplete(@NonNull Task<Uri> task) {
+                            Submitter submitter = new Submitter(inputManagement.getInput(ed_title),inputManagement.getInput(ed_content),riversRef.getDownloadUrl().toString(),mission.getKeyID(),user.getKeyID());
+
+                            activityTransition.back(SubmitAssignmentActivity.this,null);
+
                             pd.dismiss();
                         }
                     });
@@ -152,6 +168,10 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
                     loading.calculatePercent ( taskSnapshot, pd );
                 }
             });
+        }
+        else
+        {
+            activityTransition.back(SubmitAssignmentActivity.this,null);
         }
     }
 }

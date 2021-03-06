@@ -3,26 +3,30 @@ package com.myapp.organizeteam.Core;
 import java.io.Serializable;
 
 public class Submitter implements Serializable {
-    String name;
+    String title;
     String content;
     String fileUrl;
     String taskID;
     String userID;
 
-    public Submitter(String name, String content, String fileUrl, String taskID, String userID) {
-        this.name = name;
+    public Submitter(String title, String content, String fileUrl, String taskID, String userID) {
+        this.title = title;
         this.content = content;
         this.fileUrl = fileUrl;
         this.taskID = taskID;
         this.userID = userID;
     }
 
-    public String getName() {
-        return name;
+    public Submitter() {
+
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getContent() {
