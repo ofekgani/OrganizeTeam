@@ -48,9 +48,11 @@ public class TaskDialog extends AppCompatDialogFragment{
 
 
     private Mission task;
+    private Team team;
+    private User user;
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public Dialog onCreateDialog(final Bundle savedInstanceState) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View view = inflater.inflate( R.layout.layout_dialog_task, null);
 
@@ -68,9 +70,10 @@ public class TaskDialog extends AppCompatDialogFragment{
         btn_submit = view.findViewById(R.id.btn_SubmitAssignment);
 
         Bundle bundle = getArguments ();
-        final User user = (User)bundle.getSerializable(ConstantNames.USER);
-
+        user = (User)bundle.getSerializable(ConstantNames.USER);
+        team = (Team) bundle.getSerializable(ConstantNames.TEAM);
         task = (Mission) bundle.getSerializable(ConstantNames.TASK);
+
 
         tv_name.setText ( ""+ task.getTaskName());
         tv_description.setText ( ""+ task.getTaskDescription());
@@ -91,7 +94,8 @@ public class TaskDialog extends AppCompatDialogFragment{
                 Map<String,Object> save = new HashMap<>();
                 save.put(ConstantNames.USER,user);
                 save.put(ConstantNames.TASK,task);
-                activityTransition.goToWithResult(getActivity(), SubmitAssignmentActivity.class,121,null,null);
+                save.put(ConstantNames.TEAM,team);
+                activityTransition.goToWithResult(getActivity(), SubmitAssignmentActivity.class,121,save,null);
             }
         });
 

@@ -15,6 +15,7 @@ import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Meeting;
 import com.myapp.organizeteam.Core.Mission;
 import com.myapp.organizeteam.Core.Role;
+import com.myapp.organizeteam.Core.Submitter;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.MyService.Token;
@@ -1178,7 +1179,15 @@ public class DataExtraction
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    tasks.add(ds.getValue().toString());
+                    if(ds.hasChildren())
+                    {
+                        Submitter task = ds.getValue(Submitter.class);
+                        tasks.add(task.getTaskID());
+                    }
+                    else
+                    {
+                        tasks.add(ds.getValue().toString());
+                    }
                 }
                 iSavable.onDataRead(tasks);
             }

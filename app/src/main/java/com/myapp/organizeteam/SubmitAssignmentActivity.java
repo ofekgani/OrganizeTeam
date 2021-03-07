@@ -22,6 +22,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -32,7 +37,9 @@ import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.InputManagement;
 import com.myapp.organizeteam.Core.Mission;
 import com.myapp.organizeteam.Core.Submitter;
+import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
+import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.Resources.Loading;
 
 import java.io.File;
@@ -45,6 +52,7 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
 
     ActivityTransition activityTransition;
     InputManagement inputManagement;
+    DataExtraction dataExtraction;
 
     TextView tv_path;
     EditText ed_title, ed_content;
@@ -52,6 +60,7 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
     Intent intent;
     User user;
     Mission mission;
+    Team team;
 
     Uri uriFile;
 
@@ -64,6 +73,7 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
 
         activityTransition = new ActivityTransition();
         inputManagement = new InputManagement();
+        dataExtraction = new DataExtraction();
 
         tv_path = findViewById(R.id.tv_filePath);
 
@@ -73,6 +83,7 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
         intent = getIntent();
         user = (User) intent.getSerializableExtra(ConstantNames.USER);
         mission = (Mission) intent.getSerializableExtra(ConstantNames.TASK);
+        team = (Team) intent.getSerializableExtra(ConstantNames.TEAM);
     }
 
     public void oc_getPath(View view) {
@@ -148,12 +159,29 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     riversRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                         @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            Submitter submitter = new Submitter(inputManagement.getInput(ed_title),inputManagement.getInput(ed_content),riversRef.getDownloadUrl().toString(),mission.getKeyID(),user.getKeyID());
+                        public void onComplete(@NonNull final Task<Uri> task) {
+                            final Submitter submitter = new Submitter(inputManagement.getInput(ed_title),inputManagement.getInput(ed_content),riversRef.getDownloadUrl().toString(),mission.getKeyID(),user.getKeyID());
+                            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.USER_ACTIVITY_PATH).child(team.getKeyID()).child(user.getKeyID()).child(ConstantNames.DATA_USER_TASKS);
+                            mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    for(DataSnapshot ds : snapshot.getChildren())
+                                    {
+                                        if(ds.getValue().equals(mission.getKeyID()))
+                                        {
+                                            String keyID = ds.getKey();
+                                            mDatabase.child(keyID).setValue(submitter);
+                                            activityTransition.back(SubmitAssignmentActivity.this,null);
+                                            pd.dismiss();
+                                        }
+                                    }
+                                }
 
-                            activityTransition.back(SubmitAssignmentActivity.this,null);
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
 
-                            pd.dismiss();
+                                }
+                            });
                         }
                     });
                 }
@@ -171,7 +199,27 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
         }
         else
         {
-            activityTransition.back(SubmitAssignmentActivity.this,null);
+            final Submitter submitter = new Submitter(inputManagement.getInput(ed_title),inputManagement.getInput(ed_content),null,mission.getKeyID(),user.getKeyID());
+            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.USER_ACTIVITY_PATH).child(team.getKeyID()).child(user.getKeyID()).child(ConstantNames.DATA_USER_TASKS);
+            mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot ds : snapshot.getChildren())
+                    {
+                        if(ds.getValue().equals(mission.getKeyID()))
+                        {
+                            String keyID = ds.getKey();
+                            mDatabase.child(keyID).setValue(submitter);
+                            activityTransition.back(SubmitAssignmentActivity.this,null);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
         }
     }
 }

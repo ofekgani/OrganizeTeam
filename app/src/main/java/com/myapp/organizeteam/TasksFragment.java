@@ -110,6 +110,7 @@ public class TasksFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(ConstantNames.TASK,tasksList.get(i));
                 bundle.putSerializable(ConstantNames.USER,user);
+                bundle.putSerializable(ConstantNames.TEAM,team);
                 DialogFragment taskDialog = new TaskDialog();
                 taskDialog.setArguments ( bundle );
 
