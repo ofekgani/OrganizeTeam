@@ -161,27 +161,10 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull final Task<Uri> task) {
                             final Submitter submitter = new Submitter(inputManagement.getInput(ed_title),inputManagement.getInput(ed_content),riversRef.getDownloadUrl().toString(),mission.getKeyID(),user.getKeyID());
-                            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.USER_ACTIVITY_PATH).child(team.getKeyID()).child(user.getKeyID()).child(ConstantNames.DATA_USER_TASKS);
-                            mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    for(DataSnapshot ds : snapshot.getChildren())
-                                    {
-                                        if(ds.getValue().equals(mission.getKeyID()))
-                                        {
-                                            String keyID = ds.getKey();
-                                            mDatabase.child(keyID).setValue(submitter);
-                                            activityTransition.back(SubmitAssignmentActivity.this,null);
-                                            pd.dismiss();
-                                        }
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
+                            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH).child(team.getKeyID()).child(mission.getKeyID()).child(ConstantNames.DATA_TASK_USER);
+                            mDatabase.child(user.getKeyID()).setValue(submitter);
+                            activityTransition.back(SubmitAssignmentActivity.this,null);
+                            pd.dismiss();
                         }
                     });
                 }
@@ -200,26 +183,9 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
         else
         {
             final Submitter submitter = new Submitter(inputManagement.getInput(ed_title),inputManagement.getInput(ed_content),null,mission.getKeyID(),user.getKeyID());
-            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.USER_ACTIVITY_PATH).child(team.getKeyID()).child(user.getKeyID()).child(ConstantNames.DATA_USER_TASKS);
-            mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for(DataSnapshot ds : snapshot.getChildren())
-                    {
-                        if(ds.getValue().equals(mission.getKeyID()))
-                        {
-                            String keyID = ds.getKey();
-                            mDatabase.child(keyID).setValue(submitter);
-                            activityTransition.back(SubmitAssignmentActivity.this,null);
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
+            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH).child(team.getKeyID()).child(mission.getKeyID()).child(ConstantNames.DATA_TASK_USER);
+            mDatabase.child(user.getKeyID()).setValue(submitter);
+            activityTransition.back(SubmitAssignmentActivity.this,null);
         }
     }
 }

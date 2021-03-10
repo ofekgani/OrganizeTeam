@@ -2,14 +2,11 @@ package com.myapp.organizeteam.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
@@ -22,21 +19,12 @@ import com.myapp.organizeteam.Core.Mission;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
-import com.myapp.organizeteam.DataManagement.ISavable;
-import com.myapp.organizeteam.MyService.APIService;
-import com.myapp.organizeteam.MyService.Data;
-import com.myapp.organizeteam.MyService.Notification;
-import com.myapp.organizeteam.MyService.Sender;
 import com.myapp.organizeteam.R;
 import com.myapp.organizeteam.SubmitAssignmentActivity;
+import com.myapp.organizeteam.SubmitsListActivity;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class TaskDialog extends AppCompatDialogFragment{
 
@@ -44,7 +32,7 @@ public class TaskDialog extends AppCompatDialogFragment{
     ActivityTransition activityTransition;
 
     private TextView tv_name, tv_description, tv_date;
-    private Button btn_cancel, btn_submit;
+    private Button btn_cancel, btn_submit, btn_submittersList;
 
 
     private Mission task;
@@ -68,6 +56,7 @@ public class TaskDialog extends AppCompatDialogFragment{
 
         btn_cancel = view.findViewById(R.id.btn_cancel);
         btn_submit = view.findViewById(R.id.btn_SubmitAssignment);
+        btn_submittersList = view.findViewById(R.id.btn_ShowSubmits);
 
         Bundle bundle = getArguments ();
         user = (User)bundle.getSerializable(ConstantNames.USER);
@@ -96,6 +85,16 @@ public class TaskDialog extends AppCompatDialogFragment{
                 save.put(ConstantNames.TASK,task);
                 save.put(ConstantNames.TEAM,team);
                 activityTransition.goToWithResult(getActivity(), SubmitAssignmentActivity.class,121,save,null);
+            }
+        });
+
+        btn_submittersList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Map<String,Object> save = new HashMap<>();
+                save.put(ConstantNames.TASK,task);
+                save.put(ConstantNames.TEAM,team);
+                activityTransition.goTo(getActivity(), SubmitsListActivity.class,false,save,null);
             }
         });
 

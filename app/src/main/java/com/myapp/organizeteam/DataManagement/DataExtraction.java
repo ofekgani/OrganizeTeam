@@ -1198,4 +1198,39 @@ public class DataExtraction
             }
         });
     }
+
+    public void getSubmitters(String teamID, String taskID, final ISavable iSavable)
+    {
+        final ArrayList<String> usersID = new ArrayList<>();
+
+        final DatabaseReference mDatabase = getDatabaseReference(ConstantNames.TASK_PATH).child(teamID).child(taskID);
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.hasChild(ConstantNames.DATA_TASK_USER))
+                {
+                    for (DataSnapshot ds : snapshot.child(ConstantNames.DATA_TASK_USER).getChildren())
+                    {
+                        usersID.add(ds.getKey().toString());
+                    }
+                    getUsersByKeys(usersID, new ISavable() {
+                        @Override
+                        public void onDataRead(Object save) {
+                            iSavable.onDataRead(save);
+                        }
+                    });
+                }
+                else
+                {
+                    iSavable.onDataRead(null);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 }
