@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:backgroundTint="@color/primaryColor"
-            app:title="Submit assignment"
+            app:title="Submits list"
             tools:layout_editor_absoluteX="2dp"
             tools:layout_editor_absoluteY="-2dp"></com.google.android.material.appbar.MaterialToolbar>
 
