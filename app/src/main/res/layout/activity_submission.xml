@@ -15,7 +15,7 @@
         android:fontFamily="@font/sans_semi_bold"
         android:gravity="center"
         android:onClick="oc_reply"
-        android:text="Reply"
+        android:text="Add reply"
         android:textAllCaps="false"
         android:textColor="#ffffff"
         android:textSize="15sp"

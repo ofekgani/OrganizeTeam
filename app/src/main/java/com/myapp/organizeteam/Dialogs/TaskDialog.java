@@ -92,6 +92,7 @@ public class TaskDialog extends AppCompatDialogFragment{
             @Override
             public void onClick(View v) {
                 Map<String,Object> save = new HashMap<>();
+                save.put(ConstantNames.USER,user);
                 save.put(ConstantNames.TASK,task);
                 save.put(ConstantNames.TEAM,team);
                 activityTransition.goTo(getActivity(), SubmitsListActivity.class,false,save,null);

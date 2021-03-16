@@ -75,4 +75,6 @@ public class ConstantNames {
     public static final String DATA_ROLE_TASK_PERMISSION = "tasksPermission";
     public static final String DATA_TASK_USER = "users";
     public static final String SUBMITTER = "submitter";
+    public static final String DATA_TASK_REPLIES = "responses";
+    public static final String USER_SUBMITTER = "userSubmitter";
 }

@@ -44,6 +44,7 @@ public class SubmitsListActivity extends AppCompatActivity {
     Intent intent;
     Team team;
     Mission mission;
+    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +59,7 @@ public class SubmitsListActivity extends AppCompatActivity {
         intent = getIntent();
         team = (Team) intent.getSerializableExtra(ConstantNames.TEAM);
         mission = (Mission) intent.getSerializableExtra(ConstantNames.TASK);
+        user = (User) intent.getSerializableExtra(ConstantNames.USER);
 
         dataExtraction.getSubmitters(team.getKeyID(), mission.getKeyID(), new ISavable() {
             @Override
@@ -90,8 +92,10 @@ public class SubmitsListActivity extends AppCompatActivity {
                     public void onDataRead(Object submitter) {
                         Map<String,Object> save = new HashMap<>();
                         save.put(ConstantNames.TASK,mission);
-                        save.put(ConstantNames.USER,usersList.get(position));
+                        save.put(ConstantNames.USER_SUBMITTER,usersList.get(position));
                         save.put(ConstantNames.SUBMITTER,submitter);
+                        save.put(ConstantNames.USER,user);
+                        save.put(ConstantNames.TEAM,team);
                         activityTransition.goTo(SubmitsListActivity.this,SubmissionActivity.class,false,save,null);
                     }
                 });

@@ -13,17 +13,23 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Mission;
 import com.myapp.organizeteam.Core.Submitter;
+import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.Resources.Image;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.os.Environment.DIRECTORY_DOWNLOADS;
 
 public class SubmissionActivity extends AppCompatActivity {
 
     Image image;
+    ActivityTransition activityTransition;
 
     TextView tv_title, tv_content, tv_userName, tv_fileName;
     ImageView mv_userLogo, mv_fileDownload;
@@ -32,8 +38,9 @@ public class SubmissionActivity extends AppCompatActivity {
     Intent intent;
 
     Mission mission;
-    User user;
+    User user,userSubmitter;
     Submitter submitter;
+    Team team;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +48,7 @@ public class SubmissionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_submission);
 
         image = new Image();
+        activityTransition = new ActivityTransition();
 
         tv_userName = findViewById(R.id.tv_userName);
         tv_fileName = findViewById(R.id.tv_fileName);
@@ -57,13 +65,15 @@ public class SubmissionActivity extends AppCompatActivity {
         mission = (Mission) intent.getSerializableExtra(ConstantNames.TASK);
         user = (User) intent.getSerializableExtra(ConstantNames.USER);
         submitter = (Submitter) intent.getSerializableExtra(ConstantNames.SUBMITTER);
+        userSubmitter = (User) intent.getSerializableExtra(ConstantNames.USER_SUBMITTER);
+        team = (Team) intent.getSerializableExtra(ConstantNames.TEAM);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(""+mission.getTaskName());
 
-        tv_userName.setText(""+user.getFullName());
-        image.setImageUri(user.getLogo(),mv_userLogo);
+        tv_userName.setText(""+userSubmitter.getFullName());
+        image.setImageUri(userSubmitter.getLogo(),mv_userLogo);
 
         tv_title.setText(""+submitter.getTitle());
         tv_content.setText(""+submitter.getContent());
@@ -89,6 +99,12 @@ public class SubmissionActivity extends AppCompatActivity {
     }
 
     public void oc_reply(View view) {
+        Map<String,Object> save = new HashMap<>();
+        save.put(ConstantNames.SUBMITTER,submitter);
+        save.put(ConstantNames.USER,user);
+        save.put(ConstantNames.TASK,mission);
+        save.put(ConstantNames.TEAM,team);
+        activityTransition.goTo(SubmissionActivity.this,TaskReplyActivity.class,false,save,null);
     }
 
     @Override

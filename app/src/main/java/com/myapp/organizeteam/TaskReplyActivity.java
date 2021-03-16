@@ -13,26 +13,19 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.OpenableColumns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StreamDownloadTask;
 import com.google.firebase.storage.UploadTask;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
@@ -44,13 +37,7 @@ import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.Resources.Loading;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.Serializable;
-
-public class SubmitAssignmentActivity extends AppCompatActivity {
+public class TaskReplyActivity extends AppCompatActivity {
 
     ActivityTransition activityTransition;
     InputManagement inputManagement;
@@ -61,6 +48,7 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
 
     Intent intent;
     User user;
+    Submitter submitter;
     Mission mission;
     Team team;
 
@@ -71,7 +59,7 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_submit_assignment);
+        setContentView(R.layout.activity_task_reply);
 
         activityTransition = new ActivityTransition();
         inputManagement = new InputManagement();
@@ -84,8 +72,78 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
 
         intent = getIntent();
         user = (User) intent.getSerializableExtra(ConstantNames.USER);
+        submitter = (Submitter) intent.getSerializableExtra(ConstantNames.SUBMITTER);
         mission = (Mission) intent.getSerializableExtra(ConstantNames.TASK);
         team = (Team) intent.getSerializableExtra(ConstantNames.TEAM);
+    }
+
+    public String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
+    }
+
+    public void oc_reply(View view) {
+        if(uriFile != null)
+        {
+            // Create a storage reference from our app
+            FirebaseStorage storage = FirebaseStorage.getInstance ();
+            StorageReference storageRef = storage.getReference();
+
+            final Loading loading = new Loading ();
+            final ProgressDialog pd = loading.getProgressDialog ( this,"Upload File... ");
+
+            final StorageReference riversRef = storageRef.child("files/responses/"+mission.getKeyID()+"/"+user.getKeyID());
+
+            riversRef.putFile(uriFile).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            final Submitter reply = new Submitter(inputManagement.getInput(ed_title),inputManagement.getInput(ed_content),uri.toString(), getFileName(uriFile), mission.getKeyID(),user.getKeyID());
+                            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH).child(team.getKeyID()).child(mission.getKeyID()).child(ConstantNames.DATA_TASK_USER);
+                            mDatabase.child(submitter.getUserID()).child(ConstantNames.DATA_TASK_REPLIES).child(user.getKeyID()).setValue(reply);
+                            activityTransition.back(TaskReplyActivity.this);
+                            pd.dismiss();
+                        }
+                    });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    pd.dismiss ();
+                }
+            }).addOnProgressListener ( new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    loading.calculatePercent ( taskSnapshot, pd );
+                }
+            });
+        }
+        else
+        {
+            final Submitter reply = new Submitter(inputManagement.getInput(ed_title),inputManagement.getInput(ed_content),null, null, mission.getKeyID(),user.getKeyID());
+            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH).child(team.getKeyID()).child(mission.getKeyID()).child(ConstantNames.DATA_TASK_USER);
+            mDatabase.child(submitter.getUserID()).child(ConstantNames.DATA_TASK_REPLIES).child(user.getKeyID()).setValue(reply);
+            activityTransition.back(TaskReplyActivity.this);
+        }
     }
 
     public void oc_getPath(View view) {
@@ -139,77 +197,7 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
                 {
                     Toast.makeText (this,"Premission denied...!",Toast.LENGTH_LONG ).show ();
                 }
-
                 break;
         }
-    }
-
-    public void oc_submit(View view) {
-        if(uriFile != null)
-        {
-            // Create a storage reference from our app
-            FirebaseStorage storage = FirebaseStorage.getInstance ();
-            StorageReference storageRef = storage.getReference();
-
-            final Loading loading = new Loading ();
-            final ProgressDialog pd = loading.getProgressDialog ( this,"Upload File... ");
-
-            final StorageReference riversRef = storageRef.child("files/tasks/"+mission.getKeyID()+"/"+user.getKeyID());
-
-            riversRef.putFile(uriFile).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            final Submitter submitter = new Submitter(inputManagement.getInput(ed_title),inputManagement.getInput(ed_content),uri.toString(), getFileName(uriFile), mission.getKeyID(),user.getKeyID());
-                            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH).child(team.getKeyID()).child(mission.getKeyID()).child(ConstantNames.DATA_TASK_USER);
-                            mDatabase.child(user.getKeyID()).setValue(submitter);
-                            activityTransition.back(SubmitAssignmentActivity.this,null);
-                            pd.dismiss();
-                        }
-                    });
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    pd.dismiss ();
-                }
-            }).addOnProgressListener ( new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    loading.calculatePercent ( taskSnapshot, pd );
-                }
-            });
-        }
-        else
-        {
-            final Submitter submitter = new Submitter(inputManagement.getInput(ed_title),inputManagement.getInput(ed_content),null, null, mission.getKeyID(),user.getKeyID());
-            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH).child(team.getKeyID()).child(mission.getKeyID()).child(ConstantNames.DATA_TASK_USER);
-            mDatabase.child(user.getKeyID()).setValue(submitter);
-            activityTransition.back(SubmitAssignmentActivity.this,null);
-        }
-    }
-
-    public String getFileName(Uri uri) {
-        String result = null;
-        if (uri.getScheme().equals("content")) {
-            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-            try {
-                if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                }
-            } finally {
-                cursor.close();
-            }
-        }
-        if (result == null) {
-            result = uri.getPath();
-            int cut = result.lastIndexOf('/');
-            if (cut != -1) {
-                result = result.substring(cut + 1);
-            }
-        }
-        return result;
     }
 }
