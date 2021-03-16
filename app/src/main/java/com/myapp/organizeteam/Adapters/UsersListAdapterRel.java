@@ -23,11 +23,12 @@ import java.util.ArrayList;
  * @since 30-07-2020
  */
 public class UsersListAdapterRel extends RecyclerView.Adapter<UsersListAdapterRel.ExampleViewHolder> {
+    private RecycleViewClickListener listener;
     private ArrayList<User> mExampleList;
 
     Image image = new Image ();
 
-    public static class ExampleViewHolder extends RecyclerView.ViewHolder {
+    public class ExampleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView tv_name;
         ImageView mv_logo;
@@ -38,11 +39,20 @@ public class UsersListAdapterRel extends RecyclerView.Adapter<UsersListAdapterRe
             tv_name = itemView.findViewById(R.id.tv_userName);
             mv_logo = itemView.findViewById(R.id.mv_userLogo);
             checkBox = itemView.findViewById(R.id.cb_createMeeting);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if(listener == null) return;
+            listener.onClick(view,getAdapterPosition());
         }
     }
 
-    public UsersListAdapterRel(ArrayList<User> exampleList) {
+    public UsersListAdapterRel(ArrayList<User> exampleList, RecycleViewClickListener listener) {
         mExampleList = exampleList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -75,5 +85,10 @@ public class UsersListAdapterRel extends RecyclerView.Adapter<UsersListAdapterRe
         if(mExampleList.isEmpty())
             return 0;
         return mExampleList.size();
+    }
+
+    public interface RecycleViewClickListener
+    {
+        void onClick(View v, int position);
     }
 }

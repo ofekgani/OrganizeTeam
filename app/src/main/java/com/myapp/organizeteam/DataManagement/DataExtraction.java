@@ -1233,4 +1233,20 @@ public class DataExtraction
             }
         });
     }
+
+    public void getSubmitterTask(String teamID, String taskID, String userID, final ISavable iSavable) {
+        final DatabaseReference mDatabase = getDatabaseReference(ConstantNames.TASK_PATH).child(teamID).child(taskID).child(ConstantNames.DATA_TASK_USER).child(userID);
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Submitter submitter = (Submitter) getValue(snapshot,Submitter.class);
+                iSavable.onDataRead(submitter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 }

@@ -6,12 +6,14 @@ public class Submitter implements Serializable {
     String title;
     String content;
     String fileUrl;
+    String fileName;
     String taskID;
     String userID;
 
-    public Submitter(String title, String content, String fileUrl, String taskID, String userID) {
+    public Submitter(String title, String content, String fileUrl, String fileName, String taskID, String userID) {
         this.title = title;
         this.content = content;
+        this.fileName = fileName;
         this.fileUrl = fileUrl;
         this.taskID = taskID;
         this.userID = userID;
@@ -59,5 +61,13 @@ public class Submitter implements Serializable {
 
     public void setUserID(String userID) {
         this.userID = userID;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

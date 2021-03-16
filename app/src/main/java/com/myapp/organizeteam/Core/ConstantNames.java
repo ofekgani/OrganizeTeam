@@ -74,4 +74,5 @@ public class ConstantNames {
     public static final String DATA_USER_TASKS = "tasks";
     public static final String DATA_ROLE_TASK_PERMISSION = "tasksPermission";
     public static final String DATA_TASK_USER = "users";
+    public static final String SUBMITTER = "submitter";
 }

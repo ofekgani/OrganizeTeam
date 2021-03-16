@@ -9,10 +9,12 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.OpenableColumns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -152,15 +154,15 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
             final Loading loading = new Loading ();
             final ProgressDialog pd = loading.getProgressDialog ( this,"Upload Image... ");
 
-            final StorageReference riversRef = storageRef.child("files/tasks"+mission.getKeyID()+"/"+user.getKeyID());
+            final StorageReference riversRef = storageRef.child("files/tasks/"+mission.getKeyID()+"/"+user.getKeyID());
 
             riversRef.putFile(uriFile).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    riversRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
-                        public void onComplete(@NonNull final Task<Uri> task) {
-                            final Submitter submitter = new Submitter(inputManagement.getInput(ed_title),inputManagement.getInput(ed_content),riversRef.getDownloadUrl().toString(),mission.getKeyID(),user.getKeyID());
+                        public void onSuccess(Uri uri) {
+                            final Submitter submitter = new Submitter(inputManagement.getInput(ed_title),inputManagement.getInput(ed_content),uri.toString(), getFileName(uriFile), mission.getKeyID(),user.getKeyID());
                             final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH).child(team.getKeyID()).child(mission.getKeyID()).child(ConstantNames.DATA_TASK_USER);
                             mDatabase.child(user.getKeyID()).setValue(submitter);
                             activityTransition.back(SubmitAssignmentActivity.this,null);
@@ -182,10 +184,32 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
         }
         else
         {
-            final Submitter submitter = new Submitter(inputManagement.getInput(ed_title),inputManagement.getInput(ed_content),null,mission.getKeyID(),user.getKeyID());
+            final Submitter submitter = new Submitter(inputManagement.getInput(ed_title),inputManagement.getInput(ed_content),null, null, mission.getKeyID(),user.getKeyID());
             final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH).child(team.getKeyID()).child(mission.getKeyID()).child(ConstantNames.DATA_TASK_USER);
             mDatabase.child(user.getKeyID()).setValue(submitter);
             activityTransition.back(SubmitAssignmentActivity.this,null);
         }
+    }
+
+    public String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
     }
 }

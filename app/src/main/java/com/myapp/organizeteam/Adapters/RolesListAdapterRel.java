@@ -77,7 +77,7 @@ public class RolesListAdapterRel extends RecyclerView.Adapter<RolesListAdapterRe
 
                 holder.lv_users.setHasFixedSize(true);
                 mLayoutManager = new LinearLayoutManager(mContext);
-                rolesAdapter = new UsersListAdapterRel((ArrayList<User>) save);
+                rolesAdapter = new UsersListAdapterRel((ArrayList<User>) save,null);
                 holder.lv_users.setLayoutManager(mLayoutManager);
                 holder.lv_users.setAdapter(rolesAdapter);
 

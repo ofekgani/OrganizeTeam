@@ -85,7 +85,7 @@ public class UsersListFragment extends Fragment{
         {
             lv_users.setHasFixedSize(true);
             mLayoutManager = new LinearLayoutManager(inflater.getContext(),LinearLayoutManager.VERTICAL, false);
-            usersAdapter = new UsersListAdapterRel(users);
+            usersAdapter = new UsersListAdapterRel(users,null);
             lv_users.setLayoutManager(mLayoutManager);
             lv_users.setAdapter(usersAdapter);
         }

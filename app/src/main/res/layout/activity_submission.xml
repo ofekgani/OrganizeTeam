@@ -6,6 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".SubmissionActivity">
 
+    <Button
+        android:id="@+id/btn_register"
+        android:layout_width="115dp"
+        android:layout_height="36dp"
+        android:layout_marginBottom="60dp"
+        android:background="@drawable/button"
+        android:fontFamily="@font/sans_semi_bold"
+        android:gravity="center"
+        android:onClick="oc_reply"
+        android:text="Reply"
+        android:textAllCaps="false"
+        android:textColor="#ffffff"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout2"
+        app:layout_constraintVertical_bias="1.0" />
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout2"
         android:layout_width="match_parent"
@@ -30,6 +50,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:fillViewport="true"
         app:layout_constraintBottom_toTopOf="@+id/cardView"
@@ -96,8 +117,8 @@
         android:layout_width="200dp"
         android:layout_height="56dp"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_register"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -115,6 +136,7 @@
                 android:layout_weight="5"></Space>
 
             <TextView
+                android:id="@+id/tv_fileName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="File name"></TextView>
@@ -125,6 +147,7 @@
                 android:layout_weight="90"></Space>
 
             <ImageView
+                android:id="@+id/mv_fileDownload"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@android:drawable/ic_menu_upload"
