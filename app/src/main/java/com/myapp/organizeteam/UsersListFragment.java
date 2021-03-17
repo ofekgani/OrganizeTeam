@@ -7,20 +7,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.tabs.TabLayout;
 import com.myapp.organizeteam.Adapters.UsersListAdapterRel;
 import com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
-import com.myapp.organizeteam.Resources.Image;
+import com.myapp.organizeteam.Resources.FileManage;
 
 import java.util.ArrayList;
 
@@ -28,7 +26,7 @@ import static com.myapp.organizeteam.DataManagement.Authorization.isManager;
 
 public class UsersListFragment extends Fragment{
 
-    Image image;
+    FileManage fileManage;
 
     TextView tv_managerName;
     ImageView mv_managerLogo;
@@ -53,7 +51,7 @@ public class UsersListFragment extends Fragment{
         View v = inflater.inflate(R.layout.fragment_users_list, container, false);
         this.inflater = inflater;
 
-        image = new Image ();
+        fileManage = new FileManage();
 
         tv_managerName = v.findViewById ( R.id.tv_userName);
         mv_managerLogo = v.findViewById ( R.id.mv_userLogo);
@@ -77,7 +75,7 @@ public class UsersListFragment extends Fragment{
 
     private void updateManagerUI() {
         tv_managerName.setText ( ""+manager.getFullName() );
-        image.setImageUri (manager.getLogo(), mv_managerLogo );
+        fileManage.setImageUri (manager.getLogo(), mv_managerLogo );
     }
 
     private void setAdapter(ArrayList<User> users,ArrayList<User> requests) {

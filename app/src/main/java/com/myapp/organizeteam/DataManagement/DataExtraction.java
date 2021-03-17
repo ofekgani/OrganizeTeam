@@ -1026,7 +1026,7 @@ public class DataExtraction
                     {
                         if(r.equals(ds.getKey()))
                         {
-                            for(DataSnapshot userID : ds.child(ConstantNames.DATA_USERS_SELECTED).getChildren())
+                            for(DataSnapshot userID : ds.child(ConstantNames.DATA_USERS_LIST).getChildren())
                             {
                                 usersID.add(userID.getValue().toString());
                             }
@@ -1207,9 +1207,9 @@ public class DataExtraction
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.hasChild(ConstantNames.DATA_TASK_USER))
+                if(snapshot.hasChild(ConstantNames.DATA_USERS_LIST))
                 {
-                    for (DataSnapshot ds : snapshot.child(ConstantNames.DATA_TASK_USER).getChildren())
+                    for (DataSnapshot ds : snapshot.child(ConstantNames.DATA_USERS_LIST).getChildren())
                     {
                         usersID.add(ds.getKey().toString());
                     }
@@ -1235,7 +1235,7 @@ public class DataExtraction
     }
 
     public void getSubmitterTask(String teamID, String taskID, String userID, final ISavable iSavable) {
-        final DatabaseReference mDatabase = getDatabaseReference(ConstantNames.TASK_PATH).child(teamID).child(taskID).child(ConstantNames.DATA_TASK_USER).child(userID);
+        final DatabaseReference mDatabase = getDatabaseReference(ConstantNames.TASK_PATH).child(teamID).child(taskID).child(ConstantNames.DATA_USERS_LIST).child(userID);
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

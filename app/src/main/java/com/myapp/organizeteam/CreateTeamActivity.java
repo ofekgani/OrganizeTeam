@@ -20,7 +20,7 @@ import com.myapp.organizeteam.Core.InputManagement;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.Core.ConstantNames;
-import com.myapp.organizeteam.Resources.Image;
+import com.myapp.organizeteam.Resources.FileManage;
 import com.myapp.organizeteam.Core.Team;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -46,7 +46,7 @@ public class CreateTeamActivity extends AppCompatActivity {
     ActivityTransition activityTransition = new ActivityTransition ();
     DataExtraction dataExtraction = new DataExtraction ();
     InputManagement userInput = new InputManagement ();
-    Image image = new Image ();
+    FileManage fileManage = new FileManage();
 
     Intent intent;
 
@@ -80,15 +80,15 @@ public class CreateTeamActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult ( requestCode, resultCode, data );
 
-        if(image.imageSelectedFromGallery ( requestCode, resultCode ))
+        if(fileManage.imageSelectedFromGallery ( requestCode, resultCode ))
         {
-            imageUri = image.getImageUri ( data );
-            image.cropImage ( imageUri,this );
+            imageUri = fileManage.getImageUri ( data );
+            fileManage.cropImage ( imageUri,this );
         }
-        else if(image.isImageCropped ( requestCode, resultCode ))
+        else if(fileManage.isImageCropped ( requestCode, resultCode ))
         {
-            imageUriResultCrop = image.getCropOutput ( data );
-            image.setImageUri ( imageUriResultCrop.toString (),mv_logo );
+            imageUriResultCrop = fileManage.getCropOutput ( data );
+            fileManage.setImageUri ( imageUriResultCrop.toString (),mv_logo );
         }
     }
 
@@ -101,7 +101,7 @@ public class CreateTeamActivity extends AppCompatActivity {
             case PERMISSION_CODE:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
-                    image.pickImageFromGallery(this);
+                    fileManage.pickImageFromGallery(this);
                 }
                 else
                 {
@@ -193,12 +193,12 @@ public class CreateTeamActivity extends AppCompatActivity {
             }
             else
             {
-                image.pickImageFromGallery(this);
+                fileManage.pickImageFromGallery(this);
             }
         }
         else
         {
-            image.pickImageFromGallery(this);
+            fileManage.pickImageFromGallery(this);
         }
     }
 }

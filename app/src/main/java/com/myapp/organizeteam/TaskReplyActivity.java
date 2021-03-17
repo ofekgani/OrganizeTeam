@@ -35,6 +35,7 @@ import com.myapp.organizeteam.Core.Submitter;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
+import com.myapp.organizeteam.Resources.FileManage;
 import com.myapp.organizeteam.Resources.Loading;
 
 public class TaskReplyActivity extends AppCompatActivity {
@@ -42,11 +43,13 @@ public class TaskReplyActivity extends AppCompatActivity {
     ActivityTransition activityTransition;
     InputManagement inputManagement;
     DataExtraction dataExtraction;
+    FileManage fileManage;
 
     TextView tv_path;
     EditText ed_title, ed_content;
 
     Intent intent;
+
     User user;
     Submitter submitter;
     Mission mission;
@@ -64,6 +67,7 @@ public class TaskReplyActivity extends AppCompatActivity {
         activityTransition = new ActivityTransition();
         inputManagement = new InputManagement();
         dataExtraction = new DataExtraction();
+        fileManage = new FileManage();
 
         tv_path = findViewById(R.id.tv_filePath);
 
@@ -77,31 +81,17 @@ public class TaskReplyActivity extends AppCompatActivity {
         team = (Team) intent.getSerializableExtra(ConstantNames.TEAM);
     }
 
-    public String getFileName(Uri uri) {
-        String result = null;
-        if (uri.getScheme().equals("content")) {
-            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-            try {
-                if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                }
-            } finally {
-                cursor.close();
-            }
-        }
-        if (result == null) {
-            result = uri.getPath();
-            int cut = result.lastIndexOf('/');
-            if (cut != -1) {
-                result = result.substring(cut + 1);
-            }
-        }
-        return result;
-    }
-
     public void oc_reply(View view) {
+
+        final String title = inputManagement.getInput(ed_title);
+        final String content = inputManagement.getInput(ed_content);
+
+        final String taskID = mission.getKeyID();
+        final String userID = user.getKeyID();
+
         if(uriFile != null)
         {
+
             // Create a storage reference from our app
             FirebaseStorage storage = FirebaseStorage.getInstance ();
             StorageReference storageRef = storage.getReference();
@@ -109,7 +99,7 @@ public class TaskReplyActivity extends AppCompatActivity {
             final Loading loading = new Loading ();
             final ProgressDialog pd = loading.getProgressDialog ( this,"Upload File... ");
 
-            final StorageReference riversRef = storageRef.child("files/responses/"+mission.getKeyID()+"/"+user.getKeyID());
+            final StorageReference riversRef = storageRef.child("files/responses/"+taskID+"/"+userID);
 
             riversRef.putFile(uriFile).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -117,10 +107,21 @@ public class TaskReplyActivity extends AppCompatActivity {
                     riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            final Submitter reply = new Submitter(inputManagement.getInput(ed_title),inputManagement.getInput(ed_content),uri.toString(), getFileName(uriFile), mission.getKeyID(),user.getKeyID());
-                            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH).child(team.getKeyID()).child(mission.getKeyID()).child(ConstantNames.DATA_TASK_USER);
-                            mDatabase.child(submitter.getUserID()).child(ConstantNames.DATA_TASK_REPLIES).child(user.getKeyID()).setValue(reply);
+                            String fileName = fileManage.getFileName(uriFile);
+
+                            final Submitter reply = new Submitter(title,content,uri.toString(), fileName, taskID, userID);
+
+                            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH)
+                                    .child(team.getKeyID())
+                                    .child(taskID)
+                                    .child(ConstantNames.DATA_USERS_LIST)
+                                    .child(submitter.getUserID())
+                                    .child(ConstantNames.DATA_TASK_REPLIES)
+                                    .child(userID);
+                            mDatabase.setValue(reply);
+
                             activityTransition.back(TaskReplyActivity.this);
+
                             pd.dismiss();
                         }
                     });
@@ -139,9 +140,17 @@ public class TaskReplyActivity extends AppCompatActivity {
         }
         else
         {
-            final Submitter reply = new Submitter(inputManagement.getInput(ed_title),inputManagement.getInput(ed_content),null, null, mission.getKeyID(),user.getKeyID());
-            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH).child(team.getKeyID()).child(mission.getKeyID()).child(ConstantNames.DATA_TASK_USER);
-            mDatabase.child(submitter.getUserID()).child(ConstantNames.DATA_TASK_REPLIES).child(user.getKeyID()).setValue(reply);
+            final Submitter reply = new Submitter(title,content,null, null, taskID, userID);
+
+            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH)
+                    .child(team.getKeyID())
+                    .child(taskID)
+                    .child(ConstantNames.DATA_USERS_LIST)
+                    .child(submitter.getUserID())
+                    .child(ConstantNames.DATA_TASK_REPLIES)
+                    .child(userID);
+            mDatabase.setValue(reply);
+
             activityTransition.back(TaskReplyActivity.this);
         }
     }
@@ -156,16 +165,12 @@ public class TaskReplyActivity extends AppCompatActivity {
             }
             else
             {
-                Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                fileIntent.setType("*/*");
-                startActivityForResult(fileIntent,190);
+                fileManage.pickFile(this);
             }
         }
         else
         {
-            Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
-            fileIntent.setType("*/*");
-            startActivityForResult(fileIntent,190);
+            fileManage.pickFile(this);
         }
     }
 
@@ -173,7 +178,7 @@ public class TaskReplyActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode == RESULT_OK && requestCode == 190)
+        if(resultCode == RESULT_OK && requestCode == fileManage.FILE_PICK_CODE)
         {
             uriFile = data.getData();
             tv_path.setText(uriFile.toString());
@@ -189,9 +194,7 @@ public class TaskReplyActivity extends AppCompatActivity {
             case PERMISSION_CODE:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
-                    Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                    fileIntent.setType("*/*");
-                    startActivityForResult(fileIntent,190);
+                    fileManage.pickFile(this);
                 }
                 else
                 {

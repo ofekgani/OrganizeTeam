@@ -30,7 +30,7 @@ import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.DataPass;
 import com.myapp.organizeteam.DataManagement.IRegister;
 import com.myapp.organizeteam.DataManagement.ISavable;
-import com.myapp.organizeteam.Resources.Image;
+import com.myapp.organizeteam.Resources.FileManage;
 import com.myapp.organizeteam.Resources.Loading;
 import com.myapp.organizeteam.Resources.Stepper;
 import com.stepstone.stepper.Step;
@@ -48,7 +48,7 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
     InputManagement input;
     Loading progressBar;
     Stepper stepper;
-    Image image;
+    FileManage fileManage;
 
     StepperLayout mStepperLayout;
 
@@ -77,7 +77,7 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
         input = new InputManagement ();
         stepper = new Stepper();
         progressBar = new Loading ( );
-        image = new Image();
+        fileManage = new FileManage();
         dataExtraction = new DataExtraction();
 
         pb = v.findViewById(R.id.pb_next);
@@ -169,12 +169,12 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
                     }
                     else
                     {
-                        image.pickImageFromGallery(StepThreeRegisterFragment.this);
+                        fileManage.pickImageFromGallery(StepThreeRegisterFragment.this);
                     }
                 }
                 else
                 {
-                    image.pickImageFromGallery(StepThreeRegisterFragment.this);
+                    fileManage.pickImageFromGallery(StepThreeRegisterFragment.this);
                 }
             }
         });
@@ -286,15 +286,15 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(data == null) return;
-        if(resultCode == RESULT_OK && requestCode == image.IMAGE_PICK_CODE)
+        if(resultCode == RESULT_OK && requestCode == fileManage.IMAGE_PICK_CODE)
         {
-            Uri imageUri = image.getImageUri(data);
-            image.cropImage(imageUri,getContext(),StepThreeRegisterFragment.this);
+            Uri imageUri = fileManage.getImageUri(data);
+            fileManage.cropImage(imageUri,getContext(),StepThreeRegisterFragment.this);
         }
         else if(requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK)
         {
-            Uri imageUriResultCrop = image.getCropOutput(data);
-            image.setImageUri(imageUriResultCrop.toString(),mv_userLogo);
+            Uri imageUriResultCrop = fileManage.getCropOutput(data);
+            fileManage.setImageUri(imageUriResultCrop.toString(),mv_userLogo);
             imageUriResult = imageUriResultCrop;
         }
     }
@@ -308,7 +308,7 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
             case PERMISSION_CODE:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
-                    image.pickImageFromGallery(this);
+                    fileManage.pickImageFromGallery(this);
                 }
                 else
                 {
@@ -342,7 +342,7 @@ public class StepThreeRegisterFragment extends Fragment implements Step {
                 }
                 if(user.getLogo() != null && user.getLogo() != "")
                 {
-                    image.setImageUri(user.getLogo(),mv_userLogo);
+                    fileManage.setImageUri(user.getLogo(),mv_userLogo);
                 }
             }
         }

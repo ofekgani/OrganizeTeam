@@ -1,9 +1,12 @@
 package com.myapp.organizeteam.Resources;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
+import android.provider.OpenableColumns;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -17,9 +20,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-public class Image  extends AppCompatActivity {
+public class FileManage extends AppCompatActivity {
 
     public static final int IMAGE_PICK_CODE = 1000;
+    public static final int FILE_PICK_CODE = 190;
     private static final String SAMPLE_CROPPED_IMG_NAME = "SampleCropImg";
 
     /**
@@ -110,5 +114,45 @@ public class Image  extends AppCompatActivity {
     public Uri getImageUri(@Nullable Intent data) {
         if(data == null) return null;
         return data.getData ();
+    }
+
+    public void downloadFile(Context context, String fileName, String destinationDirectory, String url) {
+        DownloadManager downloadmanager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        Uri uri = Uri.parse(url);
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalFilesDir(context, destinationDirectory, fileName);
+
+        downloadmanager.enqueue(request);
+    }
+
+    public String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
+    }
+
+    public void pickFile(Activity activity)
+    {
+        Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        fileIntent.setType("*/*");
+        activity.startActivityForResult(fileIntent,FILE_PICK_CODE);
     }
 }

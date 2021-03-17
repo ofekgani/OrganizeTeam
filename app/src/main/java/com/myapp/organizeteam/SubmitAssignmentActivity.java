@@ -42,6 +42,7 @@ import com.myapp.organizeteam.Core.Submitter;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
+import com.myapp.organizeteam.Resources.FileManage;
 import com.myapp.organizeteam.Resources.Loading;
 
 import java.io.File;
@@ -55,6 +56,7 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
     ActivityTransition activityTransition;
     InputManagement inputManagement;
     DataExtraction dataExtraction;
+    FileManage fileManage;
 
     TextView tv_path;
     EditText ed_title, ed_content;
@@ -76,6 +78,7 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
         activityTransition = new ActivityTransition();
         inputManagement = new InputManagement();
         dataExtraction = new DataExtraction();
+        fileManage = new FileManage();
 
         tv_path = findViewById(R.id.tv_filePath);
 
@@ -98,16 +101,12 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
             }
             else
             {
-                Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                fileIntent.setType("*/*");
-                startActivityForResult(fileIntent,190);
+                fileManage.pickFile(this);
             }
         }
         else
         {
-            Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
-            fileIntent.setType("*/*");
-            startActivityForResult(fileIntent,190);
+            fileManage.pickFile(this);
         }
     }
 
@@ -115,7 +114,7 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode == RESULT_OK && requestCode == 190)
+        if(resultCode == RESULT_OK && requestCode == fileManage.FILE_PICK_CODE)
         {
             uriFile = data.getData();
             tv_path.setText(uriFile.toString());
@@ -131,9 +130,7 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
             case PERMISSION_CODE:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
-                    Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                    fileIntent.setType("*/*");
-                    startActivityForResult(fileIntent,190);
+                    fileManage.pickFile(this);
                 }
                 else
                 {
@@ -145,6 +142,12 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
     }
 
     public void oc_submit(View view) {
+        final String title = inputManagement.getInput(ed_title);
+        final String content = inputManagement.getInput(ed_content);
+
+        final String taskID = mission.getKeyID();
+        final String userID = user.getKeyID();
+
         if(uriFile != null)
         {
             // Create a storage reference from our app
@@ -154,7 +157,7 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
             final Loading loading = new Loading ();
             final ProgressDialog pd = loading.getProgressDialog ( this,"Upload File... ");
 
-            final StorageReference riversRef = storageRef.child("files/tasks/"+mission.getKeyID()+"/"+user.getKeyID());
+            final StorageReference riversRef = storageRef.child("files/tasks/"+taskID+"/"+userID);
 
             riversRef.putFile(uriFile).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -162,9 +165,15 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
                     riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            final Submitter submitter = new Submitter(inputManagement.getInput(ed_title),inputManagement.getInput(ed_content),uri.toString(), getFileName(uriFile), mission.getKeyID(),user.getKeyID());
-                            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH).child(team.getKeyID()).child(mission.getKeyID()).child(ConstantNames.DATA_TASK_USER);
-                            mDatabase.child(user.getKeyID()).setValue(submitter);
+                            final Submitter submitter = new Submitter(title,content,uri.toString(), fileManage.getFileName(uriFile), taskID,userID);
+
+                            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH)
+                                    .child(team.getKeyID())
+                                    .child(mission.getKeyID())
+                                    .child(ConstantNames.DATA_USERS_LIST)
+                                    .child(user.getKeyID());
+                            mDatabase.setValue(submitter);
+
                             activityTransition.back(SubmitAssignmentActivity.this,null);
                             pd.dismiss();
                         }
@@ -184,32 +193,16 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
         }
         else
         {
-            final Submitter submitter = new Submitter(inputManagement.getInput(ed_title),inputManagement.getInput(ed_content),null, null, mission.getKeyID(),user.getKeyID());
-            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH).child(team.getKeyID()).child(mission.getKeyID()).child(ConstantNames.DATA_TASK_USER);
-            mDatabase.child(user.getKeyID()).setValue(submitter);
+            final Submitter submitter = new Submitter(title,content,null, null, taskID,userID);
+
+            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH)
+                    .child(team.getKeyID())
+                    .child(mission.getKeyID())
+                    .child(ConstantNames.DATA_USERS_LIST)
+                    .child(user.getKeyID());
+            mDatabase.setValue(submitter);
+
             activityTransition.back(SubmitAssignmentActivity.this,null);
         }
-    }
-
-    public String getFileName(Uri uri) {
-        String result = null;
-        if (uri.getScheme().equals("content")) {
-            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-            try {
-                if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                }
-            } finally {
-                cursor.close();
-            }
-        }
-        if (result == null) {
-            result = uri.getPath();
-            int cut = result.lastIndexOf('/');
-            if (cut != -1) {
-                result = result.substring(cut + 1);
-            }
-        }
-        return result;
     }
 }

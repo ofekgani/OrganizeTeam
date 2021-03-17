@@ -6,36 +6,25 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.myapp.organizeteam.Adapters.RolesListAdapterRel;
-import com.myapp.organizeteam.Adapters.UsersListAdapterRel;
-import com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel;
 import com.myapp.organizeteam.Core.ConstantNames;
-import com.myapp.organizeteam.Core.Meeting;
 import com.myapp.organizeteam.Core.Role;
 import com.myapp.organizeteam.Core.Team;
-import com.myapp.organizeteam.Core.User;
-import com.myapp.organizeteam.DataManagement.ISavable;
-import com.myapp.organizeteam.Resources.Image;
 
 import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
-import static com.myapp.organizeteam.DataManagement.Authorization.isManager;
 
 public class RollsListFragment extends Fragment{
 

@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.R;
-import com.myapp.organizeteam.Resources.Image;
+import com.myapp.organizeteam.Resources.FileManage;
 
 import java.util.ArrayList;
 
@@ -31,7 +31,7 @@ public class UsersListAdapter extends ArrayAdapter<User> {
 
     private UserSelectedListener listener;
 
-    Image image = new Image ();
+    FileManage fileManage = new FileManage();
 
     public UsersListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<User> objects) {
         super ( context, resource, objects );
@@ -60,7 +60,7 @@ public class UsersListAdapter extends ArrayAdapter<User> {
         //if to the team has logo, set it to image view resource.
         if( logo != null && !logo.equals ( "" ))
         {
-            image.setImageUri ( logo,mv_logo );
+            fileManage.setImageUri ( logo,mv_logo );
         }
 
         tv_name.setText ( name );

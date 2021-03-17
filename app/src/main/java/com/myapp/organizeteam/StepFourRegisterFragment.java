@@ -30,7 +30,7 @@ import com.myapp.organizeteam.DataManagement.Authorization;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.DataPass;
 import com.myapp.organizeteam.DataManagement.IRegister;
-import com.myapp.organizeteam.Resources.Image;
+import com.myapp.organizeteam.Resources.FileManage;
 import com.myapp.organizeteam.Resources.Loading;
 import com.myapp.organizeteam.Resources.Stepper;
 import com.stepstone.stepper.Step;
@@ -45,7 +45,7 @@ public class StepFourRegisterFragment extends Fragment implements Step {
     InputManagement input;
     Loading progressBar;
     Stepper stepper;
-    Image image;
+    FileManage fileManage;
     DataExtraction dataExtraction;
 
     StepperLayout mStepperLayout;
@@ -69,7 +69,7 @@ public class StepFourRegisterFragment extends Fragment implements Step {
         input = new InputManagement ();
         stepper = new Stepper();
         progressBar = new Loading ( );
-        image = new Image();
+        fileManage = new FileManage();
         dataExtraction = new DataExtraction();
 
         ccp = v.findViewById(R.id.ccp);

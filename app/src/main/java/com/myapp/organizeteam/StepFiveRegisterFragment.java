@@ -20,7 +20,7 @@ import com.myapp.organizeteam.DataManagement.Authorization;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.DataPass;
 import com.myapp.organizeteam.DataManagement.ISavable;
-import com.myapp.organizeteam.Resources.Image;
+import com.myapp.organizeteam.Resources.FileManage;
 import com.myapp.organizeteam.Resources.Loading;
 import com.myapp.organizeteam.Resources.Stepper;
 import com.stepstone.stepper.Step;
@@ -35,7 +35,7 @@ public class StepFiveRegisterFragment extends Fragment implements Step {
     InputManagement input;
     Loading progressBar;
     Stepper stepper;
-    Image image;
+    FileManage fileManage;
     DataExtraction dataExtraction;
     ActivityTransition transformation;
 
@@ -56,7 +56,7 @@ public class StepFiveRegisterFragment extends Fragment implements Step {
         input = new InputManagement ();
         stepper = new Stepper();
         progressBar = new Loading ( );
-        image = new Image();
+        fileManage = new FileManage();
         dataExtraction = new DataExtraction();
         transformation = new ActivityTransition();
 
@@ -110,7 +110,7 @@ public class StepFiveRegisterFragment extends Fragment implements Step {
         }
         if(user.getLogo() != null && user.getLogo() != "")
         {
-            image.setImageUri(user.getLogo(),mv_userLogo);
+            fileManage.setImageUri(user.getLogo(),mv_userLogo);
         }
     }
 

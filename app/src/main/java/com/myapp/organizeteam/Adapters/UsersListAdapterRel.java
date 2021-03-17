@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.R;
-import com.myapp.organizeteam.Resources.Image;
+import com.myapp.organizeteam.Resources.FileManage;
 
 import java.util.ArrayList;
 
@@ -26,7 +26,7 @@ public class UsersListAdapterRel extends RecyclerView.Adapter<UsersListAdapterRe
     private RecycleViewClickListener listener;
     private ArrayList<User> mExampleList;
 
-    Image image = new Image ();
+    FileManage fileManage = new FileManage();
 
     public class ExampleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -74,7 +74,7 @@ public class UsersListAdapterRel extends RecyclerView.Adapter<UsersListAdapterRe
         //if to the team has logo, set it to image view resource.
         if( logo != null && !logo.equals ( "" ))
         {
-            image.setImageUri ( logo,holder.mv_logo );
+            fileManage.setImageUri ( logo,holder.mv_logo );
         }
 
         holder.tv_name.setText ( name );

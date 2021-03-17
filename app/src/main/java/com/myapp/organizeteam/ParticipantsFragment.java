@@ -4,28 +4,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Fragment;
 import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
-import com.myapp.organizeteam.Adapters.UsersListAdapterRel;
-import com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel;
 import com.myapp.organizeteam.Core.ConstantNames;
-import com.myapp.organizeteam.Core.Team;
-import com.myapp.organizeteam.Core.User;
-import com.myapp.organizeteam.Resources.Image;
-
-import java.util.ArrayList;
-
-import static com.myapp.organizeteam.DataManagement.Authorization.isManager;
 
 public class ParticipantsFragment extends Fragment{
 

@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.R;
-import com.myapp.organizeteam.Resources.Image;
+import com.myapp.organizeteam.Resources.FileManage;
 
 import java.util.ArrayList;
 
@@ -28,7 +28,7 @@ public class TeamListAdapter extends ArrayAdapter<Team> {
     private Context mContext;
     private int mResource;
 
-    Image image = new Image ();
+    FileManage fileManage = new FileManage();
 
     public TeamListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Team> objects) {
         super ( context, resource, objects );
@@ -53,7 +53,7 @@ public class TeamListAdapter extends ArrayAdapter<Team> {
         //if to the team has logo, set it to image view resource.
         if( logo != null && !logo.equals ( "" ))
         {
-            image.setImageUri ( logo,mv_logo );
+            fileManage.setImageUri ( logo,mv_logo );
         }
 
         tv_name.setText ( name );

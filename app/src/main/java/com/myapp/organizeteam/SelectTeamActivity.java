@@ -20,7 +20,7 @@ import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.DataPass;
 import com.myapp.organizeteam.DataManagement.ISavable;
 import com.myapp.organizeteam.Dialogs.RequestJoinDialog;
-import com.myapp.organizeteam.Resources.Image;
+import com.myapp.organizeteam.Resources.FileManage;
 import com.myapp.organizeteam.Adapters.TeamListAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,7 +37,7 @@ public class SelectTeamActivity extends AppCompatActivity implements AdapterView
     ActivityTransition activityTransition;
     Authorization authorization;
     DataExtraction dataExtraction;
-    Image image;
+    FileManage fileManage;
 
     ListView listView;
     Toolbar toolbar;
@@ -70,7 +70,7 @@ public class SelectTeamActivity extends AppCompatActivity implements AdapterView
         activityTransition = new ActivityTransition ();
         authorization = new Authorization ();
         dataExtraction = new DataExtraction ();
-        image = new Image();
+        fileManage = new FileManage();
 
         intent = getIntent (  );
 

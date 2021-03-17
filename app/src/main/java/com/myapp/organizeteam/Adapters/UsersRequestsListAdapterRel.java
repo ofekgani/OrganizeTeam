@@ -16,7 +16,7 @@ import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.DataListener;
 import com.myapp.organizeteam.R;
-import com.myapp.organizeteam.Resources.Image;
+import com.myapp.organizeteam.Resources.FileManage;
 
 import java.util.ArrayList;
 
@@ -34,7 +34,7 @@ public class UsersRequestsListAdapterRel extends RecyclerView.Adapter<UsersReque
 
     private AdapterListener listener;
 
-    Image image = new Image ();
+    FileManage fileManage = new FileManage();
 
     public static class ExampleViewHolder extends RecyclerView.ViewHolder {
 
@@ -103,7 +103,7 @@ public class UsersRequestsListAdapterRel extends RecyclerView.Adapter<UsersReque
         //if to the team has logo, set it to image view resource.
         if( logo != null && !logo.equals ( "" ))
         {
-            image.setImageUri ( logo,holder.mv_logo );
+            fileManage.setImageUri ( logo,holder.mv_logo );
         }
 
         holder.tv_name.setText ( name );
@@ -115,7 +115,7 @@ public class UsersRequestsListAdapterRel extends RecyclerView.Adapter<UsersReque
     }
 
     private void acceptJoinRequest(String userID) {
-        dataExtraction.pushNewData(ConstantNames.TEAM_PATH,teamID,ConstantNames.DATA_USERS_AT_TEAM,userID);
+        dataExtraction.pushNewData(ConstantNames.TEAM_PATH,teamID,ConstantNames.DATA_USERS_LIST,userID);
         dataExtraction.setNewData(ConstantNames.USER_PATH,userID,ConstantNames.DATA_USER_TEAM,teamID);
     }
 

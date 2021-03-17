@@ -28,7 +28,7 @@ import com.myapp.organizeteam.DataManagement.DataListener;
 import com.myapp.organizeteam.DataManagement.DataPass;
 import com.myapp.organizeteam.DataManagement.ISavable;
 import com.myapp.organizeteam.R;
-import com.myapp.organizeteam.Resources.Image;
+import com.myapp.organizeteam.Resources.FileManage;
 
 import java.util.Map;
 
@@ -36,7 +36,7 @@ public class JoinRequestCard extends Fragment {
 
     DataExtraction dataExtraction;
     ActivityTransition transformation;
-    Image image;
+    FileManage fileManage;
     CardView cardRequest;
 
     TextView tv_teamName;
@@ -54,7 +54,7 @@ public class JoinRequestCard extends Fragment {
         //allocating memory
         dataExtraction = new DataExtraction();
         transformation = new ActivityTransition();
-        image = new Image();
+        fileManage = new FileManage();
 
         tv_teamName = v.findViewById(R.id.tv_teamName);
         mv_teamLogo = v.findViewById(R.id.mv_teamLogo);
@@ -70,7 +70,7 @@ public class JoinRequestCard extends Fragment {
         {
             final Team team = (Team)userData.get(ConstantNames.TEAM);
             tv_teamName.setText(""+team.getName());
-            image.setImageUri(team.getLogo(),mv_teamLogo);
+            fileManage.setImageUri(team.getLogo(),mv_teamLogo);
 
             cardRequest.setOnClickListener(new View.OnClickListener() {
                 @Override

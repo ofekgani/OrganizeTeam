@@ -87,7 +87,7 @@ public class UserSelectionActivity extends AppCompatActivity implements UsersLis
     private void createUsersList()
     {
         final DataExtraction dataExtraction = new DataExtraction();
-        dataExtraction.getAllUsersByTeam(teamID, ConstantNames.DATA_USERS_AT_TEAM,new ISavable() {
+        dataExtraction.getAllUsersByTeam(teamID, ConstantNames.DATA_USERS_LIST,new ISavable() {
             @Override
             public void onDataRead(Object save) {
                 usersList = (ArrayList<User>)save;

@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.DialogFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,14 +25,12 @@ import com.myapp.organizeteam.Adapters.MeetingsListAdapter;
 import com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
-import com.myapp.organizeteam.Core.Mission;
 import com.myapp.organizeteam.Core.Role;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.DataManagement.Authorization;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.ISavable;
-import com.myapp.organizeteam.Dialogs.TaskDialog;
-import com.myapp.organizeteam.Resources.Image;
+import com.myapp.organizeteam.Resources.FileManage;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.Resources.OpenMenu;
 
@@ -51,7 +48,7 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
     ImageView nav_logo;
     FloatingActionButton fab_createMeeting,fab_createRole, fab_createTask;
 
-    Image image;
+    FileManage fileManage;
     DataExtraction dataExtraction;
 
     Intent intent;
@@ -79,7 +76,7 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
 
         openMenu = new OpenMenu(R.id.main_toolbar);
 
-        image = new Image ();
+        fileManage = new FileManage();
         dataExtraction = new DataExtraction();
 
         intent = getIntent ();
@@ -127,7 +124,7 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
         TextView nav_name = (TextView) openMenu.getResource ( navigationView,R.id.nav_name );
 
         nav_name.setText(team.getName());
-        image.setImageUri ( team.getLogo(),nav_logo );
+        fileManage.setImageUri ( team.getLogo(),nav_logo );
 
         bundle = new Bundle();
         bundle.putSerializable(ConstantNames.TEAM_HOST, (User)intent.getSerializableExtra ( ConstantNames.TEAM_HOST ));
@@ -174,7 +171,7 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
                 Map<String,Object> save = new HashMap<>();
                 save.put(ConstantNames.TEAM,team);
                 save.put(ConstantNames.USER,intent.getSerializableExtra ( ConstantNames.USER ));
-                save.put(ConstantNames.USER_PERMISSIONS,meetingsPer);
+                save.put(ConstantNames.USER_PERMISSIONS,tasksPer);
                 activityTransition.goToWithResult(TeamPageActivity.this,CreateTaskActivity.class,979,save,null);
             }
         });
@@ -240,11 +237,11 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
             }
         });
 
-        DatabaseReference usersDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TEAM_PATH).child(team.getKeyID()).child(ConstantNames.DATA_USERS_AT_TEAM);
+        DatabaseReference usersDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TEAM_PATH).child(team.getKeyID()).child(ConstantNames.DATA_USERS_LIST);
         usersDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                dataExtraction.getAllUsersByTeam(team.getKeyID(), ConstantNames.DATA_USERS_AT_TEAM, new ISavable() {
+                dataExtraction.getAllUsersByTeam(team.getKeyID(), ConstantNames.DATA_USERS_LIST, new ISavable() {
                     @Override
                     public void onDataRead(Object save) {
                         users = (ArrayList<User>) save;

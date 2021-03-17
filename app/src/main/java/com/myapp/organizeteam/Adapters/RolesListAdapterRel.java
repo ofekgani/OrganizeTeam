@@ -2,12 +2,8 @@ package com.myapp.organizeteam.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,11 +15,8 @@ import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.ISavable;
 import com.myapp.organizeteam.R;
-import com.myapp.organizeteam.Resources.Image;
-import com.myapp.organizeteam.Resources.Loading;
 
 import java.util.ArrayList;
-import java.util.zip.Inflater;
 
 /**
  * Design item to team list.

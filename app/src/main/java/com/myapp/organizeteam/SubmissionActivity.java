@@ -19,7 +19,7 @@ import com.myapp.organizeteam.Core.Mission;
 import com.myapp.organizeteam.Core.Submitter;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
-import com.myapp.organizeteam.Resources.Image;
+import com.myapp.organizeteam.Resources.FileManage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +28,7 @@ import static android.os.Environment.DIRECTORY_DOWNLOADS;
 
 public class SubmissionActivity extends AppCompatActivity {
 
-    Image image;
+    FileManage fileManage;
     ActivityTransition activityTransition;
 
     TextView tv_title, tv_content, tv_userName, tv_fileName;
@@ -47,7 +47,7 @@ public class SubmissionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_submission);
 
-        image = new Image();
+        fileManage = new FileManage();
         activityTransition = new ActivityTransition();
 
         tv_userName = findViewById(R.id.tv_userName);
@@ -73,7 +73,7 @@ public class SubmissionActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(""+mission.getTaskName());
 
         tv_userName.setText(""+userSubmitter.getFullName());
-        image.setImageUri(userSubmitter.getLogo(),mv_userLogo);
+        fileManage.setImageUri(userSubmitter.getLogo(),mv_userLogo);
 
         tv_title.setText(""+submitter.getTitle());
         tv_content.setText(""+submitter.getContent());
@@ -82,20 +82,9 @@ public class SubmissionActivity extends AppCompatActivity {
         mv_fileDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                downloadFile(SubmissionActivity.this,submitter.getFileName(),DIRECTORY_DOWNLOADS,submitter.getFileUrl());
+                fileManage.downloadFile(SubmissionActivity.this,submitter.getFileName(),DIRECTORY_DOWNLOADS,submitter.getFileUrl());
             }
         });
-    }
-
-    public void downloadFile(Context context, String fileName, String destinationDirectory, String url) {
-        DownloadManager downloadmanager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-        Uri uri = Uri.parse(url);
-        DownloadManager.Request request = new DownloadManager.Request(uri);
-
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDestinationInExternalFilesDir(context, destinationDirectory, fileName);
-
-        downloadmanager.enqueue(request);
     }
 
     public void oc_reply(View view) {
