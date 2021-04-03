@@ -28,6 +28,7 @@ public class ConstantNames {
     //Task path
     public static final String DATA_PUBLISH_TO = "publishTo";
     public static final String DATA_TASK_REPLIES = "responses";
+    public static final String DATA_TASK_CONFIRM = "confirmStatus";
 
     //Meeting path
     public static final String DATA_MEETING_STATUS = "status";
@@ -40,6 +41,9 @@ public class ConstantNames {
     //Role path
     public static final String DATA_ROLE_MEETING_PERMISSION  = "meetingPermission";
     public static final String DATA_ROLE_TASK_PERMISSION = "tasksPermission";
+
+    //Submitter
+    public static final String DATA_SUBMITTER_RESPONSES = "responses";
 
     //Other
     public static final String DATA_USERS_LIST = "users";

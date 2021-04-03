@@ -117,6 +117,7 @@ public class FileManage extends AppCompatActivity {
     }
 
     public void downloadFile(Context context, String fileName, String destinationDirectory, String url) {
+        if(url == null) return;
         DownloadManager downloadmanager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         Uri uri = Uri.parse(url);
         DownloadManager.Request request = new DownloadManager.Request(uri);

@@ -101,7 +101,7 @@ public class TasksFragment extends Fragment {
     }
 
     private void setAdapter() {
-        adapter = new TasksListAdapter(inflater.getContext(),R.layout.adapter_tasks_list, tasksList);
+        adapter = new TasksListAdapter(inflater.getContext(),R.layout.adapter_tasks_list, tasksList,user.getKeyID());
         lv_taskList.setAdapter ( adapter );
         adapter.notifyDataSetChanged();
         lv_taskList.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -35,7 +35,7 @@
     <ScrollView
         android:id="@+id/layout1"
         android:layout_width="match_parent"
-        android:layout_height="240dp"
+        android:layout_height="280dp"
         android:layout_below="@+id/tv_taskDateDialog"
         android:layout_alignParentStart="true"
         android:layout_marginStart="8dp"
@@ -54,7 +54,6 @@
                 android:layout_below="@+id/tv_taskNameDialog"
                 android:layout_alignStart="@+id/tv_taskNameDialog"
                 android:layout_alignParentEnd="true"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:fontFamily="@font/roboto_medium"
                 android:scrollbars="vertical"
@@ -81,46 +80,14 @@
         android:textAllCaps="false">
     </Button>
 
-    <Button
-        android:id="@+id/btn_PostComment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_AddStatus"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="8dp"
-        android:background="@color/primaryTextColor"
-        android:fontFamily="@font/roboto_bold"
-        android:text="Post comment"
-        android:textAllCaps="false"
-        android:textColor="@color/secondaryTextColor"
-        app:strokeColor="@color/primaryColor"
-        app:strokeWidth="8dp"></Button>
-
-    <Button
-        android:id="@+id/btn_AddStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_SubmitAssignment"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="8dp"
-        android:background="@color/primaryTextColor"
-        android:fontFamily="@font/roboto_bold"
-        android:text="Update status"
-        android:textAllCaps="false"
-        android:textColor="@color/secondaryTextColor"
-        app:strokeColor="@color/primaryColor"
-        app:strokeWidth="8dp"></Button>
 
     <Button
         android:id="@+id/btn_ShowSubmits"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_PostComment"
+        android:layout_below="@+id/btn_SubmitAssignment"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="1dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="0dp"
         android:background="@color/primaryTextColor"
@@ -132,7 +99,7 @@
         app:strokeWidth="8dp"></Button>
 
     <Button
-        android:id="@+id/btn_cancel"
+        android:id="@+id/btn_ShowResponses"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btn_ShowSubmits"
@@ -141,13 +108,29 @@
         android:layout_marginTop="8dp"
         android:background="@color/primaryTextColor"
         android:fontFamily="@font/roboto_bold"
+        android:text="Show responses"
+        android:textAllCaps="false"
+        android:textColor="@color/secondaryTextColor"
+        app:strokeColor="@color/primaryColor"
+        app:strokeWidth="8dp"></Button>
+
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_ShowResponses"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="8dp"
+        android:background="@color/primaryTextColor"
+        android:fontFamily="@font/roboto_bold"
         android:text="Cancel"
         android:textAllCaps="false"
         android:textColor="@color/secondaryTextColor"
+        android:theme="@style/Widget.AppCompat.Button"
         app:rippleColor="#33AAAAAA"
         app:strokeColor="@color/ms_black"
-        app:strokeWidth="2dp"
-        android:theme="@style/Widget.AppCompat.Button"></Button>
+        app:strokeWidth="2dp"></Button>
 
 
 </RelativeLayout>

@@ -165,7 +165,7 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
                     riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            final Submitter submitter = new Submitter(title,content,uri.toString(), fileManage.getFileName(uriFile), taskID,userID);
+                            final Submitter submitter = new Submitter(title,content,uri.toString(), fileManage.getFileName(uri), Submitter.STATUS_WAITING, taskID,userID);
 
                             final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH)
                                     .child(team.getKeyID())
@@ -193,7 +193,7 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
         }
         else
         {
-            final Submitter submitter = new Submitter(title,content,null, null, taskID,userID);
+            final Submitter submitter = new Submitter(title,content,null, null,Submitter.STATUS_WAITING, taskID,userID);
 
             final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH)
                     .child(team.getKeyID())

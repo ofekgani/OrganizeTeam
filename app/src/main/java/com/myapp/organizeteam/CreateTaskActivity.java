@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
@@ -49,6 +50,7 @@ public class CreateTaskActivity extends AppCompatActivity {
     ActivityTransition activityTransition;
 
     EditText ed_taskName,ed_taskDescription,ed_taskDate, ed_taskHour;
+    CheckBox cb_enableRequired;
 
     Intent intent;
     Team team;
@@ -79,6 +81,7 @@ public class CreateTaskActivity extends AppCompatActivity {
         ed_taskDescription = findViewById(R.id.ed_roleDescription);
         ed_taskName = findViewById(R.id.ed_roleName);
         ed_taskHour = findViewById(R.id.ed_meetingHour);
+        cb_enableRequired = findViewById(R.id.cb_enableRequired);
 
         intent = getIntent();
         team = (Team) intent.getSerializableExtra(ConstantNames.TEAM);
@@ -220,6 +223,7 @@ public class CreateTaskActivity extends AppCompatActivity {
             //Get inputs
             String taskName = inputManagement.getInput(ed_taskName);
             String taskDescription = inputManagement.getInput(ed_taskDescription);
+            boolean isRequiredConfirm = cb_enableRequired.isChecked();
             Date taskDate = new Date(m_year,m_month,m_day);
             Hour taskTime = new Hour(m_hour,m_minute);
 
@@ -231,7 +235,7 @@ public class CreateTaskActivity extends AppCompatActivity {
             final String taskID = mDatabase.push ().getKey ();
 
             //Add meeting into firebase
-            final Mission task = new Mission(taskID,teamID,taskName,taskDescription,taskDate,taskTime);
+            final Mission task = new Mission(taskID,teamID,taskName,taskDescription,isRequiredConfirm,taskDate,taskTime);
             dataExtraction.setObject(ConstantNames.TASK_PATH,teamID,taskID,task);
 
             //Add to cloud all selected roles to which the meeting will be published

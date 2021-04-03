@@ -8,15 +8,16 @@ public class Mission implements Serializable {
     private String teamID;
     private String taskName;
     private String taskDescription;
+    private boolean requiredConfirm;
     private Date date;
     private Hour hour;
 
-
-    public Mission(String keyID, String teamID, String taskName, String taskDescription, Date date, Hour hour) {
-        this.teamID = teamID;
+    public Mission(String keyID, String teamID, String taskName, String taskDescription, boolean requiredConfirm, Date date, Hour hour) {
         this.keyID = keyID;
+        this.teamID = teamID;
         this.taskName = taskName;
         this.taskDescription = taskDescription;
+        this.requiredConfirm = requiredConfirm;
         this.date = date;
         this.hour = hour;
     }
@@ -69,5 +70,13 @@ public class Mission implements Serializable {
 
     public void setTeamID(String teamID) {
         this.teamID = teamID;
+    }
+
+    public boolean isRequiredConfirm() {
+        return requiredConfirm;
+    }
+
+    public void setRequiredConfirm(boolean requiredConfirm) {
+        this.requiredConfirm = requiredConfirm;
     }
 }

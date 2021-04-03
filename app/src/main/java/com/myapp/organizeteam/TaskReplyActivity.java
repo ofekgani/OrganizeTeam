@@ -3,6 +3,7 @@ package com.myapp.organizeteam;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
@@ -15,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +49,7 @@ public class TaskReplyActivity extends AppCompatActivity {
 
     TextView tv_path;
     EditText ed_title, ed_content;
+    CheckBox cb_returnToReform;
 
     Intent intent;
 
@@ -73,6 +76,7 @@ public class TaskReplyActivity extends AppCompatActivity {
 
         ed_title = findViewById(R.id.ed_title);
         ed_content = findViewById(R.id.ed_content);
+        cb_returnToReform = findViewById(R.id.cb_returnToReform);
 
         intent = getIntent();
         user = (User) intent.getSerializableExtra(ConstantNames.USER);
@@ -109,16 +113,7 @@ public class TaskReplyActivity extends AppCompatActivity {
                         public void onSuccess(Uri uri) {
                             String fileName = fileManage.getFileName(uriFile);
 
-                            final Submitter reply = new Submitter(title,content,uri.toString(), fileName, taskID, userID);
-
-                            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH)
-                                    .child(team.getKeyID())
-                                    .child(taskID)
-                                    .child(ConstantNames.DATA_USERS_LIST)
-                                    .child(submitter.getUserID())
-                                    .child(ConstantNames.DATA_TASK_REPLIES)
-                                    .child(userID);
-                            mDatabase.setValue(reply);
+                            saveReply(title, content, taskID, userID, fileName, uri.toString());
 
                             activityTransition.back(TaskReplyActivity.this);
 
@@ -140,18 +135,36 @@ public class TaskReplyActivity extends AppCompatActivity {
         }
         else
         {
-            final Submitter reply = new Submitter(title,content,null, null, taskID, userID);
-
-            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH)
-                    .child(team.getKeyID())
-                    .child(taskID)
-                    .child(ConstantNames.DATA_USERS_LIST)
-                    .child(submitter.getUserID())
-                    .child(ConstantNames.DATA_TASK_REPLIES)
-                    .child(userID);
-            mDatabase.setValue(reply);
+            saveReply(title, content, taskID, userID,null, null);
 
             activityTransition.back(TaskReplyActivity.this);
+        }
+    }
+
+    private void saveReply(String title, String content, String taskID, String userID,String fileName, String uriPath) {
+        final Submitter reply = new Submitter(title, content, uriPath, fileName, Submitter.STATUS_WAITING, taskID, userID);
+        setStatusSubmit(taskID);
+
+        final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH)
+                .child(team.getKeyID())
+                .child(taskID)
+                .child(ConstantNames.DATA_USERS_LIST)
+                .child(submitter.getUserID())
+                .child(ConstantNames.DATA_TASK_REPLIES)
+                .child(userID);
+        mDatabase.setValue(reply);
+    }
+
+    private void setStatusSubmit(String taskID) {
+        DatabaseReference submitterDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH)
+                .child(team.getKeyID()).child(taskID)
+                .child(ConstantNames.DATA_USERS_LIST)
+                .child(submitter.getUserID())
+                .child(ConstantNames.DATA_TASK_CONFIRM);
+        if (cb_returnToReform.isChecked()) {
+            submitterDatabase.setValue(Submitter.STATUS_UNCONFIRMED);
+        } else {
+            submitterDatabase.setValue(Submitter.STATUS_CONFIRM);
         }
     }
 

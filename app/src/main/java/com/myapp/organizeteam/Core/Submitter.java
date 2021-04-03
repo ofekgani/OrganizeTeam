@@ -7,14 +7,16 @@ public class Submitter implements Serializable {
     String content;
     String fileUrl;
     String fileName;
+    int confirmStatus;
     String taskID;
     String userID;
 
-    public Submitter(String title, String content, String fileUrl, String fileName, String taskID, String userID) {
+    public Submitter(String title, String content, String fileUrl, String fileName, int confirmStatus, String taskID, String userID) {
         this.title = title;
         this.content = content;
-        this.fileName = fileName;
         this.fileUrl = fileUrl;
+        this.fileName = fileName;
+        this.confirmStatus = confirmStatus;
         this.taskID = taskID;
         this.userID = userID;
     }
@@ -22,6 +24,10 @@ public class Submitter implements Serializable {
     public Submitter() {
 
     }
+
+    public static final int STATUS_CONFIRM = 1;
+    public static final int STATUS_UNCONFIRMED = 0;
+    public static final int STATUS_WAITING = -1;
 
     public String getTitle() {
         return title;
@@ -69,5 +75,13 @@ public class Submitter implements Serializable {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public int getConfirmStatus() {
+        return confirmStatus;
+    }
+
+    public void setConfirm(int confirm) {
+        confirmStatus = confirm;
     }
 }

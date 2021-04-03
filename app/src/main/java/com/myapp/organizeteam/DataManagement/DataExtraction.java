@@ -620,6 +620,27 @@ public class DataExtraction
         });
     }
 
+    public void hasChild(DatabaseReference path,final String key ,final ISavable iSavable)
+    {
+        path.addListenerForSingleValueEvent ( new ValueEventListener () {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(""+key)) {
+                    iSavable.onDataRead ( true );
+                }
+                else
+                {
+                    iSavable.onDataRead ( false );
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     /**
      * Check if a value exist by key.
      * @param path The path that we want to check.
@@ -1241,6 +1262,56 @@ public class DataExtraction
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Submitter submitter = (Submitter) getValue(snapshot,Submitter.class);
                 iSavable.onDataRead(submitter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void getResponse(String teamID, String taskID, String userID, String response, final ISavable iSavable) {
+        final DatabaseReference mDatabase = getDatabaseReference(ConstantNames.TASK_PATH).child(teamID).child(taskID).child(ConstantNames.DATA_USERS_LIST).child(userID).child(ConstantNames.DATA_TASK_REPLIES).child(response);
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Submitter submitter = (Submitter) getValue(snapshot,Submitter.class);
+                iSavable.onDataRead(submitter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void getResponsesOfSubmitter(String teamID, String taskID, String userID, final ISavable iSavable) {
+
+        final ArrayList<String> usersID = new ArrayList<>();
+
+        final DatabaseReference mDatabase = getDatabaseReference(ConstantNames.TASK_PATH).child(teamID).child(taskID).child(ConstantNames.DATA_USERS_LIST).child(userID);
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.hasChild(ConstantNames.DATA_SUBMITTER_RESPONSES))
+                {
+                    for (DataSnapshot ds : snapshot.child(ConstantNames.DATA_SUBMITTER_RESPONSES).getChildren())
+                    {
+                        usersID.add(ds.getKey());
+                    }
+                    getUsersByKeys(usersID, new ISavable() {
+                        @Override
+                        public void onDataRead(Object save) {
+                            iSavable.onDataRead(save);
+                        }
+                    });
+                }
+                else
+                {
+                    iSavable.onDataRead(null);
+                }
             }
 
             @Override

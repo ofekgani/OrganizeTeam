@@ -107,4 +107,13 @@ public class SubmissionActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void oc_showResponses(View view) {
+        Map<String,Object> save = new HashMap<>();
+        save.put(ConstantNames.USER,user);
+        save.put(ConstantNames.USER_SUBMITTER,userSubmitter);
+        save.put(ConstantNames.TASK,mission);
+        save.put(ConstantNames.TEAM,team);
+        activityTransition.goTo(SubmissionActivity.this,ResponsesListActivity.class,false,save,null);
+    }
 }

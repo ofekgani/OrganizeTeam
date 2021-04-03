@@ -1,6 +1,8 @@
 package com.myapp.organizeteam.Adapters;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,12 +12,20 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Date;
 import com.myapp.organizeteam.Core.Hour;
 import com.myapp.organizeteam.Core.Mission;
+import com.myapp.organizeteam.Core.Submitter;
+import com.myapp.organizeteam.DataManagement.DataExtraction;
+import com.myapp.organizeteam.DataManagement.ISavable;
 import com.myapp.organizeteam.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  * Design item to team list.
@@ -25,13 +35,18 @@ import java.util.ArrayList;
  */
 public class TasksListAdapter extends ArrayAdapter<Mission> {
 
+    DataExtraction dataExtraction;
+
     private Context mContext;
     private int mResource;
+    String userID;
+    String status;
 
-    public TasksListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Mission> objects) {
+    public TasksListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Mission> objects, String userID) {
         super ( context, resource, objects );
         mContext = context;
         mResource = resource;
+        this.userID = userID;
     }
 
     @NonNull
@@ -40,20 +55,67 @@ public class TasksListAdapter extends ArrayAdapter<Mission> {
         LayoutInflater inflater = LayoutInflater.from ( mContext );
         convertView = inflater.inflate ( mResource,parent,false );
 
+        dataExtraction = new DataExtraction();
+
+        TextView tv_name = convertView.findViewById ( R.id.tv_taskName);
+        TextView tv_description = convertView.findViewById ( R.id.tv_taskDescription);
+        TextView tv_date = convertView.findViewById ( R.id.tv_taskDate);
+        final TextView tv_status = convertView.findViewById ( R.id.tv_taskStatus);
+
         String name = getItem ( position ).getTaskName ();
         String description = getItem ( position ).getTaskDescription ();
         Date date = getItem ( position ).getDate ();
         Hour hour = getItem ( position ).getHour ();
 
-        TextView tv_name = convertView.findViewById ( R.id.tv_taskName);
-        TextView tv_description = convertView.findViewById ( R.id.tv_taskDescription);
-        TextView tv_date = convertView.findViewById ( R.id.tv_taskDate);
+        final String teamID = getItem(position).getTeamID();
+        final String taskID = getItem(position).getKeyID();
 
         tv_name.setText ( name );
         tv_description.setText (description);
 
         String meetingDate = date.getDay() + "/" + date.getMonth() + "/" + date.getYear() + " , " + hour.getHour() + ":" + hour.getMinute();
         tv_date.setText(meetingDate);
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH).child(teamID).child(taskID).child(ConstantNames.DATA_USERS_LIST);
+        dataExtraction.hasChild(databaseReference, userID, new ISavable() {
+            @Override
+            public void onDataRead(Object save) {
+                if(!(boolean)save)
+                {
+                   status = "Not submitted";
+                }
+                else
+                {
+                    if(!getItem(position).isRequiredConfirm())
+                    {
+                        status = "Submitted";
+                    }
+                    else
+                    {
+                        dataExtraction.getSubmitterTask(teamID, taskID, userID, new ISavable() {
+                            @Override
+                            public void onDataRead(Object save) {
+                                Submitter submitter = (Submitter) save;
+                                if(submitter.getConfirmStatus() == 1)
+                                {
+                                    status = "Submitted";
+                                }
+                                else if(submitter.getConfirmStatus() == 0)
+                                {
+                                    status = "Returned";
+                                }
+                                else
+                                {
+                                    status = "Waiting for confirm";
+                                }
+                                tv_status.setText(""+status);
+                            }
+                        });
+                    }
+                }
+                tv_status.setText(""+status);
+            }
+        });
 
         return convertView;
     }
