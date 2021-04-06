@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.os.Environment.DIRECTORY_DOWNLOADS;
+import static com.myapp.organizeteam.DataManagement.Authorization.isManager;
 
 public class SubmissionActivity extends AppCompatActivity {
 
@@ -34,6 +36,7 @@ public class SubmissionActivity extends AppCompatActivity {
     TextView tv_title, tv_content, tv_userName, tv_fileName;
     ImageView mv_userLogo, mv_fileDownload;
     Toolbar toolbar;
+    Button btn_reply;
 
     Intent intent;
 
@@ -54,6 +57,7 @@ public class SubmissionActivity extends AppCompatActivity {
         tv_fileName = findViewById(R.id.tv_fileName);
         tv_title = findViewById(R.id.tv_title);
         tv_content = findViewById(R.id.tv_content);
+        btn_reply = findViewById(R.id.btn_reply);
 
         mv_userLogo = findViewById(R.id.mv_userLogo);
         mv_fileDownload = findViewById(R.id.mv_fileDownload);
@@ -79,12 +83,20 @@ public class SubmissionActivity extends AppCompatActivity {
         tv_content.setText(""+submitter.getContent());
         tv_fileName.setText(""+submitter.getFileName());
 
+        btn_reply.setVisibility(View.GONE);
+        if(isManager)
+        {
+            btn_reply.setVisibility(View.VISIBLE);
+        }
+
         mv_fileDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 fileManage.downloadFile(SubmissionActivity.this,submitter.getFileName(),DIRECTORY_DOWNLOADS,submitter.getFileUrl());
             }
         });
+
+
     }
 
     public void oc_reply(View view) {

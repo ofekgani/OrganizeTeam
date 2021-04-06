@@ -35,22 +35,22 @@ public class CreateRoleActivity extends AppCompatActivity implements AdapterView
     DataExtraction dataExtraction;
     ActivityTransition activityTransition;
 
-    Spinner sp_createMeetingTo,sp_createTaskTo;
-    ConstraintLayout meetingSettings,taskSettings;
-    CheckBox cb_createMeeting,cb_createTask;
+    Spinner sp_createMeetingTo,sp_createTaskTo,sp_createPostTo;
+    ConstraintLayout meetingSettings,taskSettings,postSettings;
+    CheckBox cb_createMeeting,cb_createTask,cb_createPost;
     EditText ed_roleName, ed_roleDescription;
-    TextView btn_selectRolesPermissionMeeting, btn_selectRolesPermissionTask;
+    TextView btn_selectRolesPermissionMeeting, btn_selectRolesPermissionTask, btn_selectRolesPermissionPost;
     Toolbar toolbar;
 
     Intent intent;
 
-    int meetingSpinnerChoice,taskSpinnerChoice;
+    int meetingSpinnerChoice,taskSpinnerChoice,postSpinnerChoice;
     String teamID;
-    boolean rulesSelected;
+    boolean rolesSelected;
 
     Map<String,Object> save = new HashMap<>();
 
-    ArrayList<Role> rolesPublishMeetings,rolesPublishTasks;
+    ArrayList<Role> rolesPublishMeetings,rolesPublishTasks,rolesPublishPosts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +71,10 @@ public class CreateRoleActivity extends AppCompatActivity implements AdapterView
         taskSettings = findViewById(R.id.taskSettings);
         cb_createTask = findViewById(R.id.cb_createTask);
         btn_selectRolesPermissionTask = findViewById(R.id.tv_btn_select_task);
+        sp_createPostTo = findViewById(R.id.sp_createPostTo);
+        postSettings = findViewById(R.id.postSettings);
+        cb_createPost = findViewById(R.id.cb_createPost);
+        btn_selectRolesPermissionPost = findViewById(R.id.tv_btn_select_post);
 
         toolbar = findViewById(R.id.appBarLayout);
         setSupportActionBar(toolbar);
@@ -83,6 +87,7 @@ public class CreateRoleActivity extends AppCompatActivity implements AdapterView
 
         configuringSetting(meetingSettings, cb_createMeeting);
         configuringSetting(taskSettings, cb_createTask);
+        configuringSetting(postSettings, cb_createPost);
 
         configuringSpinner(sp_createMeetingTo);
         meetingSpinnerChoice = 0;
@@ -91,6 +96,10 @@ public class CreateRoleActivity extends AppCompatActivity implements AdapterView
         configuringSpinner(sp_createTaskTo);
         taskSpinnerChoice = 0;
         checkSpinnerChoice(taskSpinnerChoice, btn_selectRolesPermissionTask);
+
+        configuringSpinner(sp_createPostTo);
+        postSpinnerChoice = 0;
+        checkSpinnerChoice(postSpinnerChoice, btn_selectRolesPermissionPost);
 
         btn_selectRolesPermissionMeeting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,6 +116,15 @@ public class CreateRoleActivity extends AppCompatActivity implements AdapterView
                 Map<String,Object> save = new HashMap<>();
                 save.put(ConstantNames.TEAM_KEY_ID,teamID);
                 activityTransition.goToWithResult(CreateRoleActivity.this,RoleSelectionActivity.class,314,save,null);
+            }
+        });
+
+        btn_selectRolesPermissionPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Map<String,Object> save = new HashMap<>();
+                save.put(ConstantNames.TEAM_KEY_ID,teamID);
+                activityTransition.goToWithResult(CreateRoleActivity.this,RoleSelectionActivity.class,315,save,null);
             }
         });
     }
@@ -153,6 +171,10 @@ public class CreateRoleActivity extends AppCompatActivity implements AdapterView
                 taskSpinnerChoice = i;
                 checkSpinnerChoice(taskSpinnerChoice, btn_selectRolesPermissionTask);
                 break;
+            case R.id.sp_createPostTo:
+                postSpinnerChoice = i;
+                checkSpinnerChoice(postSpinnerChoice, btn_selectRolesPermissionPost);
+                break;
         }
 
     }
@@ -196,13 +218,19 @@ public class CreateRoleActivity extends AppCompatActivity implements AdapterView
         {
             save.put(ConstantNames.ROLES_LIST,data.getSerializableExtra(ConstantNames.ROLES_LIST));
             rolesPublishMeetings = (ArrayList<Role>) data.getSerializableExtra(ConstantNames.ROLES_LIST);
-            rulesSelected = true;
+            rolesSelected = true;
         }
         if(resultCode == RESULT_OK && requestCode == 314)
         {
             save.put(ConstantNames.ROLES_LIST,data.getSerializableExtra(ConstantNames.ROLES_LIST));
             rolesPublishTasks = (ArrayList<Role>) data.getSerializableExtra(ConstantNames.ROLES_LIST);
-            rulesSelected = true;
+            rolesSelected = true;
+        }
+        if(resultCode == RESULT_OK && requestCode == 315)
+        {
+            save.put(ConstantNames.ROLES_LIST,data.getSerializableExtra(ConstantNames.ROLES_LIST));
+            rolesPublishPosts = (ArrayList<Role>) data.getSerializableExtra(ConstantNames.ROLES_LIST);
+            rolesSelected = true;
         }
 
         if(resultCode == RESULT_OK && requestCode == 319)
@@ -235,6 +263,7 @@ public class CreateRoleActivity extends AppCompatActivity implements AdapterView
             //Check if to this role has permission to publish meetings, if has, add all the roles that can be published to
             addPermissions(rollDatabase, roleID, rolesPublishMeetings, ConstantNames.DATA_ROLE_MEETING_PERMISSION, cb_createMeeting, meetingSpinnerChoice);
             addPermissions(rollDatabase, roleID, rolesPublishTasks, ConstantNames.DATA_ROLE_TASK_PERMISSION, cb_createTask, taskSpinnerChoice);
+            addPermissions(rollDatabase, roleID, rolesPublishPosts, ConstantNames.DATA_ROLE_POST_PERMISSION, cb_createPost, postSpinnerChoice);
 
             DatabaseReference userDatabase = FirebaseDatabase.getInstance ().getReference ( ConstantNames.USER_ACTIVITY_PATH).child(teamID);
             for(String id : usersID)

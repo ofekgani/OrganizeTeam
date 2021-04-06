@@ -9,6 +9,7 @@ public class ConstantNames {
     public static final String MEETINGS_PATH = "meeting";
     public static final String TASK_PATH = "task";
     public static final String ROLE_PATH = "role";
+    public static final String POST_PATH = "post";
     public static final String USER_ACTIVITY_PATH = "userActivity";
 
     //Keys in firebase
@@ -37,10 +38,12 @@ public class ConstantNames {
     public static final String DATA_USER_TASKS = "tasks";
     public static final String DATA_USER_ROLES = "roles";
     public static final String DATA_USER_MEETINGS = "meetings";
+    public static final String DATA_USER_POSTS = "posts";
 
     //Role path
     public static final String DATA_ROLE_MEETING_PERMISSION  = "meetingPermission";
     public static final String DATA_ROLE_TASK_PERMISSION = "tasksPermission";
+    public static final String DATA_ROLE_POST_PERMISSION = "postsPermission";
 
     //Submitter
     public static final String DATA_SUBMITTER_RESPONSES = "responses";
@@ -57,6 +60,7 @@ public class ConstantNames {
     public static final String ROLE = "role";
     public static final String TASK = "task";
     public static final String SUBMITTER = "submitter";
+    public static final String POST = "post";
 
     //User
     public static final String USER_NAME  = "userName";
@@ -79,6 +83,7 @@ public class ConstantNames {
     public static final String USER_ROLES = "rolesList";
     public static final String USER_PERMISSIONS_MEETING = "userPermissionMeetings";
     public static final String USER_PERMISSIONS_TASK = "userPermissionTasks";
+    public static final String USER_PERMISSIONS_POST = "userPermissionPosts";
 
     //Submitter
     public static final String USER_SUBMITTER = "userSubmitter";

@@ -99,7 +99,7 @@
         app:strokeWidth="8dp"></Button>
 
     <Button
-        android:id="@+id/btn_ShowResponses"
+        android:id="@+id/btn_cancel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btn_ShowSubmits"
@@ -108,29 +108,13 @@
         android:layout_marginTop="8dp"
         android:background="@color/primaryTextColor"
         android:fontFamily="@font/roboto_bold"
-        android:text="Show responses"
-        android:textAllCaps="false"
-        android:textColor="@color/secondaryTextColor"
-        app:strokeColor="@color/primaryColor"
-        app:strokeWidth="8dp"></Button>
-
-    <Button
-        android:id="@+id/btn_cancel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_ShowResponses"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="8dp"
-        android:background="@color/primaryTextColor"
-        android:fontFamily="@font/roboto_bold"
         android:text="Cancel"
         android:textAllCaps="false"
         android:textColor="@color/secondaryTextColor"
-        android:theme="@style/Widget.AppCompat.Button"
         app:rippleColor="#33AAAAAA"
         app:strokeColor="@color/ms_black"
-        app:strokeWidth="2dp"></Button>
+        app:strokeWidth="2dp"
+        android:theme="@style/Widget.AppCompat.Button"></Button>
 
 
 </RelativeLayout>

@@ -32,7 +32,7 @@ public class TaskDialog extends AppCompatDialogFragment{
     ActivityTransition activityTransition;
 
     private TextView tv_name, tv_description, tv_date;
-    private Button btn_cancel, btn_submit, btn_submittersList, btn_responses;
+    private Button btn_cancel, btn_submit, btn_submittersList;
 
     private Mission task;
     private Team team;
@@ -56,7 +56,6 @@ public class TaskDialog extends AppCompatDialogFragment{
         btn_cancel = view.findViewById(R.id.btn_cancel);
         btn_submit = view.findViewById(R.id.btn_SubmitAssignment);
         btn_submittersList = view.findViewById(R.id.btn_ShowSubmits);
-        btn_responses = view.findViewById(R.id.btn_ShowResponses);
 
         Bundle bundle = getArguments ();
         user = (User)bundle.getSerializable(ConstantNames.USER);
@@ -96,13 +95,6 @@ public class TaskDialog extends AppCompatDialogFragment{
                 save.put(ConstantNames.TASK,task);
                 save.put(ConstantNames.TEAM,team);
                 activityTransition.goTo(getActivity(), SubmitsListActivity.class,false,save,null);
-            }
-        });
-
-        btn_responses.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
             }
         });
 

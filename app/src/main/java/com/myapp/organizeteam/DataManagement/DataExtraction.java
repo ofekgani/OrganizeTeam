@@ -14,6 +14,7 @@ import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Meeting;
 import com.myapp.organizeteam.Core.Mission;
+import com.myapp.organizeteam.Core.Post;
 import com.myapp.organizeteam.Core.Role;
 import com.myapp.organizeteam.Core.Submitter;
 import com.myapp.organizeteam.Core.Team;
@@ -860,6 +861,7 @@ public class DataExtraction
 
         final ArrayList<String> meetingPermissions = new ArrayList<>();
         final ArrayList<String> taskPermissions = new ArrayList<>();
+        final ArrayList<String> postPermissions = new ArrayList<>();
 
         final DatabaseReference mDatabase =  getDatabaseReference(ConstantNames.ROLE_PATH).child ( teamID );
 
@@ -867,11 +869,14 @@ public class DataExtraction
         final Task dbPerMetingAll = dbSourceMeetingAll.getTask();
         final TaskCompletionSource<ArrayList<Role>> dbSourceTaskAll = new TaskCompletionSource<>();
         final Task dbPerTaskAll = dbSourceTaskAll.getTask();
+        final TaskCompletionSource<ArrayList<Role>> dbSourcePostAll = new TaskCompletionSource<>();
+        final Task dbPerPostAll = dbSourceTaskAll.getTask();
 
         getListPermissions(teamID, roles, meetingPermissions, mDatabase, dbSourceMeetingAll, dbPerMetingAll, ConstantNames.DATA_ROLE_MEETING_PERMISSION);
         getListPermissions(teamID, roles, taskPermissions, mDatabase, dbSourceTaskAll, dbPerTaskAll, ConstantNames.DATA_ROLE_TASK_PERMISSION);
+        getListPermissions(teamID, roles, postPermissions, mDatabase, dbSourcePostAll, dbPerPostAll, ConstantNames.DATA_ROLE_POST_PERMISSION);
 
-        Tasks.whenAll(dbPerMetingAll,dbPerTaskAll).addOnSuccessListener(new OnSuccessListener<Void>() {
+        Tasks.whenAll(dbPerMetingAll,dbPerTaskAll,dbPerPostAll).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 if(dbPerMetingAll.getResult() != null)
@@ -882,7 +887,11 @@ public class DataExtraction
                 {
                     permissions.put(ConstantNames.USER_PERMISSIONS_TASK,dbPerTaskAll.getResult());
                 }
-                if(dbPerMetingAll.getResult() != null && dbPerTaskAll.getResult() != null)
+                if(dbPerPostAll.getResult() != null)
+                {
+                    permissions.put(ConstantNames.USER_PERMISSIONS_POST,dbPerPostAll.getResult());
+                }
+                if((dbPerMetingAll.getResult() != null && dbPerTaskAll.getResult() != null) && dbPerPostAll.getResult() != null)
                 {
                     iSavable.onDataRead(permissions);
                 }
@@ -895,6 +904,10 @@ public class DataExtraction
                 final Task dbTask = dbSourceTask.getTask();
                 getRolesResult(dbSourceTask, taskPermissions, teamID);
 
+                final TaskCompletionSource<ArrayList<Role>> dbSourcePost = new TaskCompletionSource<>();
+                final Task dbPost = dbSourcePost.getTask();
+                getRolesResult(dbSourcePost, postPermissions, teamID);
+
                 Task<Void> allTask = Tasks.whenAll(dbTask,dbMeeting);
                 allTask.addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -906,6 +919,10 @@ public class DataExtraction
                         if(dbTask.getResult() != null)
                         {
                             permissions.put(ConstantNames.USER_PERMISSIONS_TASK,dbTask.getResult());
+                        }
+                        if(dbPost.getResult() != null)
+                        {
+                            permissions.put(ConstantNames.USER_PERMISSIONS_POST,dbPost.getResult());
                         }
                         iSavable.onDataRead(permissions);
                     }
@@ -1312,6 +1329,99 @@ public class DataExtraction
                 {
                     iSavable.onDataRead(null);
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void getAllPostsByTeam(String keyID, final ISavable iSavable) {
+        final ArrayList<Post> tasks = new ArrayList<>();
+
+        final DatabaseReference mDatabase =  getDatabaseReference(ConstantNames.POST_PATH).child ( keyID );
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds : snapshot.getChildren()) {
+                    Post post = (Post) getValue ( ds,Post.class );
+                    tasks.add(post);
+                }
+                iSavable.onDataRead(tasks);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+    public void getPostsByUser(String userID, String teamID, final ISavable iSavable) {
+        final ArrayList<String> posts = new ArrayList<>();
+
+        final DatabaseReference mDatabase = getDatabaseReference(ConstantNames.USER_ACTIVITY_PATH).child(teamID).child(userID).child(ConstantNames.DATA_USER_POSTS);
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    if(ds.hasChildren())
+                    {
+                        Post post = ds.getValue(Post.class);
+                        posts.add(post.getKeyID());
+                    }
+                    else
+                    {
+                        posts.add(ds.getValue().toString());
+                    }
+                }
+                iSavable.onDataRead(posts);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void getPostsByID(final ArrayList<String> postsID, final String teamID, final String userID, final ISavable iSavable)
+    {
+        final ArrayList<Post> posts = new ArrayList<>();
+
+        final DatabaseReference mDatabase =  getDatabaseReference(ConstantNames.POST_PATH).child ( teamID );
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds : snapshot.getChildren())
+                {
+                    for(String id : postsID)
+                    {
+                        if(ds.getKey().equals(id))
+                        {
+                            Post post = (Post)getValue(ds,Post.class);
+                            posts.add(post);
+                            postsID.remove(id);
+                            break;
+                        }
+                    }
+                }
+                if(postsID.size() > 0)
+                {
+                    for(String id : postsID)
+                    {
+                        deleteValue(ConstantNames.USER_ACTIVITY_PATH, teamID, userID, ConstantNames.DATA_USER_POSTS, id, new DataListener() {
+                            @Override
+                            public void onDataDelete() {
+
+                            }
+                        });
+                    }
+                }
+                iSavable.onDataRead(posts);
             }
 
             @Override

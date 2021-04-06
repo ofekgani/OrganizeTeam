@@ -22,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.myapp.organizeteam.Adapters.MeetingsListAdapter;
+import com.myapp.organizeteam.Adapters.PostsListAdapter;
 import com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
@@ -40,13 +41,13 @@ import java.util.Map;
 
 import static com.myapp.organizeteam.DataManagement.Authorization.isManager;
 
-public class TeamPageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, UsersRequestsListAdapterRel.AdapterListener, MeetingsListAdapter.AdapterListener {
+public class TeamPageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, UsersRequestsListAdapterRel.AdapterListener, MeetingsListAdapter.AdapterListener, PostsListAdapter.AdapterListener {
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     OpenMenu openMenu;
     ImageView nav_logo;
-    FloatingActionButton fab_createMeeting,fab_createRole, fab_createTask;
+    FloatingActionButton fab_createMeeting,fab_createRole, fab_createTask, fab_createPost;
 
     FileManage fileManage;
     DataExtraction dataExtraction;
@@ -55,13 +56,12 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
 
     User user, manager;
     Team team;
-    ArrayList<Role> meetingsPer,tasksPer;
+    ArrayList<Role> meetingsPer,tasksPer,postsPer;
     ArrayList<Role> userRoles,roles;
 
     ArrayList<User> users,requests;
 
     Bundle bundle;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +73,7 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
         fab_createMeeting = findViewById(R.id.fb_createMeeting);
         fab_createRole = findViewById(R.id.fb_createRole);
         fab_createTask = findViewById(R.id.fb_createTask);
+        fab_createPost = findViewById(R.id.fb_createPost);
 
         openMenu = new OpenMenu(R.id.main_toolbar);
 
@@ -107,6 +108,15 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
         else
         {
             tasksPer = new ArrayList<>();
+        }
+
+        if((ArrayList<Role>)intent.getSerializableExtra(ConstantNames.USER_PERMISSIONS_POST) != null)
+        {
+            postsPer = (ArrayList<Role>)intent.getSerializableExtra(ConstantNames.USER_PERMISSIONS_POST);
+        }
+        else
+        {
+            postsPer = new ArrayList<>();
         }
 
         accessPermissions();
@@ -176,6 +186,19 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
             }
         });
 
+        fab_createPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActivityTransition activityTransition = new ActivityTransition();
+
+                Map<String,Object> save = new HashMap<>();
+                save.put(ConstantNames.TEAM,team);
+                save.put(ConstantNames.USER,intent.getSerializableExtra ( ConstantNames.USER ));
+                save.put(ConstantNames.USER_PERMISSIONS,postsPer);
+                activityTransition.goToWithResult(TeamPageActivity.this,CreatePostActivity.class,980,save,null);
+            }
+        });
+
         DatabaseReference userDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.USER_ACTIVITY_PATH).child(team.getKeyID()).child(user.getKeyID());
         userDatabase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -190,6 +213,7 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
                                 Map<String,Object> permissions = (Map<String, Object>) save;
                                 meetingsPer = (ArrayList<Role>) permissions.get(ConstantNames.USER_PERMISSIONS_MEETING);
                                 tasksPer = (ArrayList<Role>) permissions.get(ConstantNames.USER_PERMISSIONS_TASK);
+                                postsPer = (ArrayList<Role>) permissions.get(ConstantNames.USER_PERMISSIONS_POST);
                                 accessPermissions();
                             }
                         });
@@ -217,6 +241,7 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
                                 Map<String,Object> permissions = (Map<String, Object>) save;
                                 meetingsPer = (ArrayList<Role>) permissions.get(ConstantNames.USER_PERMISSIONS_MEETING);
                                 tasksPer = (ArrayList<Role>) permissions.get(ConstantNames.USER_PERMISSIONS_TASK);
+                                postsPer = (ArrayList<Role>) permissions.get(ConstantNames.USER_PERMISSIONS_POST);
                                 accessPermissions();
                             }
                         });
@@ -279,12 +304,14 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
         fab_createMeeting.setVisibility(View.GONE);
         fab_createRole.setVisibility(View.GONE);
         fab_createTask.setVisibility(View.GONE);
+        fab_createPost.setVisibility(View.GONE);
 
         if(isManager)
         {
             fab_createMeeting.setVisibility(View.VISIBLE);
             fab_createRole.setVisibility(View.VISIBLE);
             fab_createTask.setVisibility(View.VISIBLE);
+            fab_createPost.setVisibility(View.VISIBLE);
             return;
         }
 
@@ -309,6 +336,18 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
             else
             {
                 fab_createTask.setVisibility(View.GONE);
+            }
+        }
+
+        if (postsPer != null)
+        {
+            if(postsPer.size() > 0  && !postsPer.isEmpty())
+            {
+                fab_createPost.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                fab_createPost.setVisibility(View.GONE);
             }
         }
 
@@ -357,6 +396,14 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
                 getFragmentManager().beginTransaction().replace(R.id.fragment_container, tasksFragment,"tasksFragment").commit();
 
                 openMenu.setCheckedItem(navigationView,R.id.btn_tasks);
+                break;
+            case R.id.btn_posts:
+                PostsFragment postsFragment = new PostsFragment();
+                postsFragment.setArguments(bundle);
+                getFragmentManager().beginTransaction().replace(R.id.fragment_container, postsFragment,"postsFragment").commit();
+
+                openMenu.setCheckedItem(navigationView,R.id.btn_tasks);
+                break;
         }
         openMenu.closeMenu ( drawerLayout );
         return true;
@@ -384,6 +431,10 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
         TasksFragment tasksFragment = (TasksFragment) getFragmentManager().findFragmentByTag("tasksFragment");
         if(tasksFragment != null)
             tasksFragment.onActivityResult(requestCode,resultCode,data);
+
+        PostsFragment postsFragment = (PostsFragment) getFragmentManager().findFragmentByTag("postsFragment");
+        if(postsFragment != null)
+            postsFragment.onActivityResult(requestCode,resultCode,data);
     }
 
     @Override

@@ -140,6 +140,7 @@
                 app:fab_size="mini"></com.github.clans.fab.FloatingActionButton>
 
             <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fb_createPost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableTint="@color/primaryTextColor"
