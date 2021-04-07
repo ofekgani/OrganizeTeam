@@ -28,6 +28,7 @@ public class Submitter implements Serializable {
     public static final int STATUS_CONFIRM = 1;
     public static final int STATUS_UNCONFIRMED = 0;
     public static final int STATUS_WAITING = -1;
+    public static final int STATUS_UNSUBMITTED = -2;
 
     public String getTitle() {
         return title;

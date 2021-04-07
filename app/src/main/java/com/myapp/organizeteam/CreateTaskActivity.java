@@ -24,6 +24,7 @@ import com.myapp.organizeteam.Core.Hour;
 import com.myapp.organizeteam.Core.InputManagement;
 import com.myapp.organizeteam.Core.Role;
 import com.myapp.organizeteam.Core.Mission;
+import com.myapp.organizeteam.Core.Submitter;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
@@ -250,9 +251,12 @@ public class CreateTaskActivity extends AppCompatActivity {
                 public void onDataRead(Object usersList) {
                     ArrayList<String> usersID = (ArrayList<String>) usersList;
                     DatabaseReference taskDatabase = FirebaseDatabase.getInstance ().getReference (ConstantNames.USER_ACTIVITY_PATH).child(teamID);
+                    DatabaseReference usersDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH).child(teamID).child(taskID).child(ConstantNames.DATA_USERS_LIST);
                     for(String id : usersID)
                     {
                         taskDatabase.child(id).child(ConstantNames.DATA_USER_TASKS).push().setValue(taskID);
+                        Submitter submitter = new Submitter(null,null,null,null,Submitter.STATUS_UNSUBMITTED,taskID,id);
+                        usersDatabase.child(id).setValue(submitter);
                     }
                     Map<String,Object> save = new HashMap<>();
                     save.put(ConstantNames.TASK,task);
