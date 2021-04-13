@@ -76,8 +76,8 @@ public class TasksListAdapter extends ArrayAdapter<Mission> {
         String meetingDate = date.getDay() + "/" + date.getMonth() + "/" + date.getYear() + " , " + hour.getHour() + ":" + hour.getMinute();
         tv_date.setText(meetingDate);
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH).child(teamID).child(taskID).child(ConstantNames.DATA_USERS_LIST);
-        dataExtraction.hasChild(databaseReference, userID, new ISavable() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH).child(teamID).child(taskID).child(ConstantNames.DATA_USERS_LIST).child(userID);
+        dataExtraction.hasChild(databaseReference, ConstantNames.DATA_TASK_TITLE, new ISavable() {
             @Override
             public void onDataRead(Object save) {
                 if(!(boolean)save)

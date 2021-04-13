@@ -34,7 +34,7 @@ public class SubmitsListActivity extends AppCompatActivity {
     DataExtraction dataExtraction;
     ActivityTransition activityTransition;
 
-    RecyclerView lv_users;
+    RecyclerView lv_users, lv_rejects;
     private RecyclerView.Adapter usersAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private UsersListAdapterRel.RecycleViewClickListener listener;
@@ -55,6 +55,7 @@ public class SubmitsListActivity extends AppCompatActivity {
         activityTransition = new ActivityTransition();
 
         lv_users = findViewById(R.id.lv_submits);
+        lv_rejects = findViewById(R.id.lv_rejects);
 
         intent = getIntent();
         team = (Team) intent.getSerializableExtra(ConstantNames.TEAM);
@@ -66,6 +67,13 @@ public class SubmitsListActivity extends AppCompatActivity {
             public void onDataRead(Object save) {
                 usersList = (ArrayList<User>) save;
                 setAdapter(usersList);
+                dataExtraction.getRejects(team.getKeyID(), mission.getKeyID(), new ISavable() {
+                    @Override
+                    public void onDataRead(Object save) {
+                        usersList = (ArrayList<User>) save;
+                        setAdapter(usersList);
+                    }
+                });
             }
         });
 

@@ -30,6 +30,7 @@ public class ConstantNames {
     public static final String DATA_PUBLISH_TO = "publishTo";
     public static final String DATA_TASK_REPLIES = "responses";
     public static final String DATA_TASK_CONFIRM = "confirmStatus";
+    public static final String DATA_TASK_TITLE = "title";
 
     //Meeting path
     public static final String DATA_MEETING_STATUS = "status";
