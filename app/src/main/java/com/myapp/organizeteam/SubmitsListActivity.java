@@ -1,19 +1,14 @@
 package com.myapp.organizeteam;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 
-import com.myapp.organizeteam.Adapters.TasksListAdapter;
 import com.myapp.organizeteam.Adapters.UsersListAdapterRel;
-import com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Mission;
@@ -21,13 +16,10 @@ import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.ISavable;
-import com.myapp.organizeteam.Dialogs.TaskDialog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.myapp.organizeteam.DataManagement.Authorization.isManager;
 
 public class SubmitsListActivity extends AppCompatActivity {
 
@@ -35,16 +27,18 @@ public class SubmitsListActivity extends AppCompatActivity {
     ActivityTransition activityTransition;
 
     RecyclerView lv_users, lv_rejects;
-    private RecyclerView.Adapter usersAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private UsersListAdapterRel.RecycleViewClickListener listener;
+    private RecyclerView.Adapter usersAdapter,rejectsAdapter;
+    private RecyclerView.LayoutManager usersLayoutManager,rejectsLayoutManager;
+    private UsersListAdapterRel.RecycleViewClickListener usersListener;
 
     ArrayList<User> usersList;
+    ArrayList<User> rejectsList;
 
     Intent intent;
     Team team;
     Mission mission;
     User user;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,12 +60,11 @@ public class SubmitsListActivity extends AppCompatActivity {
             @Override
             public void onDataRead(Object save) {
                 usersList = (ArrayList<User>) save;
-                setAdapter(usersList);
                 dataExtraction.getRejects(team.getKeyID(), mission.getKeyID(), new ISavable() {
                     @Override
                     public void onDataRead(Object save) {
-                        usersList = (ArrayList<User>) save;
-                        setAdapter(usersList);
+                        rejectsList = (ArrayList<User>) save;
+                        setAdapters(usersList, rejectsList);
                     }
                 });
             }
@@ -79,20 +72,27 @@ public class SubmitsListActivity extends AppCompatActivity {
 
     }
 
-    private void setAdapter(ArrayList<User> users) {
-        if(users != null)
-        {
+    private void setAdapters(ArrayList<User> usersList, ArrayList<User> rejectsList) {
+        if(usersList != null) {
             setOnClickListener();
             lv_users.setHasFixedSize(true);
-            mLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
-            usersAdapter = new UsersListAdapterRel(users, listener);
-            lv_users.setLayoutManager(mLayoutManager);
+            usersLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
+            usersAdapter = new UsersListAdapterRel(usersList, usersListener);
+            lv_users.setLayoutManager(usersLayoutManager);
             lv_users.setAdapter(usersAdapter);
+        }
+
+        if(rejectsList != null){
+            lv_rejects.setHasFixedSize(true);
+            rejectsLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
+            rejectsAdapter = new UsersListAdapterRel(rejectsList, null);
+            lv_rejects.setLayoutManager(rejectsLayoutManager);
+            lv_rejects.setAdapter(rejectsAdapter);
         }
     }
 
     private void setOnClickListener() {
-        listener = new UsersListAdapterRel.RecycleViewClickListener() {
+        usersListener = new UsersListAdapterRel.RecycleViewClickListener() {
             @Override
             public void onClick(View v, final int position) {
                 dataExtraction.getSubmitterTask(team.getKeyID(), mission.getKeyID(), usersList.get(position).getKeyID(), new ISavable() {

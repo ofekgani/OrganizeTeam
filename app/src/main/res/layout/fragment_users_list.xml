@@ -42,11 +42,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Users:"
         android:background="#8A3F4142"
-        android:textColor="@color/secondaryTextColor"
         android:fontFamily="@font/roboto_medium"
         android:paddingLeft="16dp"
+        android:text="Users:"
+        android:textColor="@color/secondaryTextColor"
         app:layout_constraintBottom_toTopOf="@+id/lv_users"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -63,7 +63,7 @@
         android:nestedScrollingEnabled="false"
         app:layout_constraintBottom_toTopOf="@+id/textView4"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3"
         app:layout_constraintVertical_bias="0.0"></androidx.recyclerview.widget.RecyclerView>
@@ -73,17 +73,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Requests:"
         android:background="#8A3F4142"
-        android:textColor="@color/secondaryTextColor"
         android:fontFamily="@font/roboto_medium"
         android:paddingLeft="16dp"
+        android:text="Requests:"
+        android:textColor="@color/secondaryTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mv_userLogo"
-        app:layout_constraintVertical_bias="0.274"></TextView>
+        app:layout_constraintVertical_bias="0.45"></TextView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/lv_requests"
