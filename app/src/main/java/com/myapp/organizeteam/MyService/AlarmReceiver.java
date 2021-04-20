@@ -16,15 +16,7 @@ import static com.myapp.organizeteam.Core.Meeting.FLAG_MEETING_STARTED;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
-    String channel, title, description;
     Bundle bundle;
-
-    public AlarmReceiver(String channel,String title, String description)
-    {
-        this.channel = channel;
-        this.title = title;
-        this.description = description;
-    }
 
     @Override
     public void onReceive(Context context, Intent intent) {

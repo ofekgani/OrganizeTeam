@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
@@ -26,6 +27,7 @@ import com.myapp.organizeteam.Core.Hour;
 import com.myapp.organizeteam.Core.InputManagement;
 import com.myapp.organizeteam.Core.Meeting;
 import com.myapp.organizeteam.Core.Role;
+import com.myapp.organizeteam.Core.Submitter;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
@@ -56,6 +58,7 @@ public class CreateMeetingActivity extends AppCompatActivity{
     ActivityTransition activityTransition;
 
     EditText ed_meetingName,ed_meetingDescription,ed_meetingDate, ed_meetingHour;
+    CheckBox cb_ArrivalConfirmation;
 
     Intent intent;
     Team team;
@@ -86,6 +89,7 @@ public class CreateMeetingActivity extends AppCompatActivity{
         ed_meetingDescription = findViewById(R.id.ed_roleDescription);
         ed_meetingName = findViewById(R.id.ed_roleName);
         ed_meetingHour = findViewById(R.id.ed_meetingHour);
+        cb_ArrivalConfirmation = findViewById(R.id.cb_arrivalRequired);
 
         intent = getIntent();
         team = (Team) intent.getSerializableExtra(ConstantNames.TEAM);
@@ -254,7 +258,7 @@ public class CreateMeetingActivity extends AppCompatActivity{
             final String meetingID = mDatabase.push ().getKey ();
 
             //Add meeting into firebase
-            final Meeting meeting = new Meeting(meetingID,teamID,meetingName,meetingDescription,meetingDate,meetingTime,FLAG_MEETING_BOOKED);
+            final Meeting meeting = new Meeting(meetingID,teamID,meetingName,meetingDescription,meetingDate,meetingTime,FLAG_MEETING_BOOKED,cb_ArrivalConfirmation.isChecked());
             dataExtraction.setObject(ConstantNames.MEETINGS_PATH,teamID,meetingID,meeting);
 
             //Add to cloud all selected roles to which the meeting will be published
@@ -269,9 +273,21 @@ public class CreateMeetingActivity extends AppCompatActivity{
                 public void onDataRead(Object usersList) {
                     ArrayList<String> usersID = (ArrayList<String>) usersList;
                     DatabaseReference meetingDatabase = FirebaseDatabase.getInstance ().getReference (ConstantNames.USER_ACTIVITY_PATH).child(teamID);
+                    DatabaseReference usersDatabase = FirebaseDatabase.getInstance ().getReference (ConstantNames.MEETINGS_PATH).child(teamID).child(meetingID).child(ConstantNames.DATA_USERS_LIST);
                     for(String id : usersID)
                     {
                         meetingDatabase.child(id).child(ConstantNames.DATA_USER_MEETINGS).push().setValue(meetingID);
+                        Submitter submitter;
+                        if(cb_ArrivalConfirmation.isChecked())
+                        {
+                            submitter = new Submitter(null,null,null,null,Meeting.ARRIVAL_CONFIRMATION,meetingID,id);
+                        }
+                        else
+                        {
+                            submitter = new Submitter(null,null,null,null,Meeting.NO_ANSWER,meetingID,id);
+                        }
+
+                        usersDatabase.child(id).setValue(submitter);
                     }
                     setAlarm(calendar,meeting);
                     Map<String,Object> save = new HashMap<>();
