@@ -10,9 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import android.app.Fragment;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.myapp.organizeteam.Adapters.MeetingsListAdapter;
+import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Meeting;
 import com.myapp.organizeteam.Core.Role;
@@ -22,6 +25,8 @@ import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.ISavable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 import static com.myapp.organizeteam.DataManagement.Authorization.isManager;
@@ -29,6 +34,7 @@ import static com.myapp.organizeteam.DataManagement.Authorization.isManager;
 public class MeetingsFragment extends Fragment{
 
     DataExtraction dataExtraction;
+    ActivityTransition activityTransition;
 
     ListView lv_meetingList;
     MeetingsListAdapter adapter;
@@ -48,6 +54,7 @@ public class MeetingsFragment extends Fragment{
         this.inflater = inflater;
 
         dataExtraction = new DataExtraction();
+        activityTransition = new ActivityTransition();
 
         lv_meetingList = v.findViewById(R.id.lv_meeting);
 
@@ -96,6 +103,16 @@ public class MeetingsFragment extends Fragment{
     private void setAdapter() {
         adapter = new MeetingsListAdapter(inflater.getContext(),R.layout.adapter_meetings_list,meetingsList);
         lv_meetingList.setAdapter ( adapter );
+        lv_meetingList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Meeting meeting = meetingsList.get(position);
+                Map<String,Object> save = new HashMap<>();
+                save.put(ConstantNames.MEETING,meeting);
+                save.put(ConstantNames.TEAM,team);
+                activityTransition.goTo(getActivity(),MeetingActivity.class,false,save,null);
+            }
+        });
         adapter.notifyDataSetChanged();
     }
 

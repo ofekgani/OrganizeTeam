@@ -95,7 +95,7 @@ public class SubmitsListActivity extends AppCompatActivity {
         usersListener = new UsersListAdapterRel.RecycleViewClickListener() {
             @Override
             public void onClick(View v, final int position) {
-                dataExtraction.getSubmitterTask(team.getKeyID(), mission.getKeyID(), usersList.get(position).getKeyID(), new ISavable() {
+                dataExtraction.getSubmitter(ConstantNames.TASK_PATH,team.getKeyID(), mission.getKeyID(), usersList.get(position).getKeyID(), new ISavable() {
                     @Override
                     public void onDataRead(Object submitter) {
                         Map<String,Object> save = new HashMap<>();
