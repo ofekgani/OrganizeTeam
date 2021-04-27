@@ -280,11 +280,11 @@ public class CreateMeetingActivity extends AppCompatActivity{
                         Submitter submitter;
                         if(cb_ArrivalConfirmation.isChecked())
                         {
-                            submitter = new Submitter(null,null,null,null,Meeting.ARRIVAL_CONFIRMATION,meetingID,id);
+                            submitter = new Submitter(null,null,null,null,Meeting.NO_ANSWER,meetingID,id);
                         }
                         else
                         {
-                            submitter = new Submitter(null,null,null,null,Meeting.NO_ANSWER,meetingID,id);
+                            submitter = new Submitter(null,null,null,null,Meeting.ARRIVAL_CONFIRMATION,meetingID,id);
                         }
 
                         usersDatabase.child(id).setValue(submitter);

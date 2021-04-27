@@ -1467,4 +1467,33 @@ public class DataExtraction
             }
         });
     }
+
+    public void getUsersByConfirmations(String path, String teamID, String id, final int confirmation, final ISavable iSavable)
+    {
+        final ArrayList<String> usersID = new ArrayList<>();
+
+        final DatabaseReference mDatabase = getDatabaseReference(path).child(teamID).child(id).child(ConstantNames.DATA_USERS_LIST);
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds : snapshot.getChildren())
+                {
+                    int value = ds.child(ConstantNames.DATA_TASK_CONFIRM).getValue(Integer.class);
+                    if(value == confirmation)
+                        usersID.add(ds.getValue().toString());
+                }
+                getUsersByKeys(usersID, new ISavable() {
+                    @Override
+                    public void onDataRead(Object save) {
+                        iSavable.onDataRead(save);
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 }

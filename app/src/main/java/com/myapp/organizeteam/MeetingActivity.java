@@ -2,6 +2,8 @@ package com.myapp.organizeteam;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.myapp.organizeteam.Adapters.UsersListAdapterRel;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Meeting;
 import com.myapp.organizeteam.Core.Submitter;
@@ -21,19 +24,24 @@ import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.ISavable;
 
+import java.util.ArrayList;
+
 public class MeetingActivity extends AppCompatActivity {
 
     DataExtraction dataExtraction;
 
     TextView tv_meetingName, tv_meetingDate, tv_meetingDescription;
     Button btn_arrivalConfirmation;
-    ListView lv_arrivals, lv_rejects;
+    RecyclerView lv_arrivals, lv_rejects;
     Toolbar toolbar;
 
     Intent intent;
     Meeting meeting;
     Team team;
     User user;
+
+    private RecyclerView.Adapter usersAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     boolean arrival;
     private Submitter submitter;
@@ -49,6 +57,8 @@ public class MeetingActivity extends AppCompatActivity {
         tv_meetingName = findViewById(R.id.tv_meetingName);
         tv_meetingDate = findViewById(R.id.tv_meetingDate);
         tv_meetingDescription = findViewById(R.id.tv_meetingDescription);
+        lv_arrivals = findViewById(R.id.lv_arrivalConfirmations);
+        lv_rejects = findViewById(R.id.lv_rejects);
 
         toolbar = findViewById(R.id.appBarLayout);
         setSupportActionBar(toolbar);
@@ -62,15 +72,23 @@ public class MeetingActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(""+meeting.getMeetingName());
 
-        tv_meetingName.setText(""+meeting.getMeetingName());
-        tv_meetingDate.setText(""+meeting.getDate());
-        tv_meetingDescription.setText(""+meeting.getMeetingDescription());
+        setUI();
+        setConfirmationButton();
+        dataExtraction.getUsersByConfirmations(ConstantNames.MEETINGS_PATH,team.getKeyID(),meeting.getKeyID(),Meeting.ARRIVAL_CONFIRMATION, new ISavable() {
+            @Override
+            public void onDataRead(Object save) {
+                setAdapter((ArrayList<User>) save);
+            }
+        });
+    }
 
+    private void setConfirmationButton() {
         btn_arrivalConfirmation.setVisibility(View.GONE);
         dataExtraction.getSubmitter(ConstantNames.MEETINGS_PATH,team.getKeyID(), meeting.getKeyID(), user.getKeyID(), new ISavable() {
             @Override
             public void onDataRead(Object save) {
                 submitter = (Submitter) save;
+                if(submitter == null) return;
                 if(meeting.isArrivalConfirmation())
                 {
                     btn_arrivalConfirmation.setVisibility(View.VISIBLE);
@@ -90,6 +108,23 @@ public class MeetingActivity extends AppCompatActivity {
         });
     }
 
+    private void setUI() {
+        tv_meetingName.setText(""+meeting.getMeetingName());
+        tv_meetingDate.setText(""+meeting.getDate().getDay()+"/"+meeting.getDate().getMonth()+"/"+meeting.getDate().getYear());
+        tv_meetingDescription.setText(""+meeting.getMeetingDescription());
+    }
+
+    private void setAdapter(ArrayList<User> users) {
+        if(users != null)
+        {
+            lv_arrivals.setHasFixedSize(true);
+            mLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
+            usersAdapter = new UsersListAdapterRel(users, null);
+            lv_arrivals.setLayoutManager(mLayoutManager);
+            lv_arrivals.setAdapter(usersAdapter);
+        }
+    }
+
     public void oc_confirmArrival(View view) {
         if(arrival)
         {
@@ -99,13 +134,13 @@ public class MeetingActivity extends AppCompatActivity {
         {
             submitter.setConfirm(Meeting.NO_ANSWER);
         }
-        dataExtraction.setObject(ConstantNames.MEETINGS_PATH,team.getKeyID(),meeting.getKeyID(),meeting);
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.MEETINGS_PATH);
         mDatabase.child(team.getKeyID())
                 .child(meeting.getKeyID())
                 .child(ConstantNames.DATA_USERS_LIST)
                 .child(user.getKeyID())
                 .setValue(submitter);
+        finish();
     }
 
     @Override

@@ -92,7 +92,7 @@ public class TasksListAdapter extends ArrayAdapter<Mission> {
                     }
                     else
                     {
-                        dataExtraction.getSubmitterTask(teamID, taskID, userID, new ISavable() {
+                        dataExtraction.getSubmitter(ConstantNames.TASK_PATH,teamID, taskID, userID, new ISavable() {
                             @Override
                             public void onDataRead(Object save) {
                                 Submitter submitter = (Submitter) save;

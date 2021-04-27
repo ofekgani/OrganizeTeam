@@ -110,6 +110,7 @@ public class MeetingsFragment extends Fragment{
                 Map<String,Object> save = new HashMap<>();
                 save.put(ConstantNames.MEETING,meeting);
                 save.put(ConstantNames.TEAM,team);
+                save.put(ConstantNames.USER,user);
                 activityTransition.goTo(getActivity(),MeetingActivity.class,false,save,null);
             }
         });
