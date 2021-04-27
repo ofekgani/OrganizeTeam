@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
@@ -40,8 +39,8 @@ public class MeetingActivity extends AppCompatActivity {
     Team team;
     User user;
 
-    private RecyclerView.Adapter usersAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView.Adapter confirmationsAdapter,rejectsAdapter;
+    private RecyclerView.LayoutManager confirmationsLayoutManager,rejectsLayoutManager;
 
     boolean arrival;
     private Submitter submitter;
@@ -77,7 +76,15 @@ public class MeetingActivity extends AppCompatActivity {
         dataExtraction.getUsersByConfirmations(ConstantNames.MEETINGS_PATH,team.getKeyID(),meeting.getKeyID(),Meeting.ARRIVAL_CONFIRMATION, new ISavable() {
             @Override
             public void onDataRead(Object save) {
-                setAdapter((ArrayList<User>) save);
+                ArrayList<User> users = (ArrayList<User>) save;
+                setAdapter(users,lv_arrivals,confirmationsAdapter,confirmationsLayoutManager);
+            }
+        });
+
+        dataExtraction.getUsersByConfirmations(ConstantNames.MEETINGS_PATH, team.getKeyID(), meeting.getKeyID(), Meeting.NO_ANSWER, new ISavable() {
+            @Override
+            public void onDataRead(Object save) {
+                setAdapter((ArrayList<User>) save,lv_rejects,rejectsAdapter,rejectsLayoutManager);
             }
         });
     }
@@ -114,14 +121,14 @@ public class MeetingActivity extends AppCompatActivity {
         tv_meetingDescription.setText(""+meeting.getMeetingDescription());
     }
 
-    private void setAdapter(ArrayList<User> users) {
+    private void setAdapter(ArrayList<User> users, RecyclerView recyclerView, RecyclerView.Adapter adapter, RecyclerView.LayoutManager layoutManager) {
         if(users != null)
         {
-            lv_arrivals.setHasFixedSize(true);
-            mLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
-            usersAdapter = new UsersListAdapterRel(users, null);
-            lv_arrivals.setLayoutManager(mLayoutManager);
-            lv_arrivals.setAdapter(usersAdapter);
+            recyclerView.setHasFixedSize(true);
+            layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
+            adapter = new UsersListAdapterRel(users, null);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setAdapter(adapter);
         }
     }
 

@@ -1480,7 +1480,7 @@ public class DataExtraction
                 {
                     int value = ds.child(ConstantNames.DATA_TASK_CONFIRM).getValue(Integer.class);
                     if(value == confirmation)
-                        usersID.add(ds.getValue().toString());
+                        usersID.add(ds.getKey());
                 }
                 getUsersByKeys(usersID, new ISavable() {
                     @Override
