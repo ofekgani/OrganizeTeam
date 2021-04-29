@@ -30,7 +30,8 @@
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/ln_buttonsList"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout2">
@@ -118,9 +119,9 @@
                 android:id="@+id/lv_arrivalConfirmations"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentStart="true"
                 android:layout_below="@+id/tv_arrivalConfirmations"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
                 android:layout_marginTop="8dp"
                 android:nestedScrollingEnabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -155,14 +156,14 @@
                 android:id="@+id/lv_rejects"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentStart="true"
                 android:layout_below="@+id/tv_arrivalConfirmations"
-                android:layout_marginBottom="96dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
                 android:layout_marginTop="8dp"
                 android:nestedScrollingEnabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_rejects"
                 app:layout_constraintVertical_bias="0.0"></androidx.recyclerview.widget.RecyclerView>
@@ -170,23 +171,58 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <Button
-        android:id="@+id/btn_confirmArrival"
-        android:layout_width="150dp"
-        android:layout_height="36dp"
-        android:layout_marginBottom="56dp"
-        android:background="@drawable/button"
-        android:fontFamily="@font/sans_semi_bold"
-        android:gravity="center"
-        android:onClick="oc_confirmArrival"
-        android:text="Confirm arrival"
-        android:textAllCaps="false"
-        android:textColor="#ffffff"
-        android:textSize="15sp"
+    <LinearLayout
+        android:id="@+id/ln_buttonsList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout2"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0">
+
+        <Button
+            android:id="@+id/btn_confirmArrivals"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/edit_text_button_2"
+            android:fontFamily="@font/sans_semi_bold"
+            android:gravity="center"
+            android:onClick="oc_confirmArrivals"
+            android:text="Confirm arrivals"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/btn_confirmArrival"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/edit_text_button_2"
+            android:fontFamily="@font/sans_semi_bold"
+            android:gravity="center"
+            android:onClick="oc_confirmArrival"
+            android:text="Confirm arrival"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/btn_enableMeeting"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/edit_text_button_2"
+            android:fontFamily="@font/sans_semi_bold"
+            android:gravity="center"
+            android:onClick="oc_handleMeeting"
+            android:text="Start meeting"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:textSize="15sp" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -111,7 +111,8 @@ public class MeetingsFragment extends Fragment{
                 save.put(ConstantNames.MEETING,meeting);
                 save.put(ConstantNames.TEAM,team);
                 save.put(ConstantNames.USER,user);
-                activityTransition.goTo(getActivity(),MeetingActivity.class,false,save,null);
+                save.put("pos",position);
+                activityTransition.goToWithResult(getActivity(),MeetingActivity.class,966,save,null);
             }
         });
         adapter.notifyDataSetChanged();
@@ -125,6 +126,24 @@ public class MeetingsFragment extends Fragment{
             {
                 Meeting meeting = (Meeting) data.getSerializableExtra(ConstantNames.MEETING);
                 meetingsList.add(meeting);
+                adapter.notifyDataSetChanged();
+            }
+            if(resultCode == RESULT_OK && requestCode == 966)
+            {
+                Meeting meeting = (Meeting) data.getSerializableExtra(ConstantNames.MEETING);
+                int position = data.getIntExtra("pos",-1);
+                if(position >= 0)
+                {
+                    if (meeting == null)
+                    {
+                        meetingsList.remove(position);
+                    }
+                    else
+                    {
+                        meetingsList.set(position,meeting);
+                    }
+                }
+
                 adapter.notifyDataSetChanged();
             }
         }

@@ -11,6 +11,7 @@ public class ConstantNames {
     public static final String ROLE_PATH = "role";
     public static final String POST_PATH = "post";
     public static final String USER_ACTIVITY_PATH = "userActivity";
+    public static final String USER_STATUSES_PATH = "userStatus";
 
     //Keys in firebase
     //User
@@ -93,4 +94,6 @@ public class ConstantNames {
     public static final String USERS_LIST = "usersList";
     public static final String REQUESTS_LIST = "requestsList";
     public static final String USER_PERMISSIONS = "userPermissions";
+
+    public static final String DATA_USER_STATUS_ARRIVED = "arrived";
 }

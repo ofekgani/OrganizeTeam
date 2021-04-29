@@ -41,7 +41,7 @@ import java.util.Map;
 
 import static com.myapp.organizeteam.DataManagement.Authorization.isManager;
 
-public class TeamPageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, UsersRequestsListAdapterRel.AdapterListener, MeetingsListAdapter.AdapterListener, PostsListAdapter.AdapterListener {
+public class TeamPageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, UsersRequestsListAdapterRel.AdapterListener, PostsListAdapter.AdapterListener {
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;

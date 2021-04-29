@@ -74,6 +74,11 @@ public class UserSelectionActivity extends AppCompatActivity implements UsersLis
             publishPermission = (String) intent.getSerializableExtra(ConstantNames.ROLE_MEETING_PERMISSION);
         }
 
+        if(intent.getSerializableExtra(ConstantNames.USERS_LIST) != null)
+        {
+            usersList = (ArrayList<User>) intent.getSerializableExtra(ConstantNames.USERS_LIST);
+        }
+
         createUsersList();
     }
 
@@ -86,14 +91,22 @@ public class UserSelectionActivity extends AppCompatActivity implements UsersLis
 
     private void createUsersList()
     {
-        final DataExtraction dataExtraction = new DataExtraction();
-        dataExtraction.getAllUsersByTeam(teamID, ConstantNames.DATA_USERS_LIST,new ISavable() {
-            @Override
-            public void onDataRead(Object save) {
-                usersList = (ArrayList<User>)save;
-                setAdapter(usersList);
-            }
-        });
+        if(usersList == null)
+        {
+            final DataExtraction dataExtraction = new DataExtraction();
+            dataExtraction.getAllUsersByTeam(teamID, ConstantNames.DATA_USERS_LIST,new ISavable() {
+                @Override
+                public void onDataRead(Object save) {
+                    ArrayList<User> users = (ArrayList<User>)save;
+                    setAdapter(users);
+                }
+            });
+        }
+        else
+        {
+            setAdapter(usersList);
+        }
+
     }
 
     private void setAdapter(ArrayList<User> users) {

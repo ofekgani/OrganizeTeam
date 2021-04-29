@@ -1,5 +1,6 @@
 package com.myapp.organizeteam;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,22 +16,28 @@ import android.widget.TextView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.myapp.organizeteam.Adapters.UsersListAdapterRel;
+import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Meeting;
 import com.myapp.organizeteam.Core.Submitter;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
+import com.myapp.organizeteam.DataManagement.Authorization;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
+import com.myapp.organizeteam.DataManagement.DataListener;
 import com.myapp.organizeteam.DataManagement.ISavable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-public class MeetingActivity extends AppCompatActivity {
+public class MeetingActivity extends AppCompatActivity{
 
     DataExtraction dataExtraction;
+    ActivityTransition activityTransition;
 
     TextView tv_meetingName, tv_meetingDate, tv_meetingDescription;
-    Button btn_arrivalConfirmation;
+    Button btn_arrivalConfirmation, btn_enableMeeting, btn_confirmArrivals;
     RecyclerView lv_arrivals, lv_rejects;
     Toolbar toolbar;
 
@@ -39,11 +46,11 @@ public class MeetingActivity extends AppCompatActivity {
     Team team;
     User user;
 
-    private RecyclerView.Adapter confirmationsAdapter,rejectsAdapter;
-    private RecyclerView.LayoutManager confirmationsLayoutManager,rejectsLayoutManager;
-
     boolean arrival;
     private Submitter submitter;
+    int position;
+
+    ArrayList<User> usersList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +58,11 @@ public class MeetingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_meeting);
 
         dataExtraction = new DataExtraction();
+        activityTransition = new ActivityTransition();
 
         btn_arrivalConfirmation = findViewById(R.id.btn_confirmArrival);
+        btn_confirmArrivals = findViewById(R.id.btn_confirmArrivals);
+        btn_enableMeeting = findViewById(R.id.btn_enableMeeting);
         tv_meetingName = findViewById(R.id.tv_meetingName);
         tv_meetingDate = findViewById(R.id.tv_meetingDate);
         tv_meetingDescription = findViewById(R.id.tv_meetingDescription);
@@ -66,6 +76,7 @@ public class MeetingActivity extends AppCompatActivity {
         meeting = (Meeting) intent.getSerializableExtra(ConstantNames.MEETING);
         team = (Team) intent.getSerializableExtra(ConstantNames.TEAM);
         user = (User) intent.getSerializableExtra(ConstantNames.USER);
+        position = (int) intent.getSerializableExtra("pos");
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -76,15 +87,15 @@ public class MeetingActivity extends AppCompatActivity {
         dataExtraction.getUsersByConfirmations(ConstantNames.MEETINGS_PATH,team.getKeyID(),meeting.getKeyID(),Meeting.ARRIVAL_CONFIRMATION, new ISavable() {
             @Override
             public void onDataRead(Object save) {
-                ArrayList<User> users = (ArrayList<User>) save;
-                setAdapter(users,lv_arrivals,confirmationsAdapter,confirmationsLayoutManager);
+                usersList = (ArrayList<User>) save;
+                setAdapter(usersList,lv_arrivals);
             }
         });
 
         dataExtraction.getUsersByConfirmations(ConstantNames.MEETINGS_PATH, team.getKeyID(), meeting.getKeyID(), Meeting.NO_ANSWER, new ISavable() {
             @Override
             public void onDataRead(Object save) {
-                setAdapter((ArrayList<User>) save,lv_rejects,rejectsAdapter,rejectsLayoutManager);
+                setAdapter((ArrayList<User>) save,lv_rejects);
             }
         });
     }
@@ -116,17 +127,41 @@ public class MeetingActivity extends AppCompatActivity {
     }
 
     private void setUI() {
+        btn_enableMeeting.setVisibility(View.GONE);
+        btn_confirmArrivals.setVisibility(View.GONE);
+
         tv_meetingName.setText(""+meeting.getMeetingName());
         tv_meetingDate.setText(""+meeting.getDate().getDay()+"/"+meeting.getDate().getMonth()+"/"+meeting.getDate().getYear());
         tv_meetingDescription.setText(""+meeting.getMeetingDescription());
+
+        if(Authorization.isManager)
+        {
+            btn_enableMeeting.setVisibility(View.VISIBLE);
+            btn_confirmArrivals.setVisibility(View.VISIBLE);
+
+            if(meeting.getStatus() == Meeting.FLAG_MEETING_STARTED)
+            {
+                btn_enableMeeting.setText("End meeting");
+            }
+            else if(meeting.getStatus() == Meeting.FLAG_MEETING_BOOKED)
+            {
+                btn_enableMeeting.setText("Start meeting");
+            }
+        }
+        else
+        {
+            btn_enableMeeting.setVisibility(View.GONE);
+            btn_confirmArrivals.setVisibility(View.GONE);
+        }
+
     }
 
-    private void setAdapter(ArrayList<User> users, RecyclerView recyclerView, RecyclerView.Adapter adapter, RecyclerView.LayoutManager layoutManager) {
+    private void setAdapter(ArrayList<User> users, RecyclerView recyclerView) {
         if(users != null)
         {
             recyclerView.setHasFixedSize(true);
-            layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
-            adapter = new UsersListAdapterRel(users, null);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
+            RecyclerView.Adapter adapter = new UsersListAdapterRel(users, null);
             recyclerView.setLayoutManager(layoutManager);
             recyclerView.setAdapter(adapter);
         }
@@ -147,7 +182,44 @@ public class MeetingActivity extends AppCompatActivity {
                 .child(ConstantNames.DATA_USERS_LIST)
                 .child(user.getKeyID())
                 .setValue(submitter);
-        finish();
+        activityTransition.back(this);
+    }
+
+    public void oc_handleMeeting(View view) {
+        if(meeting.getStatus() == Meeting.FLAG_MEETING_STARTED)
+        {
+            dataExtraction.deleteData(ConstantNames.MEETINGS_PATH, team.getKeyID(), meeting.getKeyID(), new DataListener() {
+                @Override
+                public void onDataDelete() {
+
+                }
+            });
+            finishActivity(null);
+        }
+        else if(meeting.getStatus() == Meeting.FLAG_MEETING_BOOKED)
+        {
+            meeting.setStatus(Meeting.FLAG_MEETING_STARTED);
+            dataExtraction.setNewData(ConstantNames.MEETINGS_PATH,team.getKeyID(),meeting.getKeyID(),ConstantNames.DATA_MEETING_STATUS,meeting.getStatus());
+            finishActivity(meeting);
+        }
+    }
+
+    private void finishActivity(Meeting meeting) {
+        Map<String,Object> save = new HashMap<>();
+        save.put("pos",position);
+        if(meeting != null)
+        {
+            save.put(ConstantNames.MEETING,meeting);
+        }
+        activityTransition.back(this,save);
+    }
+
+    public void oc_confirmArrivals(View view) {
+        if(usersList == null || usersList.size() == 0) return;
+        Map<String,Object> users = new HashMap<>();
+        users.put(ConstantNames.USERS_LIST,usersList);
+        users.put(ConstantNames.TEAM_KEY_ID,team.getKeyID());
+        activityTransition.goToWithResult(this,UserSelectionActivity.class,753,users,null);
     }
 
     @Override
@@ -160,5 +232,25 @@ public class MeetingActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            if (resultCode == RESULT_OK && requestCode == 753)
+            {
+                ArrayList<User> users = (ArrayList<User>) data.getSerializableExtra(ConstantNames.USERS_LIST);
+                for(User user : users)
+                {
+                    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.USER_STATUSES_PATH)
+                            .child(team.getKeyID())
+                            .child(user.getKeyID())
+                            .child(ConstantNames.MEETINGS_PATH)
+                            .child(ConstantNames.DATA_USER_STATUS_ARRIVED);
+                    mDatabase.child(meeting.getKeyID()).setValue(meeting.getKeyID());
+                }
+            }
+        }
     }
 }
