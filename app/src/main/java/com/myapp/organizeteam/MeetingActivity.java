@@ -6,6 +6,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -26,8 +29,10 @@ import com.myapp.organizeteam.DataManagement.Authorization;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.DataListener;
 import com.myapp.organizeteam.DataManagement.ISavable;
+import com.myapp.organizeteam.MyService.AlarmReceiver;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -206,7 +211,7 @@ public class MeetingActivity extends AppCompatActivity{
                                 .child(user.getKeyID())
                                 .child(ConstantNames.MEETINGS_PATH)
                                 .child(ConstantNames.DATA_USER_STATUS_MISSING);
-                        mDatabase.child(meeting.getKeyID()).setValue(meeting.getKeyID());
+                        mDatabase.child(meeting.getKeyID()).setValue(meeting);
                     }
 
                     for(User user : arrivalConfirmationList)
@@ -216,7 +221,7 @@ public class MeetingActivity extends AppCompatActivity{
                                 .child(user.getKeyID())
                                 .child(ConstantNames.MEETINGS_PATH)
                                 .child(ConstantNames.DATA_USER_STATUS_MISSING);
-                        mDatabase.child(meeting.getKeyID()).setValue(meeting.getKeyID());
+                        mDatabase.child(meeting.getKeyID()).setValue(meeting);
                     }
 
                     for(User user : arrivalList)
@@ -226,7 +231,7 @@ public class MeetingActivity extends AppCompatActivity{
                                 .child(user.getKeyID())
                                 .child(ConstantNames.MEETINGS_PATH)
                                 .child(ConstantNames.DATA_USER_STATUS_ARRIVED);
-                        mDatabase.child(meeting.getKeyID()).setValue(meeting.getKeyID());
+                        mDatabase.child(meeting.getKeyID()).setValue(meeting);
                     }
 
                 }
@@ -235,6 +240,7 @@ public class MeetingActivity extends AppCompatActivity{
         }
         else if(meeting.getStatus() == Meeting.FLAG_MEETING_BOOKED)
         {
+            startAlarm(meeting);
             meeting.setStatus(Meeting.FLAG_MEETING_STARTED);
             dataExtraction.setNewData(ConstantNames.MEETINGS_PATH,team.getKeyID(),meeting.getKeyID(),ConstantNames.DATA_MEETING_STATUS,meeting.getStatus());
             finishActivity(meeting);
@@ -285,7 +291,7 @@ public class MeetingActivity extends AppCompatActivity{
                             .child(user.getKeyID())
                             .child(ConstantNames.MEETINGS_PATH)
                             .child(ConstantNames.DATA_USER_STATUS_ARRIVED);
-                    mDatabase.child(meeting.getKeyID()).setValue(meeting.getKeyID());
+                    mDatabase.child(meeting.getKeyID()).setValue(meeting);
 
                     DatabaseReference submitterDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.MEETINGS_PATH)
                             .child(team.getKeyID())
@@ -294,14 +300,39 @@ public class MeetingActivity extends AppCompatActivity{
                             .child(user.getKeyID())
                             .child(ConstantNames.DATA_TASK_CONFIRM);
                     submitterDatabase.setValue(Meeting.ARRIVED);
-                    if(arrivalConfirmationList.contains(user))
+                    if(isExist(user,arrivalConfirmationList))
                     {
                         arrivalConfirmationList.remove(user);
                     }
-                    if(!arrivalList.contains(user))
+                    if(!isExist(user,arrivalList))
+                    {
                         arrivalList.add(user);
+                    }
                 }
             }
         }
+    }
+
+    private boolean isExist(User user, ArrayList<User> users)
+    {
+        for(User u : users)
+        {
+            if(u.getKeyID().equals(user.getKeyID()))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void startAlarm(Meeting meeting){
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        intent.setAction(Long.toString(System.currentTimeMillis()));
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ConstantNames.MEETING,meeting);
+        intent.putExtra("bundle", bundle);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, Calendar.DATE, pendingIntent);
     }
 }
