@@ -50,7 +50,7 @@ public class MeetingActivity extends AppCompatActivity{
     private Submitter submitter;
     int position;
 
-    ArrayList<User> usersList;
+    ArrayList<User> arrivalConfirmationList, rejectsList, arrivalList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,15 +87,23 @@ public class MeetingActivity extends AppCompatActivity{
         dataExtraction.getUsersByConfirmations(ConstantNames.MEETINGS_PATH,team.getKeyID(),meeting.getKeyID(),Meeting.ARRIVAL_CONFIRMATION, new ISavable() {
             @Override
             public void onDataRead(Object save) {
-                usersList = (ArrayList<User>) save;
-                setAdapter(usersList,lv_arrivals);
+                arrivalConfirmationList = (ArrayList<User>) save;
+                setAdapter(arrivalConfirmationList,lv_arrivals);
             }
         });
 
         dataExtraction.getUsersByConfirmations(ConstantNames.MEETINGS_PATH, team.getKeyID(), meeting.getKeyID(), Meeting.NO_ANSWER, new ISavable() {
             @Override
             public void onDataRead(Object save) {
-                setAdapter((ArrayList<User>) save,lv_rejects);
+                rejectsList = (ArrayList<User>) save;
+                setAdapter(rejectsList,lv_rejects);
+            }
+        });
+
+        dataExtraction.getUsersByConfirmations(ConstantNames.MEETINGS_PATH, team.getKeyID(), meeting.getKeyID(), Meeting.ARRIVED, new ISavable() {
+            @Override
+            public void onDataRead(Object save) {
+                arrivalList = (ArrayList<User>) save;
             }
         });
     }
@@ -191,6 +199,35 @@ public class MeetingActivity extends AppCompatActivity{
             dataExtraction.deleteData(ConstantNames.MEETINGS_PATH, team.getKeyID(), meeting.getKeyID(), new DataListener() {
                 @Override
                 public void onDataDelete() {
+                    for(User user : rejectsList)
+                    {
+                        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.USER_STATUSES_PATH)
+                                .child(team.getKeyID())
+                                .child(user.getKeyID())
+                                .child(ConstantNames.MEETINGS_PATH)
+                                .child(ConstantNames.DATA_USER_STATUS_MISSING);
+                        mDatabase.child(meeting.getKeyID()).setValue(meeting.getKeyID());
+                    }
+
+                    for(User user : arrivalConfirmationList)
+                    {
+                        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.USER_STATUSES_PATH)
+                                .child(team.getKeyID())
+                                .child(user.getKeyID())
+                                .child(ConstantNames.MEETINGS_PATH)
+                                .child(ConstantNames.DATA_USER_STATUS_MISSING);
+                        mDatabase.child(meeting.getKeyID()).setValue(meeting.getKeyID());
+                    }
+
+                    for(User user : arrivalList)
+                    {
+                        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.USER_STATUSES_PATH)
+                                .child(team.getKeyID())
+                                .child(user.getKeyID())
+                                .child(ConstantNames.MEETINGS_PATH)
+                                .child(ConstantNames.DATA_USER_STATUS_ARRIVED);
+                        mDatabase.child(meeting.getKeyID()).setValue(meeting.getKeyID());
+                    }
 
                 }
             });
@@ -204,6 +241,14 @@ public class MeetingActivity extends AppCompatActivity{
         }
     }
 
+    public void oc_confirmArrivals(View view) {
+        if(arrivalConfirmationList == null || arrivalConfirmationList.size() == 0) return;
+        Map<String,Object> users = new HashMap<>();
+        users.put(ConstantNames.USERS_LIST, arrivalConfirmationList);
+        users.put(ConstantNames.TEAM_KEY_ID,team.getKeyID());
+        activityTransition.goToWithResult(this,UserSelectionActivity.class,753,users,null);
+    }
+
     private void finishActivity(Meeting meeting) {
         Map<String,Object> save = new HashMap<>();
         save.put("pos",position);
@@ -212,14 +257,6 @@ public class MeetingActivity extends AppCompatActivity{
             save.put(ConstantNames.MEETING,meeting);
         }
         activityTransition.back(this,save);
-    }
-
-    public void oc_confirmArrivals(View view) {
-        if(usersList == null || usersList.size() == 0) return;
-        Map<String,Object> users = new HashMap<>();
-        users.put(ConstantNames.USERS_LIST,usersList);
-        users.put(ConstantNames.TEAM_KEY_ID,team.getKeyID());
-        activityTransition.goToWithResult(this,UserSelectionActivity.class,753,users,null);
     }
 
     @Override
@@ -249,6 +286,20 @@ public class MeetingActivity extends AppCompatActivity{
                             .child(ConstantNames.MEETINGS_PATH)
                             .child(ConstantNames.DATA_USER_STATUS_ARRIVED);
                     mDatabase.child(meeting.getKeyID()).setValue(meeting.getKeyID());
+
+                    DatabaseReference submitterDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.MEETINGS_PATH)
+                            .child(team.getKeyID())
+                            .child(meeting.getKeyID())
+                            .child(ConstantNames.DATA_USERS_LIST)
+                            .child(user.getKeyID())
+                            .child(ConstantNames.DATA_TASK_CONFIRM);
+                    submitterDatabase.setValue(Meeting.ARRIVED);
+                    if(arrivalConfirmationList.contains(user))
+                    {
+                        arrivalConfirmationList.remove(user);
+                    }
+                    if(!arrivalList.contains(user))
+                        arrivalList.add(user);
                 }
             }
         }

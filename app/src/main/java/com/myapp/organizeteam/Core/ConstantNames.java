@@ -96,4 +96,5 @@ public class ConstantNames {
     public static final String USER_PERMISSIONS = "userPermissions";
 
     public static final String DATA_USER_STATUS_ARRIVED = "arrived";
+    public static final String DATA_USER_STATUS_MISSING = "missing";
 }
