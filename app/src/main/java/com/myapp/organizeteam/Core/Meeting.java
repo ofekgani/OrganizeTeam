@@ -31,7 +31,6 @@ public class Meeting implements Serializable {
     public static int MISSING = 0;
     public static int NO_ANSWER = -1;
 
-
     public String getKeyID() {
         return keyID;
     }

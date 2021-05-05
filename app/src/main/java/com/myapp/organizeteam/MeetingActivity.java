@@ -204,35 +204,12 @@ public class MeetingActivity extends AppCompatActivity{
             dataExtraction.deleteData(ConstantNames.MEETINGS_PATH, team.getKeyID(), meeting.getKeyID(), new DataListener() {
                 @Override
                 public void onDataDelete() {
-                    for(User user : rejectsList)
-                    {
-                        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.USER_STATUSES_PATH)
-                                .child(team.getKeyID())
-                                .child(user.getKeyID())
-                                .child(ConstantNames.MEETINGS_PATH)
-                                .child(ConstantNames.DATA_USER_STATUS_MISSING);
-                        mDatabase.child(meeting.getKeyID()).setValue(meeting);
-                    }
 
-                    for(User user : arrivalConfirmationList)
-                    {
-                        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.USER_STATUSES_PATH)
-                                .child(team.getKeyID())
-                                .child(user.getKeyID())
-                                .child(ConstantNames.MEETINGS_PATH)
-                                .child(ConstantNames.DATA_USER_STATUS_MISSING);
-                        mDatabase.child(meeting.getKeyID()).setValue(meeting);
-                    }
+                    backupMeeting();
 
-                    for(User user : arrivalList)
-                    {
-                        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.USER_STATUSES_PATH)
-                                .child(team.getKeyID())
-                                .child(user.getKeyID())
-                                .child(ConstantNames.MEETINGS_PATH)
-                                .child(ConstantNames.DATA_USER_STATUS_ARRIVED);
-                        mDatabase.child(meeting.getKeyID()).setValue(meeting);
-                    }
+                    setUserStatus(rejectsList, ConstantNames.DATA_USER_STATUS_MISSING);
+                    setUserStatus(arrivalConfirmationList, ConstantNames.DATA_USER_STATUS_MISSING);
+                    setUserStatus(arrivalList, ConstantNames.DATA_USER_STATUS_ARRIVED);
 
                 }
             });
@@ -245,6 +222,24 @@ public class MeetingActivity extends AppCompatActivity{
             dataExtraction.setNewData(ConstantNames.MEETINGS_PATH,team.getKeyID(),meeting.getKeyID(),ConstantNames.DATA_MEETING_STATUS,meeting.getStatus());
             finishActivity(meeting);
         }
+    }
+
+    private void setUserStatus(ArrayList<User> rejectsList, String dataUserStatusMissing) {
+        for (User user : rejectsList) {
+            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.USER_STATUSES_PATH)
+                    .child(team.getKeyID())
+                    .child(user.getKeyID())
+                    .child(ConstantNames.MEETINGS_PATH)
+                    .child(dataUserStatusMissing);
+            mDatabase.child(meeting.getKeyID()).setValue(meeting);
+        }
+    }
+
+    private void backupMeeting() {
+        DatabaseReference meetingDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.MEETINGS_HISTORY_PATH)
+                .child(team.getKeyID())
+                .child(meeting.getKeyID());
+        meetingDatabase.setValue(meeting);
     }
 
     public void oc_confirmArrivals(View view) {
@@ -291,7 +286,7 @@ public class MeetingActivity extends AppCompatActivity{
                             .child(user.getKeyID())
                             .child(ConstantNames.MEETINGS_PATH)
                             .child(ConstantNames.DATA_USER_STATUS_ARRIVED);
-                    mDatabase.child(meeting.getKeyID()).setValue(meeting);
+                    mDatabase.child(meeting.getKeyID()).setValue(meeting.getKeyID());
 
                     DatabaseReference submitterDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.MEETINGS_PATH)
                             .child(team.getKeyID())

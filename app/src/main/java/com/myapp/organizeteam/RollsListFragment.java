@@ -17,7 +17,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.myapp.organizeteam.Adapters.RolesListAdapterRel;
+import com.myapp.organizeteam.Adapters.RolesUsersListAdapterRel;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Role;
 import com.myapp.organizeteam.Core.Team;
@@ -75,7 +75,7 @@ public class RollsListFragment extends Fragment{
         {
             lv_roles.setHasFixedSize(true);
             mLayoutManager = new LinearLayoutManager(inflater.getContext(),LinearLayoutManager.VERTICAL, false);
-            rolesAdapter = new RolesListAdapterRel(roles,inflater.getContext());
+            rolesAdapter = new RolesUsersListAdapterRel(roles,inflater.getContext());
             lv_roles.setLayoutManager(mLayoutManager);
             lv_roles.setAdapter(rolesAdapter);
         }

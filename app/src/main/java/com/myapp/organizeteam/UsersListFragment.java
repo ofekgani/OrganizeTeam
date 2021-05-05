@@ -1,5 +1,6 @@
 package com.myapp.organizeteam;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,12 +16,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.myapp.organizeteam.Adapters.UsersListAdapterRel;
 import com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel;
+import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
+import com.myapp.organizeteam.DataManagement.ISavable;
 import com.myapp.organizeteam.Resources.FileManage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.myapp.organizeteam.DataManagement.Authorization.isManager;
 
@@ -35,6 +40,7 @@ public class UsersListFragment extends Fragment{
     RecyclerView lv_requests;
     private RecyclerView.Adapter usersAdapter,requestsAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private UsersListAdapterRel.RecycleViewClickListener listener;
 
     User manager;
     Team team;
@@ -81,9 +87,10 @@ public class UsersListFragment extends Fragment{
     private void setAdapter(ArrayList<User> users,ArrayList<User> requests) {
         if(usersList != null)
         {
+            setOnClickListener();
             lv_users.setHasFixedSize(true);
             mLayoutManager = new LinearLayoutManager(inflater.getContext(),LinearLayoutManager.VERTICAL, false);
-            usersAdapter = new UsersListAdapterRel(users,null);
+            usersAdapter = new UsersListAdapterRel(users,listener);
             lv_users.setLayoutManager(mLayoutManager);
             lv_users.setAdapter(usersAdapter);
         }
@@ -96,6 +103,19 @@ public class UsersListFragment extends Fragment{
             lv_requests.setLayoutManager(mLayoutManager2);
             lv_requests.setAdapter(requestsAdapter);
         }
+    }
+
+    private void setOnClickListener() {
+        listener = new UsersListAdapterRel.RecycleViewClickListener() {
+            @Override
+            public void onClick(View v, final int position) {
+                ActivityTransition activityTransition = new ActivityTransition();
+                Map<String, Object> save = new HashMap<>();
+                save.put(ConstantNames.USER,usersList.get(position));
+                save.put(ConstantNames.TEAM,team);
+                activityTransition.goTo((Activity) inflater.getContext(),UserInformationActivity.class,false,save,null);
+            }
+        };
     }
 
 

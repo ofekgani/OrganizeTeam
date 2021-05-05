@@ -13,8 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".MeetingActivity"
+        <activity android:name=".UserInformationActivity"
             android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".MeetingActivity"
+            android:theme="@style/AppTheme" />
         <activity android:name=".CreatePostActivity" />
         <activity
             android:name=".ResponsesListActivity"

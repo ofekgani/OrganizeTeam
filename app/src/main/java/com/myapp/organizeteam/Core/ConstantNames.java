@@ -12,6 +12,7 @@ public class ConstantNames {
     public static final String POST_PATH = "post";
     public static final String USER_ACTIVITY_PATH = "userActivity";
     public static final String USER_STATUSES_PATH = "userStatus";
+    public static final String MEETINGS_HISTORY_PATH = "meetingHistory";
 
     //Keys in firebase
     //User
