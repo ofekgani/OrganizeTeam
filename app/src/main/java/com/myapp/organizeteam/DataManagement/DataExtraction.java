@@ -1496,4 +1496,55 @@ public class DataExtraction
             }
         });
     }
+
+    public void getKeysByStatus(String path, String teamID, String id, String status, final ISavable iSavable)
+    {
+        final ArrayList<String> activityListID = new ArrayList<>();
+
+        final DatabaseReference mDatabase = getDatabaseReference(ConstantNames.USER_STATUSES_PATH).child(teamID).child(id).child(path).child(status);
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds : snapshot.getChildren())
+                {
+                   activityListID.add(ds.getKey());
+                }
+                iSavable.onDataRead(activityListID);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void getDeletedMeetingsByKeys(String teamID, final ArrayList<String> keys, final ISavable iSavable)
+    {
+        final ArrayList<Meeting> meetings = new ArrayList<>();
+
+        final DatabaseReference mDatabase = getDatabaseReference(ConstantNames.MEETINGS_HISTORY_PATH).child(teamID);
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(String key : keys)
+                {
+                    for(DataSnapshot ds : snapshot.getChildren ())
+                    {
+                        if(ds.getKey().equals ( key )){
+                            Meeting meeting = (Meeting)getValue ( ds,Meeting.class );
+                            meetings.add(meeting);
+                        }
+                    }
+                }
+                //save all called data into the interface
+                iSavable.onDataRead ( meetings );
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 }

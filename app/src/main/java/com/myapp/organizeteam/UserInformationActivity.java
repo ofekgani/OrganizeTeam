@@ -16,6 +16,7 @@ import com.myapp.organizeteam.Adapters.RolesListAdapterRel;
 import com.myapp.organizeteam.Adapters.RolesUsersListAdapterRel;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
+import com.myapp.organizeteam.Core.Meeting;
 import com.myapp.organizeteam.Core.Role;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
@@ -80,6 +81,22 @@ public class UserInformationActivity extends AppCompatActivity {
             @Override
             public void onDataRead(Object save) {
                 setAdapter((ArrayList<Role>) save,lv_userRoles);
+            }
+        });
+
+        dataExtraction.getKeysByStatus(ConstantNames.MEETINGS_PATH, team.getKeyID(), user.getKeyID(), ConstantNames.DATA_USER_STATUS_ARRIVED, new ISavable() {
+            @Override
+            public void onDataRead(Object save) {
+                ArrayList<User> arrivalsList = (ArrayList<User>) save;
+                tv_cameToMeetings.setText(""+arrivalsList.size());
+            }
+        });
+
+        dataExtraction.getKeysByStatus(ConstantNames.MEETINGS_PATH, team.getKeyID(), user.getKeyID(), ConstantNames.DATA_USER_STATUS_MISSING, new ISavable() {
+            @Override
+            public void onDataRead(Object save) {
+                ArrayList<User> absentsList = (ArrayList<User>) save;
+                tv_absentFromMeetings.setText(""+absentsList.size());
             }
         });
 
