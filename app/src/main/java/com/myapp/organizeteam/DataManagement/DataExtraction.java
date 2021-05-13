@@ -1531,7 +1531,8 @@ public class DataExtraction
                 {
                     for(DataSnapshot ds : snapshot.getChildren ())
                     {
-                        if(ds.getKey().equals ( key )){
+                        String key1 = ds.getKey();
+                        if(key1.equals ( key )){
                             Meeting meeting = (Meeting)getValue ( ds,Meeting.class );
                             meetings.add(meeting);
                         }

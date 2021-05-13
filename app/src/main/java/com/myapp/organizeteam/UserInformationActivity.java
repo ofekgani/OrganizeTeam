@@ -9,9 +9,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.myapp.organizeteam.Adapters.MeetingsListAdapter;
 import com.myapp.organizeteam.Adapters.RolesListAdapterRel;
 import com.myapp.organizeteam.Adapters.RolesUsersListAdapterRel;
 import com.myapp.organizeteam.Core.ActivityTransition;
@@ -25,6 +27,8 @@ import com.myapp.organizeteam.DataManagement.ISavable;
 import com.myapp.organizeteam.Resources.FileManage;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Map;
 
 public class UserInformationActivity extends AppCompatActivity {
 
@@ -41,6 +45,9 @@ public class UserInformationActivity extends AppCompatActivity {
     Intent intent;
     User user;
     Team team;
+
+    private ArrayList<User> arrivalsList;
+    private ArrayList<User> absentsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,16 +94,37 @@ public class UserInformationActivity extends AppCompatActivity {
         dataExtraction.getKeysByStatus(ConstantNames.MEETINGS_PATH, team.getKeyID(), user.getKeyID(), ConstantNames.DATA_USER_STATUS_ARRIVED, new ISavable() {
             @Override
             public void onDataRead(Object save) {
-                ArrayList<User> arrivalsList = (ArrayList<User>) save;
-                tv_cameToMeetings.setText(""+arrivalsList.size());
+                arrivalsList = (ArrayList<User>) save;
+                tv_cameToMeetings.setText(""+ arrivalsList.size());
             }
         });
 
         dataExtraction.getKeysByStatus(ConstantNames.MEETINGS_PATH, team.getKeyID(), user.getKeyID(), ConstantNames.DATA_USER_STATUS_MISSING, new ISavable() {
+
             @Override
             public void onDataRead(Object save) {
-                ArrayList<User> absentsList = (ArrayList<User>) save;
-                tv_absentFromMeetings.setText(""+absentsList.size());
+                absentsList = (ArrayList<User>) save;
+                tv_absentFromMeetings.setText(""+ absentsList.size());
+            }
+        });
+
+        cv_absentFromMeetings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Map<String, Object> save = new Hashtable<>();
+                save.put("meetingsID",absentsList);
+                save.put(ConstantNames.TEAM,team);
+                activityTransition.goTo(UserInformationActivity.this, MeetingListActivity.class,false,save,null);
+            }
+        });
+
+        cv_cameToMeetings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Map<String, Object> save = new Hashtable<>();
+                save.put("meetingsID",arrivalsList);
+                save.put(ConstantNames.TEAM,team);
+                activityTransition.goTo(UserInformationActivity.this, MeetingListActivity.class,false,save,null);
             }
         });
 
