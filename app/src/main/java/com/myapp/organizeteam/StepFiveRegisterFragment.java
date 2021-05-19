@@ -10,11 +10,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.myapp.organizeteam.Adapters.JoinRequestCard;
 import com.myapp.organizeteam.Adapters.JoinToTeamFragment;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.InputManagement;
+import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.Authorization;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
@@ -27,6 +33,7 @@ import com.stepstone.stepper.Step;
 import com.stepstone.stepper.StepperLayout;
 import com.stepstone.stepper.VerificationError;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class StepFiveRegisterFragment extends Fragment implements Step {
@@ -84,6 +91,41 @@ public class StepFiveRegisterFragment extends Fragment implements Step {
                         }
                     }
                 });
+            }
+        });
+
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.USER_PATH).child(user.getKeyID());
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.hasChild(ConstantNames.DATA_USER_TEAM))
+                {
+
+                    dataExtraction.getTeamDataByID(snapshot.child(ConstantNames.DATA_USER_TEAM).getValue().toString(), new ISavable() {
+                        @Override
+                        public void onDataRead(Object save) {
+                            final Team team = (Team) save;
+                            dataExtraction.getUserDataByID(team.getHost(), new ISavable() {
+                                @Override
+                                public void onDataRead(Object save) {
+                                    ActivityTransition activityTransition = new ActivityTransition();
+                                    User host = (User) save;
+                                    Map<String, Object> saves = new HashMap<>();
+                                    saves.put(ConstantNames.USER,user);
+                                    saves.put(ConstantNames.TEAM_HOST,host);
+                                    saves.put(ConstantNames.TEAM,team);
+                                    activityTransition.goTo(getActivity(),TeamPageActivity.class,true, saves,null);
+                                }
+                            });
+                        }
+                    });
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
 

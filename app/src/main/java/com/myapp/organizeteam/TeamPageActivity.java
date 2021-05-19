@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,6 +27,7 @@ import com.myapp.organizeteam.Adapters.PostsListAdapter;
 import com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
+import com.myapp.organizeteam.Core.Mission;
 import com.myapp.organizeteam.Core.Role;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.DataManagement.Authorization;
@@ -46,8 +48,10 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     OpenMenu openMenu;
-    ImageView nav_logo;
+    ImageView nav_logo,toolbar_image;
     FloatingActionButton fab_createMeeting,fab_createRole, fab_createTask, fab_createPost;
+    CollapsingToolbarLayout toolbar_title;
+    TextView nav_name;
 
     FileManage fileManage;
     DataExtraction dataExtraction;
@@ -76,6 +80,8 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
         fab_createPost = findViewById(R.id.fb_createPost);
 
         openMenu = new OpenMenu(R.id.main_toolbar);
+        toolbar_title = findViewById(R.id.toolbar_title);
+        toolbar_image = findViewById(R.id.toolbar_image);
 
         fileManage = new FileManage();
         dataExtraction = new DataExtraction();
@@ -131,10 +137,10 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
         navigationView.setNavigationItemSelectedListener ((NavigationView.OnNavigationItemSelectedListener) this);
 
         nav_logo = (ImageView) openMenu.getResource ( navigationView,R.id.nav_logo );
-        TextView nav_name = (TextView) openMenu.getResource ( navigationView,R.id.nav_name );
+        nav_name = (TextView) openMenu.getResource ( navigationView,R.id.nav_name );
 
-        nav_name.setText(team.getName());
-        fileManage.setImageUri ( team.getLogo(),nav_logo );
+        nav_name.setText(user.getFullName());
+        fileManage.setImageUri ( user.getLogo(),nav_logo );
 
         bundle = new Bundle();
         bundle.putSerializable(ConstantNames.TEAM_HOST, (User)intent.getSerializableExtra ( ConstantNames.TEAM_HOST ));
@@ -297,6 +303,10 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
 
             }
         });
+
+        toolbar_title.setTitle(""+team.getName());
+        if(team.getLogo() != null)
+            fileManage.setImageUri(team.getLogo(),toolbar_image);
     }
 
 
@@ -404,6 +414,11 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
 
                 openMenu.setCheckedItem(navigationView,R.id.btn_tasks);
                 break;
+            case R.id.btn_settings:
+                ActivityTransition activityTransition = new ActivityTransition();
+                Map<String, Object> save = new HashMap<>();
+                save.put(ConstantNames.USER,user);
+                activityTransition.goToWithResult(TeamPageActivity.this,SettingsActivity.class,143, save,null);
         }
         openMenu.closeMenu ( drawerLayout );
         return true;
@@ -435,6 +450,16 @@ public class TeamPageActivity extends AppCompatActivity implements NavigationVie
         PostsFragment postsFragment = (PostsFragment) getFragmentManager().findFragmentByTag("postsFragment");
         if(postsFragment != null)
             postsFragment.onActivityResult(requestCode,resultCode,data);
+
+        if(data != null)
+        {
+            if(resultCode == RESULT_OK && requestCode == 143)
+            {
+                user = (User) data.getSerializableExtra(ConstantNames.USER);
+                fileManage.setImageUri(user.getLogo(),nav_logo);
+                nav_name.setText(""+user.getFullName());
+            }
+        }
     }
 
     @Override

@@ -28,10 +28,11 @@ public class RolesUsersListAdapterRel extends RecyclerView.Adapter<RolesUsersLis
     private ArrayList<Role> mExampleList;
     private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView.Adapter rolesAdapter;
+    private RecycleViewClickListener listener;
 
     private Context mContext;
 
-    public static class ExampleViewHolder extends RecyclerView.ViewHolder {
+    public class ExampleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView tv_name;
         RecyclerView lv_users;
@@ -40,12 +41,21 @@ public class RolesUsersListAdapterRel extends RecyclerView.Adapter<RolesUsersLis
             super(itemView);
             tv_name = itemView.findViewById(R.id.tv_rollName);
             lv_users = itemView.findViewById(R.id.lv_usersList);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if(listener == null) return;
+            listener.onClick(view,getAdapterPosition());
         }
     }
 
-    public RolesUsersListAdapterRel(ArrayList<Role> exampleList, Context context) {
+    public RolesUsersListAdapterRel(ArrayList<Role> exampleList, Context context, RecycleViewClickListener listener) {
         mExampleList = exampleList;
         mContext = context;
+        this.listener = listener;
     }
 
     @NonNull
@@ -86,5 +96,8 @@ public class RolesUsersListAdapterRel extends RecyclerView.Adapter<RolesUsersLis
         return mExampleList.size();
     }
 
-
+    public interface RecycleViewClickListener
+    {
+        void onClick(View v, int position);
+    }
 }

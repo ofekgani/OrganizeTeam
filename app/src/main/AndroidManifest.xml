@@ -13,10 +13,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".TaskListActivity"
+        <activity android:name=".RoleInformationActivity"
             android:theme="@style/AppTheme"></activity>
-        <activity android:name=".MeetingListActivity"
-            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".TaskListActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".MeetingListActivity"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".UserInformationActivity"
             android:theme="@style/AppTheme" />
@@ -108,7 +115,6 @@
             android:name=".MyService.MeetingAlarmReceiver"
             android:enabled="true"
             android:process=":remote" />
-
         <receiver
             android:name=".MyService.TaskAlarmReceiver"
             android:enabled="true"

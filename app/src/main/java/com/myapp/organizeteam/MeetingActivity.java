@@ -217,7 +217,7 @@ public class MeetingActivity extends AppCompatActivity{
         }
         else if(meeting.getStatus() == Meeting.FLAG_MEETING_BOOKED)
         {
-            //startAlarm(meeting);
+            startAlarm(meeting);
             meeting.setStatus(Meeting.FLAG_MEETING_STARTED);
             dataExtraction.setNewData(ConstantNames.MEETINGS_PATH,team.getKeyID(),meeting.getKeyID(),ConstantNames.DATA_MEETING_STATUS,meeting.getStatus());
             finishActivity(meeting);
