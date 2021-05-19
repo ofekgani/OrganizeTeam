@@ -1548,4 +1548,34 @@ public class DataExtraction
             }
         });
     }
+
+    public void getDeletedTasksByKeys(String teamID, final ArrayList<String> keys, final ISavable iSavable)
+    {
+        final ArrayList<Mission> tasks = new ArrayList<>();
+
+        final DatabaseReference mDatabase = getDatabaseReference(ConstantNames.TASKS_HISTORY_PATH).child(teamID);
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(String key : keys)
+                {
+                    for(DataSnapshot ds : snapshot.getChildren ())
+                    {
+                        String key1 = ds.getKey();
+                        if(key1.equals ( key )){
+                            Mission task = (Mission) getValue ( ds,Mission.class );
+                            tasks.add(task);
+                        }
+                    }
+                }
+                //save all called data into the interface
+                iSavable.onDataRead ( tasks );
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 }

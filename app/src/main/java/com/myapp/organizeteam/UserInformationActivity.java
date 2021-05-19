@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.myapp.organizeteam.Adapters.MeetingsListAdapter;
 import com.myapp.organizeteam.Adapters.RolesListAdapterRel;
 import com.myapp.organizeteam.Adapters.RolesUsersListAdapterRel;
+import com.myapp.organizeteam.Adapters.TasksListAdapter;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Meeting;
@@ -46,8 +47,7 @@ public class UserInformationActivity extends AppCompatActivity {
     User user;
     Team team;
 
-    private ArrayList<User> arrivalsList;
-    private ArrayList<User> absentsList;
+    private ArrayList<String> arrivalsList,absentsList, submitsList, missedTasksList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +94,7 @@ public class UserInformationActivity extends AppCompatActivity {
         dataExtraction.getKeysByStatus(ConstantNames.MEETINGS_PATH, team.getKeyID(), user.getKeyID(), ConstantNames.DATA_USER_STATUS_ARRIVED, new ISavable() {
             @Override
             public void onDataRead(Object save) {
-                arrivalsList = (ArrayList<User>) save;
+                arrivalsList = (ArrayList<String>) save;
                 tv_cameToMeetings.setText(""+ arrivalsList.size());
             }
         });
@@ -103,8 +103,26 @@ public class UserInformationActivity extends AppCompatActivity {
 
             @Override
             public void onDataRead(Object save) {
-                absentsList = (ArrayList<User>) save;
+                absentsList = (ArrayList<String>) save;
                 tv_absentFromMeetings.setText(""+ absentsList.size());
+            }
+        });
+
+        dataExtraction.getKeysByStatus(ConstantNames.TASK_PATH, team.getKeyID(), user.getKeyID(), ConstantNames.DATA_USER_STATUS_SUBMITTED, new ISavable() {
+
+            @Override
+            public void onDataRead(Object save) {
+                submitsList = (ArrayList<String>) save;
+                tv_tasksSubmitted.setText(""+ submitsList.size());
+            }
+        });
+
+        dataExtraction.getKeysByStatus(ConstantNames.TASK_PATH, team.getKeyID(), user.getKeyID(), ConstantNames.DATA_USER_STATUS_UNSUBMITTED, new ISavable() {
+
+            @Override
+            public void onDataRead(Object save) {
+                missedTasksList = (ArrayList<String>) save;
+                tv_missedTasks.setText(""+ missedTasksList.size());
             }
         });
 
@@ -125,6 +143,26 @@ public class UserInformationActivity extends AppCompatActivity {
                 save.put("meetingsID",arrivalsList);
                 save.put(ConstantNames.TEAM,team);
                 activityTransition.goTo(UserInformationActivity.this, MeetingListActivity.class,false,save,null);
+            }
+        });
+
+        cv_tasksSubmitted.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Map<String, Object> save = new Hashtable<>();
+                save.put("tasksID",submitsList);
+                save.put(ConstantNames.TEAM,team);
+                activityTransition.goTo(UserInformationActivity.this, TaskListActivity.class,false,save,null);
+            }
+        });
+
+        cv_missedTasks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Map<String, Object> save = new Hashtable<>();
+                save.put("tasksID",missedTasksList);
+                save.put(ConstantNames.TEAM,team);
+                activityTransition.goTo(UserInformationActivity.this, TaskListActivity.class,false,save,null);
             }
         });
 

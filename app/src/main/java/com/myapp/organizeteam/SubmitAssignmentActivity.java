@@ -160,12 +160,22 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
             final StorageReference riversRef = storageRef.child("files/tasks/"+taskID+"/"+userID);
 
             riversRef.putFile(uriFile).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            final Submitter submitter = new Submitter(title,content,uri.toString(), fileManage.getFileName(uri), Submitter.STATUS_WAITING, taskID,userID);
+                            int status;
+                            if(mission.isRequiredConfirm())
+                            {
+                                status = Submitter.STATUS_WAITING;
+                            }
+                            else
+                            {
+                                status = Submitter.STATUS_CONFIRM;
+                            }
+                            final Submitter submitter = new Submitter(title,content,uri.toString(), fileManage.getFileName(uri), status, taskID,userID);
 
                             final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH)
                                     .child(team.getKeyID())
@@ -173,6 +183,8 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
                                     .child(ConstantNames.DATA_USERS_LIST)
                                     .child(user.getKeyID());
                             mDatabase.setValue(submitter);
+
+                            setUserStatus(status);
 
                             activityTransition.back(SubmitAssignmentActivity.this,null);
                             pd.dismiss();
@@ -193,7 +205,16 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
         }
         else
         {
-            final Submitter submitter = new Submitter(title,content,null, null,Submitter.STATUS_WAITING, taskID,userID);
+            int status;
+            if(mission.isRequiredConfirm())
+            {
+                status = Submitter.STATUS_WAITING;
+            }
+            else
+            {
+                status = Submitter.STATUS_CONFIRM;
+            }
+            final Submitter submitter = new Submitter(title,content,null, null,status, taskID,userID);
 
             final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH)
                     .child(team.getKeyID())
@@ -202,7 +223,20 @@ public class SubmitAssignmentActivity extends AppCompatActivity {
                     .child(user.getKeyID());
             mDatabase.setValue(submitter);
 
+            setUserStatus(status);
+
             activityTransition.back(SubmitAssignmentActivity.this,null);
+        }
+    }
+
+    private void setUserStatus(int status) {
+        if (status == Submitter.STATUS_CONFIRM) {
+            DatabaseReference userDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.USER_STATUSES_PATH)
+                    .child(team.getKeyID())
+                    .child(user.getKeyID())
+                    .child(ConstantNames.TASK_PATH)
+                    .child(ConstantNames.DATA_USER_STATUS_CONFIRM);
+            userDatabase.child(mission.getKeyID()).setValue(mission.getKeyID());
         }
     }
 }

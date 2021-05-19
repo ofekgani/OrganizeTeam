@@ -3,8 +3,11 @@ package com.myapp.organizeteam;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -22,6 +25,7 @@ import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Date;
 import com.myapp.organizeteam.Core.Hour;
 import com.myapp.organizeteam.Core.InputManagement;
+import com.myapp.organizeteam.Core.Meeting;
 import com.myapp.organizeteam.Core.Role;
 import com.myapp.organizeteam.Core.Mission;
 import com.myapp.organizeteam.Core.Submitter;
@@ -31,8 +35,10 @@ import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.ISavable;
 import com.myapp.organizeteam.MyService.APIService;
 import com.myapp.organizeteam.MyService.Data;
+import com.myapp.organizeteam.MyService.MeetingAlarmReceiver;
 import com.myapp.organizeteam.MyService.Notification;
 import com.myapp.organizeteam.MyService.Sender;
+import com.myapp.organizeteam.MyService.TaskAlarmReceiver;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -205,6 +211,21 @@ public class CreateTaskActivity extends AppCompatActivity {
         return notification.createClient ();
     }
 
+    private void setAlarm(Calendar target, Mission mission){
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, TaskAlarmReceiver.class);
+        intent.setAction(Long.toString(System.currentTimeMillis()));
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ConstantNames.TASK,mission);
+        intent.putExtra("bundle", bundle);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if (target.before(Calendar.getInstance())) {
+            target.add(Calendar.DATE, 1);
+        }
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, target.getTimeInMillis(), pendingIntent);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -225,18 +246,18 @@ public class CreateTaskActivity extends AppCompatActivity {
             String taskName = inputManagement.getInput(ed_taskName);
             String taskDescription = inputManagement.getInput(ed_taskDescription);
             boolean isRequiredConfirm = cb_enableRequired.isChecked();
-            Date taskDate = new Date(m_year,m_month,m_day);
+            final Date taskDate = new Date(m_year,m_month,m_day);
             Hour taskTime = new Hour(m_hour,m_minute);
 
             final String teamID = team.getKeyID();
             DataExtraction dataExtraction = new DataExtraction();
 
-            //Create to meeting keyID
+            //Create task keyID
             DatabaseReference mDatabase = FirebaseDatabase.getInstance ().getReference ( ConstantNames.TASK_PATH).child(teamID);
             final String taskID = mDatabase.push ().getKey ();
 
-            //Add meeting into firebase
-            final Mission task = new Mission(taskID,teamID,taskName,taskDescription,isRequiredConfirm,taskDate,taskTime);
+            //Add the task into firebase
+            final Mission task = new Mission(taskID,teamID,taskName,taskDescription,isRequiredConfirm,Mission.TASK_IS_ACTIVE,taskDate,taskTime);
             dataExtraction.setObject(ConstantNames.TASK_PATH,teamID,taskID,task);
 
             //Add to cloud all selected roles to which the meeting will be published
@@ -261,6 +282,7 @@ public class CreateTaskActivity extends AppCompatActivity {
                     Map<String,Object> save = new HashMap<>();
                     save.put(ConstantNames.TASK,task);
                     activityTransition.back(CreateTaskActivity.this,save);
+                    setAlarm(calendar,task);
                     sendNotification(view,usersID);
                 }
             });

@@ -1,51 +1,48 @@
 package com.myapp.organizeteam;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
+
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.myapp.organizeteam.Adapters.MeetingsListAdapter;
+import com.myapp.organizeteam.Adapters.TasksListAdapter;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Meeting;
+import com.myapp.organizeteam.Core.Mission;
 import com.myapp.organizeteam.Core.Team;
-import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.ISavable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-public class MeetingListActivity extends AppCompatActivity {
+public class TaskListActivity extends AppCompatActivity {
 
     ActivityTransition activityTransition;
     DataExtraction dataExtraction;
 
-    ListView lv_meetings;
+    ListView lv_tasks;
     Toolbar toolbar;
 
-    MeetingsListAdapter adapter;
+    TasksListAdapter adapter;
 
     Intent intent;
     Team team;
-    ArrayList<String> meetingsID;
+    ArrayList<String> tasksID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_meeting_list);
+        setContentView(R.layout.activity_task_list);
 
         activityTransition = new ActivityTransition();
         dataExtraction = new DataExtraction();
 
-        lv_meetings = findViewById(R.id.lv_meetings);
+        lv_tasks = findViewById(R.id.lv_tasks);
 
         toolbar = findViewById(R.id.appBarLayout);
         setSupportActionBar(toolbar);
@@ -55,20 +52,20 @@ public class MeetingListActivity extends AppCompatActivity {
 
         intent = getIntent();
         team = (Team) intent.getSerializableExtra(ConstantNames.TEAM);
-        meetingsID = (ArrayList<String>) intent.getSerializableExtra("meetingsID");
+        tasksID = (ArrayList<String>) intent.getSerializableExtra("tasksID");
 
-        dataExtraction.getDeletedMeetingsByKeys(team.getKeyID(), meetingsID, new ISavable() {
+        dataExtraction.getDeletedTasksByKeys(team.getKeyID(), tasksID, new ISavable() {
             @Override
             public void onDataRead(Object save) {
-                setAdapter((ArrayList<Meeting>) save);
+                setAdapter((ArrayList<Mission>) save);
             }
         });
     }
 
-    private void setAdapter(ArrayList<Meeting> meetingsList) {
-        if(meetingsList == null) return;
-        adapter = new MeetingsListAdapter(this,R.layout.adapter_meetings_list,meetingsList);
-        lv_meetings.setAdapter ( adapter );
+    private void setAdapter(ArrayList<Mission> tasksList) {
+        if(tasksList == null) return;
+        adapter = new TasksListAdapter(this,R.layout.adapter_tasks_list,tasksList);
+        lv_tasks.setAdapter ( adapter );
     }
 
     @Override

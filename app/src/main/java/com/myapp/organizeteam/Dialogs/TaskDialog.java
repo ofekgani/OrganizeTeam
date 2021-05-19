@@ -2,27 +2,40 @@ package com.myapp.organizeteam.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Date;
 import com.myapp.organizeteam.Core.Hour;
 import com.myapp.organizeteam.Core.Mission;
+import com.myapp.organizeteam.Core.Submitter;
 import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
+import com.myapp.organizeteam.DataManagement.DataListener;
+import com.myapp.organizeteam.DataManagement.ISavable;
 import com.myapp.organizeteam.R;
 import com.myapp.organizeteam.SubmitAssignmentActivity;
 import com.myapp.organizeteam.SubmitsListActivity;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +45,7 @@ public class TaskDialog extends AppCompatDialogFragment{
     ActivityTransition activityTransition;
 
     private TextView tv_name, tv_description, tv_date;
-    private Button btn_cancel, btn_submit, btn_submittersList;
+    private Button btn_cancel, btn_submit, btn_submittersList, btn_closeTask;
 
     private Mission task;
     private Team team;
@@ -56,19 +69,14 @@ public class TaskDialog extends AppCompatDialogFragment{
         btn_cancel = view.findViewById(R.id.btn_cancel);
         btn_submit = view.findViewById(R.id.btn_SubmitAssignment);
         btn_submittersList = view.findViewById(R.id.btn_ShowSubmits);
+        btn_closeTask = view.findViewById(R.id.btn_closeTask);
 
         Bundle bundle = getArguments ();
         user = (User)bundle.getSerializable(ConstantNames.USER);
         team = (Team) bundle.getSerializable(ConstantNames.TEAM);
         task = (Mission) bundle.getSerializable(ConstantNames.TASK);
 
-
-        tv_name.setText ( ""+ task.getTaskName());
-        tv_description.setText ( ""+ task.getTaskDescription());
-
-        Date date = task.getDate ();
-        Hour hour = task.getHour ();
-        tv_date.setText ( date.getDay() + "/" + date.getMonth() + "/" + date.getYear() + " , " + hour.getHour() + ":" + hour.getMinute());
+        setUI();
 
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,7 +106,76 @@ public class TaskDialog extends AppCompatDialogFragment{
             }
         });
 
+        btn_closeTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                btn_cancel.setEnabled(false);
+                final ArrayList<User> usersRejectsTask =  new ArrayList<>();
+                dataExtraction.getUsersByConfirmations(ConstantNames.TASK_PATH, team.getKeyID(), task.getKeyID(), Submitter.STATUS_UNCONFIRMED, new ISavable() {
+                    @Override
+                    public void onDataRead(Object save) {
+                        usersRejectsTask.addAll((ArrayList<User>) save);
+                        dataExtraction.getUsersByConfirmations(ConstantNames.TASK_PATH, team.getKeyID(), task.getKeyID(), Submitter.STATUS_UNSUBMITTED, new ISavable() {
+                            @Override
+                            public void onDataRead(Object save) {
+                                usersRejectsTask.addAll((ArrayList<User>) save);
+                                dataExtraction.getUsersByConfirmations(ConstantNames.TASK_PATH, team.getKeyID(), task.getKeyID(), Submitter.STATUS_WAITING, new ISavable() {
+                                    @Override
+                                    public void onDataRead(final Object save) {
+                                        dataExtraction.deleteData(ConstantNames.TASK_PATH, team.getKeyID(), task.getKeyID(), new DataListener() {
+                                            @Override
+                                            public void onDataDelete() {
+                                                backupTask();
+                                                setUserStatus(usersRejectsTask, ConstantNames.DATA_USER_STATUS_UNSUBMITTED);
+                                                setUserStatus((ArrayList<User>) save, ConstantNames.DATA_USER_STATUS_SUBMITTED);
+                                                ad.cancel();
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
         return ad;
+    }
+
+    private void setUI() {
+        if(task.getStatus() == Mission.TIME_IS_UP)
+        {
+            btn_closeTask.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            btn_closeTask.setVisibility(View.GONE);
+        }
+
+        tv_name.setText ( ""+ task.getTaskName());
+        tv_description.setText ( ""+ task.getTaskDescription());
+        Date date = task.getDate ();
+        Hour hour = task.getHour ();
+        tv_date.setText ( date.getDay() + "/" + date.getMonth() + "/" + date.getYear() + " , " + hour.getHour() + ":" + hour.getMinute());
+    }
+
+    private void backupTask() {
+        DatabaseReference meetingDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.TASKS_HISTORY_PATH)
+                .child(team.getKeyID())
+                .child(task.getKeyID());
+        meetingDatabase.setValue(task);
+    }
+
+    private void setUserStatus(ArrayList<User> usersList, String status) {
+        for (User user : usersList) {
+            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.USER_STATUSES_PATH)
+                    .child(team.getKeyID())
+                    .child(user.getKeyID())
+                    .child(ConstantNames.TASK_PATH)
+                    .child(status);
+            mDatabase.child(task.getKeyID()).setValue(task);
+        }
     }
 
     @Override

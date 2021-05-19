@@ -13,6 +13,7 @@ public class ConstantNames {
     public static final String USER_ACTIVITY_PATH = "userActivity";
     public static final String USER_STATUSES_PATH = "userStatus";
     public static final String MEETINGS_HISTORY_PATH = "meetingHistory";
+    public static final String TASKS_HISTORY_PATH = "taskHistory";
 
     //Keys in firebase
     //User
@@ -98,4 +99,7 @@ public class ConstantNames {
 
     public static final String DATA_USER_STATUS_ARRIVED = "arrived";
     public static final String DATA_USER_STATUS_MISSING = "missing";
+    public static final String DATA_USER_STATUS_CONFIRM = "confirm";
+    public static final String DATA_USER_STATUS_UNSUBMITTED = "unsubmitted";
+    public static final String DATA_USER_STATUS_SUBMITTED = "submitted";
 }

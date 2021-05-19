@@ -63,58 +63,73 @@
         </LinearLayout>
     </ScrollView>
 
-    <Button
-        android:id="@+id/btn_SubmitAssignment"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layout1"
-        android:text="Submit Assignment"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/roboto_bold"
-        android:textColor="@color/secondaryTextColor"
-        android:background="@color/primaryTextColor"
-        app:strokeColor="@color/primaryColor"
-        app:strokeWidth="2dp"
-        android:textAllCaps="false">
-    </Button>
+        android:orientation="vertical">
 
+        <Button
+            android:id="@+id/btn_SubmitAssignment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout1"
+            android:layout_marginTop="16dp"
+            android:background="@color/primaryTextColor"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Submit Assignment"
+            android:textAllCaps="false"
+            android:textColor="@color/secondaryTextColor"
+            app:strokeColor="@color/primaryColor"
+            app:strokeWidth="2dp"></Button>
 
-    <Button
-        android:id="@+id/btn_ShowSubmits"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_SubmitAssignment"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="0dp"
-        android:background="@color/primaryTextColor"
-        android:fontFamily="@font/roboto_bold"
-        android:text="Show submits"
-        android:textAllCaps="false"
-        android:textColor="@color/secondaryTextColor"
-        app:strokeColor="@color/primaryColor"
-        app:strokeWidth="8dp"></Button>
+        <Button
+            android:id="@+id/btn_ShowSubmits"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btn_SubmitAssignment"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="0dp"
+            android:background="@color/primaryTextColor"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Show submits"
+            android:textAllCaps="false"
+            android:textColor="@color/secondaryTextColor"
+            app:strokeColor="@color/primaryColor"
+            app:strokeWidth="8dp"></Button>
 
-    <Button
-        android:id="@+id/btn_cancel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_ShowSubmits"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="8dp"
-        android:background="@color/primaryTextColor"
-        android:fontFamily="@font/roboto_bold"
-        android:text="Cancel"
-        android:textAllCaps="false"
-        android:textColor="@color/secondaryTextColor"
-        app:rippleColor="#33AAAAAA"
-        app:strokeColor="@color/ms_black"
-        app:strokeWidth="2dp"
-        android:theme="@style/Widget.AppCompat.Button"></Button>
+        <Button
+            android:id="@+id/btn_closeTask"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/primaryTextColor"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Close task"
+            android:textAllCaps="false"
+            android:textColor="@color/secondaryTextColor"
+            android:theme="@style/Widget.AppCompat.Button"
+            app:rippleColor="#33AAAAAA"
+            app:strokeColor="@color/ms_black"
+            app:strokeWidth="2dp"></Button>
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btn_ShowSubmits"
+            android:layout_marginTop="8dp"
+            android:background="@color/primaryTextColor"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Cancel"
+            android:textAllCaps="false"
+            android:textColor="@color/secondaryTextColor"
+            android:theme="@style/Widget.AppCompat.Button"
+            app:rippleColor="#33AAAAAA"
+            app:strokeColor="@color/ms_black"
+            app:strokeWidth="2dp"></Button>
+    </LinearLayout>
+
 
 
 </RelativeLayout>

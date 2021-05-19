@@ -165,6 +165,13 @@ public class TaskReplyActivity extends AppCompatActivity {
             submitterDatabase.setValue(Submitter.STATUS_UNCONFIRMED);
         } else {
             submitterDatabase.setValue(Submitter.STATUS_CONFIRM);
+
+            DatabaseReference userDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.USER_STATUSES_PATH)
+                    .child(team.getKeyID())
+                    .child(user.getKeyID())
+                    .child(ConstantNames.TASK_PATH)
+                    .child(ConstantNames.DATA_USER_STATUS_CONFIRM);
+            userDatabase.child(mission.getKeyID()).setValue(mission.getKeyID());
         }
     }
 

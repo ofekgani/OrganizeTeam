@@ -33,7 +33,7 @@ import com.myapp.organizeteam.Core.User;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.ISavable;
 import com.myapp.organizeteam.MyService.APIService;
-import com.myapp.organizeteam.MyService.AlarmReceiver;
+import com.myapp.organizeteam.MyService.MeetingAlarmReceiver;
 import com.myapp.organizeteam.MyService.Data;
 import com.myapp.organizeteam.MyService.Notification;
 import com.myapp.organizeteam.MyService.Sender;
@@ -176,7 +176,7 @@ public class CreateMeetingActivity extends AppCompatActivity{
 
     private void setAlarm(Calendar target, Meeting meeting){
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlarmReceiver.class);
+        Intent intent = new Intent(this, MeetingAlarmReceiver.class);
         intent.setAction(Long.toString(System.currentTimeMillis()));
         Bundle bundle = new Bundle();
         bundle.putSerializable(ConstantNames.MEETING,meeting);

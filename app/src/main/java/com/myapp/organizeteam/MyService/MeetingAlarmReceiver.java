@@ -14,7 +14,7 @@ import com.myapp.organizeteam.Core.Meeting;
 
 import static com.myapp.organizeteam.Core.Meeting.FLAG_MEETING_STARTED;
 
-public class AlarmReceiver extends BroadcastReceiver {
+public class MeetingAlarmReceiver extends BroadcastReceiver {
 
     Bundle bundle;
 

@@ -29,7 +29,7 @@ import com.myapp.organizeteam.DataManagement.Authorization;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.DataListener;
 import com.myapp.organizeteam.DataManagement.ISavable;
-import com.myapp.organizeteam.MyService.AlarmReceiver;
+import com.myapp.organizeteam.MyService.MeetingAlarmReceiver;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -224,13 +224,13 @@ public class MeetingActivity extends AppCompatActivity{
         }
     }
 
-    private void setUserStatus(ArrayList<User> rejectsList, String dataUserStatusMissing) {
-        for (User user : rejectsList) {
+    private void setUserStatus(ArrayList<User> usersList, String status) {
+        for (User user : usersList) {
             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(ConstantNames.USER_STATUSES_PATH)
                     .child(team.getKeyID())
                     .child(user.getKeyID())
                     .child(ConstantNames.MEETINGS_PATH)
-                    .child(dataUserStatusMissing);
+                    .child(status);
             mDatabase.child(meeting.getKeyID()).setValue(meeting);
         }
     }
@@ -322,7 +322,7 @@ public class MeetingActivity extends AppCompatActivity{
 
     private void startAlarm(Meeting meeting){
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlarmReceiver.class);
+        Intent intent = new Intent(this, MeetingAlarmReceiver.class);
         intent.setAction(Long.toString(System.currentTimeMillis()));
         Bundle bundle = new Bundle();
         bundle.putSerializable(ConstantNames.MEETING,meeting);

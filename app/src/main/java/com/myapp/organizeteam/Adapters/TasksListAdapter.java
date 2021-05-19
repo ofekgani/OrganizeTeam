@@ -49,6 +49,12 @@ public class TasksListAdapter extends ArrayAdapter<Mission> {
         this.userID = userID;
     }
 
+    public TasksListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Mission> objects) {
+        super ( context, resource, objects );
+        mContext = context;
+        mResource = resource;
+    }
+
     @NonNull
     @Override
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -75,47 +81,53 @@ public class TasksListAdapter extends ArrayAdapter<Mission> {
 
         String meetingDate = date.getDay() + "/" + date.getMonth() + "/" + date.getYear() + " , " + hour.getHour() + ":" + hour.getMinute();
         tv_date.setText(meetingDate);
-
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH).child(teamID).child(taskID).child(ConstantNames.DATA_USERS_LIST).child(userID);
-        dataExtraction.hasChild(databaseReference, ConstantNames.DATA_TASK_TITLE, new ISavable() {
-            @Override
-            public void onDataRead(Object save) {
-                if(!(boolean)save)
-                {
-                   status = "Not submitted";
-                }
-                else
-                {
-                    if(!getItem(position).isRequiredConfirm())
+        if(userID != null)
+        {
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(ConstantNames.TASK_PATH).child(teamID).child(taskID).child(ConstantNames.DATA_USERS_LIST).child(userID);
+            dataExtraction.hasChild(databaseReference, ConstantNames.DATA_TASK_TITLE, new ISavable() {
+                @Override
+                public void onDataRead(Object save) {
+                    if(!(boolean)save)
                     {
-                        status = "Submitted";
+                        status = "Not submitted";
                     }
                     else
                     {
-                        dataExtraction.getSubmitter(ConstantNames.TASK_PATH,teamID, taskID, userID, new ISavable() {
-                            @Override
-                            public void onDataRead(Object save) {
-                                Submitter submitter = (Submitter) save;
-                                if(submitter.getConfirmStatus() == 1)
-                                {
-                                    status = "Submitted";
+                        if(!getItem(position).isRequiredConfirm())
+                        {
+                            status = "Submitted";
+                        }
+                        else
+                        {
+                            dataExtraction.getSubmitter(ConstantNames.TASK_PATH,teamID, taskID, userID, new ISavable() {
+                                @Override
+                                public void onDataRead(Object save) {
+                                    Submitter submitter = (Submitter) save;
+                                    if(submitter.getConfirmStatus() == Submitter.STATUS_CONFIRM)
+                                    {
+                                        status = "Submitted";
+                                    }
+                                    else if(submitter.getConfirmStatus() == Submitter.STATUS_UNCONFIRMED)
+                                    {
+                                        status = "Returned";
+                                    }
+                                    else
+                                    {
+                                        status = "Waiting for confirm";
+                                    }
+                                    tv_status.setText(""+status);
                                 }
-                                else if(submitter.getConfirmStatus() == 0)
-                                {
-                                    status = "Returned";
-                                }
-                                else
-                                {
-                                    status = "Waiting for confirm";
-                                }
-                                tv_status.setText(""+status);
-                            }
-                        });
+                            });
+                        }
                     }
+                    tv_status.setText(""+status);
                 }
-                tv_status.setText(""+status);
-            }
-        });
+            });
+        }
+        else
+        {
+            tv_status.setText("");
+        }
 
         return convertView;
     }
