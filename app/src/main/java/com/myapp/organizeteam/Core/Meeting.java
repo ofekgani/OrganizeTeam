@@ -11,9 +11,8 @@ public class Meeting implements Serializable {
     private Date date;
     private Hour hour;
     private int status;
-    private boolean arrivalConfirmation;
 
-    public Meeting(String keyID, String teamID, String meetingName, String meetingDescription, Date date, Hour hour, int status, boolean arrivalConfirmation) {
+    public Meeting(String keyID, String teamID, String meetingName, String meetingDescription, Date date, Hour hour, int status) {
         this.keyID = keyID;
         this.teamID = teamID;
         this.meetingName = meetingName;
@@ -21,14 +20,12 @@ public class Meeting implements Serializable {
         this.date = date;
         this.hour = hour;
         this.status = status;
-        this.arrivalConfirmation = arrivalConfirmation;
     }
 
     public Meeting(){}
 
     public static int ARRIVAL_CONFIRMATION = 2;
     public static int ARRIVED = 1;
-    public static int MISSING = 0;
     public static int NO_ANSWER = -1;
 
     public String getKeyID() {
@@ -85,14 +82,6 @@ public class Meeting implements Serializable {
 
     public void setTeamID(String teamID) {
         this.teamID = teamID;
-    }
-
-    public boolean isArrivalConfirmation() {
-        return arrivalConfirmation;
-    }
-
-    public void setArrivalConfirmation(boolean arrivalConfirmation) {
-        this.arrivalConfirmation = arrivalConfirmation;
     }
 
     public static int FLAG_MEETING_BOOKED = 0;

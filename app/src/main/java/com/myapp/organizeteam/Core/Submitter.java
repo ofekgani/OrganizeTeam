@@ -21,9 +21,7 @@ public class Submitter implements Serializable {
         this.userID = userID;
     }
 
-    public Submitter() {
-
-    }
+    public Submitter() { }
 
     public static final int STATUS_CONFIRM = 1;
     public static final int STATUS_UNCONFIRMED = 0;

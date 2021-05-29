@@ -120,11 +120,6 @@ public class MeetingActivity extends AppCompatActivity{
             public void onDataRead(Object save) {
                 submitter = (Submitter) save;
                 if(submitter == null) return;
-                if(meeting.isArrivalConfirmation())
-                {
-                    btn_arrivalConfirmation.setVisibility(View.VISIBLE);
-
-                }
 
                 if(submitter.getConfirmStatus() == Meeting.NO_ANSWER) {
                     btn_arrivalConfirmation.setText("Confirm arrival");

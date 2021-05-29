@@ -397,9 +397,9 @@ public class DataExtraction
         mDatabase.child ( key ).setValue ( value );
     }
 
-    public void setNewData(String path, String teamID, String keyID, String key, Object value) {
+    public void setNewData(String path, String keyID1, String keyID2, String key, Object value) {
         DatabaseReference mDatabase = getDatabaseReference(path);
-        mDatabase.child ( teamID ).child(keyID).child(key).setValue ( value );
+        mDatabase.child ( keyID1 ).child(keyID2).child(key).setValue ( value );
     }
 
     /**

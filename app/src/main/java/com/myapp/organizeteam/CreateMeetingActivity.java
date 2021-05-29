@@ -258,7 +258,7 @@ public class CreateMeetingActivity extends AppCompatActivity{
             final String meetingID = mDatabase.push ().getKey ();
 
             //Add meeting into firebase
-            final Meeting meeting = new Meeting(meetingID,teamID,meetingName,meetingDescription,meetingDate,meetingTime,FLAG_MEETING_BOOKED,cb_ArrivalConfirmation.isChecked());
+            final Meeting meeting = new Meeting(meetingID,teamID,meetingName,meetingDescription,meetingDate,meetingTime,FLAG_MEETING_BOOKED);
             dataExtraction.setObject(ConstantNames.MEETINGS_PATH,teamID,meetingID,meeting);
 
             //Add to cloud all selected roles to which the meeting will be published

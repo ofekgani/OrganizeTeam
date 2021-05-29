@@ -135,15 +135,4 @@ public class ActivityTransition  extends AppCompatActivity {
     public void setData(Intent intent,String key, String value){
         intent.putExtra ( key,value );
     }
-
-    /**
-     * This function use to get data by key from intent.
-     * @param intent The intent that you want to get the information from.
-     * @param key The key from which you will extract the value.
-     * @return Return the value by the key.
-     */
-    public String getData(Intent intent,String key)
-    {
-        return intent.getStringExtra ( key );
-    }
 }

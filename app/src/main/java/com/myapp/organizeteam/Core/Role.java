@@ -58,16 +58,4 @@ public class Role implements java.io.Serializable {
     public void setUsers(ArrayList<String> users) {
         this.users = users;
     }
-
-    public void addUser(String userID)
-    {
-        if(users == null) return;
-        users.add(userID);
-    }
-
-    public void removeUser(String userID)
-    {
-        if(users == null) return;
-        users.remove(userID);
-    }
 }

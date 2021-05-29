@@ -241,7 +241,10 @@ public class MainActivity extends AppCompatActivity {
             public void onDataRead(Object save) {
                 progressBar.setVisible(pb_singIn,false);
                 userInfo.put(ConstantNames.TEAM_HOST,save);
-                authorization.isManager = isManager((User)userInfo.get(ConstantNames.USER),(User) save);
+
+                User user = (User) userInfo.get(ConstantNames.USER);
+                User manager = (User) save;
+                authorization.isManager = isManager(manager.getKeyID(), user.getKeyID());
 
                 //Get user`s roles
                 dataExtraction.getAllRolesByUser(authorization.getUserID(), team.getKeyID(), new ISavable() {
@@ -273,8 +276,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private boolean isManager(User user, User manager) {
-        if (manager.getKeyID().equals(user.getKeyID())) {
+    private boolean isManager(String userKeyID, String managerKeyID) {
+        if (managerKeyID.equals(userKeyID)) {
             return true;
         } else {
             return false;
