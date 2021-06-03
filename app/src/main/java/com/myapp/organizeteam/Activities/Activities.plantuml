@@ -1,0 +1,603 @@
+@startuml
+
+title __ACTIVITIES's Class Diagram__\n
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.CreateAccountActivity {
+        ~ authorization : Authorization
+        ~ dataExtraction : DataExtraction
+        ~ intent : Intent
+        ~ stepper : Stepper
+        ~ toolbar : Toolbar
+        - mStepperLayout : StepperLayout
+        + onCompleted()
+        + onError()
+        + onOptionsItemSelected()
+        + onReturn()
+        + onStepSelected()
+        # onActivityResult()
+        # onCreate()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.CreateMeetingActivity {
+        ~ activityTransition : ActivityTransition
+        ~ calendar : Calendar
+        ~ cb_ArrivalConfirmation : CheckBox
+        ~ dataExtraction : DataExtraction
+        ~ ed_meetingDate : EditText
+        ~ ed_meetingDescription : EditText
+        ~ ed_meetingHour : EditText
+        ~ ed_meetingName : EditText
+        ~ inputManagement : InputManagement
+        ~ intent : Intent
+        ~ m_day : int
+        ~ m_hour : int
+        ~ m_minute : int
+        ~ m_month : int
+        ~ m_year : int
+        ~ team : Team
+        ~ user : User
+        ~ view : View
+        - CHANNEL_ID : String
+        + oc_createMeeting()
+        # onActivityResult()
+        # onCreate()
+        - getAPIService()
+        - sendNotification()
+        - setAlarm()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.CreatePostActivity {
+        {static} + REQUEST : int
+        ~ activityTransition : ActivityTransition
+        ~ calendar : Calendar
+        ~ dataExtraction : DataExtraction
+        ~ ed_postContent : EditText
+        ~ ed_postName : EditText
+        ~ inputManagement : InputManagement
+        ~ intent : Intent
+        ~ m_day : int
+        ~ m_hour : int
+        ~ m_minute : int
+        ~ m_month : int
+        ~ m_year : int
+        ~ team : Team
+        ~ user : User
+        ~ view : View
+        - CHANNEL_ID : String
+        + oc_createPost()
+        # onActivityResult()
+        # onCreate()
+        - getAPIService()
+        - sendNotification()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.CreateRoleActivity {
+        ~ activityTransition : ActivityTransition
+        ~ btn_selectRolesPermissionMeeting : TextView
+        ~ btn_selectRolesPermissionPost : TextView
+        ~ btn_selectRolesPermissionTask : TextView
+        ~ cb_createMeeting : CheckBox
+        ~ cb_createPost : CheckBox
+        ~ cb_createTask : CheckBox
+        ~ dataExtraction : DataExtraction
+        ~ ed_roleDescription : EditText
+        ~ ed_roleName : EditText
+        ~ inputManagement : InputManagement
+        ~ intent : Intent
+        ~ meetingSettings : ConstraintLayout
+        ~ meetingSpinnerChoice : int
+        ~ postSettings : ConstraintLayout
+        ~ postSpinnerChoice : int
+        ~ rolesPublishMeetings : ArrayList<Role>
+        ~ rolesPublishPosts : ArrayList<Role>
+        ~ rolesPublishTasks : ArrayList<Role>
+        ~ rolesSelected : boolean
+        ~ save : Map<String, Object>
+        ~ sp_createMeetingTo : Spinner
+        ~ sp_createPostTo : Spinner
+        ~ sp_createTaskTo : Spinner
+        ~ taskSettings : ConstraintLayout
+        ~ taskSpinnerChoice : int
+        ~ teamID : String
+        ~ toolbar : Toolbar
+        + oc_createRole()
+        + onItemSelected()
+        + onNothingSelected()
+        + onOptionsItemSelected()
+        # onActivityResult()
+        # onCreate()
+        - addPermissions()
+        - checkSpinnerChoice()
+        - configuringSetting()
+        - configuringSpinner()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.CreateTaskActivity {
+        ~ activityTransition : ActivityTransition
+        ~ calendar : Calendar
+        ~ cb_enableRequired : CheckBox
+        ~ dataExtraction : DataExtraction
+        ~ ed_taskDate : EditText
+        ~ ed_taskDescription : EditText
+        ~ ed_taskHour : EditText
+        ~ ed_taskName : EditText
+        ~ inputManagement : InputManagement
+        ~ intent : Intent
+        ~ m_day : int
+        ~ m_hour : int
+        ~ m_minute : int
+        ~ m_month : int
+        ~ m_year : int
+        ~ team : Team
+        ~ user : User
+        ~ view : View
+        - CHANNEL_ID : String
+        + oc_createTask()
+        # onActivityResult()
+        # onCreate()
+        - getAPIService()
+        - sendNotification()
+        - setAlarm()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.CreateTeamActivity {
+        ~ activityTransition : ActivityTransition
+        ~ dataExtraction : DataExtraction
+        ~ ed_description : EditText
+        ~ ed_name : EditText
+        ~ fileManage : FileManage
+        ~ imageUri : Uri
+        ~ imageUriResultCrop : Uri
+        ~ intent : Intent
+        ~ mv_logo : ImageView
+        ~ toolbar : Toolbar
+        ~ user : User
+        ~ userID : String
+        ~ userInput : InputManagement
+        {static} - PERMISSION_CODE : int
+        + oc_chooseImage()
+        + oc_createTeam()
+        + onOptionsItemSelected()
+        + onRequestPermissionsResult()
+        # onActivityResult()
+        # onCreate()
+        - saveAllData()
+        - uploadPicture()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.MainActivity {
+        ~ activityTransition : ActivityTransition
+        ~ authorization : Authorization
+        ~ dataExtraction : DataExtraction
+        ~ ed_email : EditText
+        ~ ed_password : EditText
+        ~ input : InputManagement
+        ~ pb_singIn : ProgressBar
+        ~ progressBar : Loading
+        ~ step : int
+        ~ transformation : Transformation
+        ~ userInfo : Map<String, Object>
+        + oc_newAccount()
+        + oc_singIn()
+        # onCreate()
+        - connect()
+        - connectToTeam()
+        - getUser()
+        - goToStepFiveWithRequestJoin()
+        - isManager()
+        - register()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.MeetingActivity {
+        ~ activityTransition : ActivityTransition
+        ~ arrival : boolean
+        ~ arrivalConfirmationList : ArrayList<User>
+        ~ arrivalList : ArrayList<User>
+        ~ btn_arrivalConfirmation : Button
+        ~ btn_confirmArrivals : Button
+        ~ btn_enableMeeting : Button
+        ~ dataExtraction : DataExtraction
+        ~ intent : Intent
+        ~ lv_arrivals : RecyclerView
+        ~ lv_rejects : RecyclerView
+        ~ meeting : Meeting
+        ~ position : int
+        ~ rejectsList : ArrayList<User>
+        ~ team : Team
+        ~ toolbar : Toolbar
+        ~ tv_meetingDate : TextView
+        ~ tv_meetingDescription : TextView
+        ~ tv_meetingName : TextView
+        ~ user : User
+        - submitter : Submitter
+        + oc_confirmArrival()
+        + oc_confirmArrivals()
+        + oc_handleMeeting()
+        + onActivityResult()
+        + onOptionsItemSelected()
+        # onCreate()
+        - backupMeeting()
+        - finishActivity()
+        - isExist()
+        - setAdapter()
+        - setConfirmationButton()
+        - setUI()
+        - setUserStatus()
+        - startAlarm()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.MeetingListActivity {
+        ~ activityTransition : ActivityTransition
+        ~ adapter : MeetingsListAdapter
+        ~ dataExtraction : DataExtraction
+        ~ intent : Intent
+        ~ lv_meetings : ListView
+        ~ meetingsID : ArrayList<String>
+        ~ team : Team
+        ~ toolbar : Toolbar
+        + onOptionsItemSelected()
+        # onCreate()
+        - setAdapter()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.ResponsesListActivity {
+        ~ activityTransition : ActivityTransition
+        ~ dataExtraction : DataExtraction
+        ~ intent : Intent
+        ~ lv_responses : RecyclerView
+        ~ mission : Mission
+        ~ team : Team
+        ~ user : User
+        ~ userSubmitter : User
+        ~ usersList : ArrayList<User>
+        - listener : RecycleViewClickListener
+        - mLayoutManager : LayoutManager
+        - usersAdapter : Adapter
+        # onCreate()
+        - setAdapter()
+        - setOnClickListener()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.RoleInformationActivity {
+        ~ intent : Intent
+        ~ role : Role
+        ~ toolbar : Toolbar
+        ~ tv_description : TextView
+        + onOptionsItemSelected()
+        # onCreate()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.RoleSelectionActivity {
+        ~ activityTransition : ActivityTransition
+        ~ adapterRoles : RolesListAdapter
+        ~ dataExtraction : DataExtraction
+        ~ intent : Intent
+        ~ lv_roles : ListView
+        ~ permissionToPublish : ArrayList<Role>
+        ~ rolesList : ArrayList<Role>
+        ~ selectedRoles : ArrayList<Role>
+        ~ teamID : String
+        ~ toolbar : Toolbar
+        + oc_doneSelecting()
+        + onOptionsItemSelected()
+        + roleSelected()
+        # onCreate()
+        - createUsersList()
+        - setAdapter()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.SelectTeamActivity {
+        ~ activityTransition : ActivityTransition
+        ~ adapter : TeamListAdapter
+        ~ authorization : Authorization
+        ~ dataExtraction : DataExtraction
+        ~ fileManage : FileManage
+        ~ intent : Intent
+        ~ listView : ListView
+        ~ team : Team
+        ~ teamID : String
+        ~ teamList : ArrayList<Team>
+        ~ toolbar : Toolbar
+        ~ user : User
+        ~ userID : String
+        + applyRequest()
+        + onItemClick()
+        + onOptionsItemSelected()
+        # onCreate()
+        - createTeamList()
+        - getTeamByJoinRequest()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.SettingsActivity {
+        ~ activityTransition : ActivityTransition
+        ~ dataExtraction : DataExtraction
+        ~ ed_name : EditText
+        ~ fileManage : FileManage
+        ~ imageUri : String
+        ~ inputManagement : InputManagement
+        ~ intent : Intent
+        ~ mv_logo : ImageView
+        ~ user : User
+        {static} - PERMISSION_CODE : int
+        + oc_confirm()
+        + onOptionsItemSelected()
+        + onRequestPermissionsResult()
+        # onActivityResult()
+        # onCreate()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.SubmissionActivity {
+        ~ activityTransition : ActivityTransition
+        ~ btn_reply : Button
+        ~ fileManage : FileManage
+        ~ intent : Intent
+        ~ mission : Mission
+        ~ mv_fileDownload : ImageView
+        ~ mv_userLogo : ImageView
+        ~ submitter : Submitter
+        ~ team : Team
+        ~ toolbar : Toolbar
+        ~ tv_content : TextView
+        ~ tv_fileName : TextView
+        ~ tv_title : TextView
+        ~ tv_userName : TextView
+        ~ user : User
+        ~ userSubmitter : User
+        + oc_reply()
+        + oc_showResponses()
+        + onOptionsItemSelected()
+        # onCreate()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.SubmitAssignmentActivity {
+        ~ activityTransition : ActivityTransition
+        ~ dataExtraction : DataExtraction
+        ~ ed_content : EditText
+        ~ ed_title : EditText
+        ~ fileManage : FileManage
+        ~ inputManagement : InputManagement
+        ~ intent : Intent
+        ~ mission : Mission
+        ~ team : Team
+        ~ tv_path : TextView
+        ~ uriFile : Uri
+        ~ user : User
+        {static} - PERMISSION_CODE : int
+        + oc_getPath()
+        + oc_submit()
+        + onRequestPermissionsResult()
+        # onActivityResult()
+        # onCreate()
+        - setUserStatus()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.SubmitsListActivity {
+        ~ activityTransition : ActivityTransition
+        ~ dataExtraction : DataExtraction
+        ~ intent : Intent
+        ~ lv_rejects : RecyclerView
+        ~ lv_users : RecyclerView
+        ~ mission : Mission
+        ~ rejectsList : ArrayList<User>
+        ~ team : Team
+        ~ user : User
+        ~ usersList : ArrayList<User>
+        - rejectsAdapter : Adapter
+        - rejectsLayoutManager : LayoutManager
+        - usersAdapter : Adapter
+        - usersLayoutManager : LayoutManager
+        - usersListener : RecycleViewClickListener
+        # onCreate()
+        - setAdapters()
+        - setOnClickListener()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.TaskListActivity {
+        ~ activityTransition : ActivityTransition
+        ~ adapter : TasksListAdapter
+        ~ dataExtraction : DataExtraction
+        ~ intent : Intent
+        ~ lv_tasks : ListView
+        ~ tasksID : ArrayList<String>
+        ~ team : Team
+        ~ toolbar : Toolbar
+        + onOptionsItemSelected()
+        # onCreate()
+        - setAdapter()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.TaskReplyActivity {
+        ~ activityTransition : ActivityTransition
+        ~ cb_returnToReform : CheckBox
+        ~ dataExtraction : DataExtraction
+        ~ ed_content : EditText
+        ~ ed_title : EditText
+        ~ fileManage : FileManage
+        ~ inputManagement : InputManagement
+        ~ intent : Intent
+        ~ mission : Mission
+        ~ submitter : Submitter
+        ~ team : Team
+        ~ tv_path : TextView
+        ~ uriFile : Uri
+        ~ user : User
+        {static} - PERMISSION_CODE : int
+        + oc_getPath()
+        + oc_reply()
+        + onRequestPermissionsResult()
+        # onActivityResult()
+        # onCreate()
+        - saveReply()
+        - setStatusSubmit()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.TeamPageActivity {
+        ~ bundle : Bundle
+        ~ dataExtraction : DataExtraction
+        ~ drawerLayout : DrawerLayout
+        ~ fab_createMeeting : FloatingActionButton
+        ~ fab_createPost : FloatingActionButton
+        ~ fab_createRole : FloatingActionButton
+        ~ fab_createTask : FloatingActionButton
+        ~ fileManage : FileManage
+        ~ intent : Intent
+        ~ manager : User
+        ~ meetingsPer : ArrayList<Role>
+        ~ nav_logo : ImageView
+        ~ nav_name : TextView
+        ~ navigationView : NavigationView
+        ~ openMenu : OpenMenu
+        ~ postsPer : ArrayList<Role>
+        ~ requests : ArrayList<User>
+        ~ roles : ArrayList<Role>
+        ~ tasksPer : ArrayList<Role>
+        ~ team : Team
+        ~ toolbar_image : ImageView
+        ~ toolbar_title : CollapsingToolbarLayout
+        ~ user : User
+        ~ userRoles : ArrayList<Role>
+        ~ users : ArrayList<User>
+        + onBackPressed()
+        + onNavigationItemSelected()
+        + updateList()
+        + updateList()
+        # onActivityResult()
+        # onCreate()
+        - accessPermissions()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.UserInformationActivity {
+        ~ activityTransition : ActivityTransition
+        ~ cv_absentFromMeetings : CardView
+        ~ cv_cameToMeetings : CardView
+        ~ cv_missedTasks : CardView
+        ~ cv_tasksSubmitted : CardView
+        ~ dataExtraction : DataExtraction
+        ~ fileManage : FileManage
+        ~ intent : Intent
+        ~ lv_userRoles : RecyclerView
+        ~ mv_userLogo : ImageView
+        ~ team : Team
+        ~ toolbar : Toolbar
+        ~ tv_absentFromMeetings : TextView
+        ~ tv_cameToMeetings : TextView
+        ~ tv_missedTasks : TextView
+        ~ tv_tasksSubmitted : TextView
+        ~ tv_userEmail : TextView
+        ~ tv_userPhone : TextView
+        ~ user : User
+        - absentsList : ArrayList<String>
+        - arrivalsList : ArrayList<String>
+        - missedTasksList : ArrayList<String>
+        - submitsList : ArrayList<String>
+        + onOptionsItemSelected()
+        # onCreate()
+        - setAdapter()
+        - setUI()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.UserSelectionActivity {
+        ~ activityTransition : ActivityTransition
+        ~ adapterUsers : UsersListAdapter
+        ~ dataExtraction : DataExtraction
+        ~ intent : Intent
+        ~ lv_users : ListView
+        ~ publishPermission : String
+        ~ rolesPermission : ArrayList<Role>
+        ~ selectedUsers : ArrayList<User>
+        ~ teamID : String
+        ~ toolbar : Toolbar
+        ~ usersList : ArrayList<User>
+        + oc_createRole()
+        + onOptionsItemSelected()
+        + userSelected()
+        # onCreate()
+        - createUsersList()
+        - setAdapter()
+    }
+  }
+  
+
+  com.myapp.organizeteam.Activities.CreateAccountActivity .up.|> StepperLayout.StepperListener
+  com.myapp.organizeteam.Activities.CreateRoleActivity .up.|> AdapterView.OnItemSelectedListener
+  com.myapp.organizeteam.Activities.RoleSelectionActivity .up.|> RolesListAdapter.RoleSelectedListener
+  com.myapp.organizeteam.Activities.SelectTeamActivity .up.|> AdapterView.OnItemClickListener
+  com.myapp.organizeteam.Activities.SelectTeamActivity .up.|> RequestJoinDialog.DialogListener
+  com.myapp.organizeteam.Activities.TeamPageActivity .up.|> NavigationView.OnNavigationItemSelectedListener
+  com.myapp.organizeteam.Activities.TeamPageActivity .up.|> PostsListAdapter.AdapterListener
+  com.myapp.organizeteam.Activities.TeamPageActivity .up.|> UsersRequestsListAdapterRel.AdapterListener
+  com.myapp.organizeteam.Activities.UserSelectionActivity .up.|> UsersListAdapter.UserSelectedListener
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

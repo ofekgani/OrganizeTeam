@@ -1273,8 +1273,8 @@ public class DataExtraction
         });
     }
 
-    public void getSubmitter(String path, String teamID, String meetingID, String userID, final ISavable iSavable) {
-        final DatabaseReference mDatabase = getDatabaseReference(path).child(teamID).child(meetingID).child(ConstantNames.DATA_USERS_LIST).child(userID);
+    public void getSubmitter(String path, String teamID, String id, String userID, final ISavable iSavable) {
+        final DatabaseReference mDatabase = getDatabaseReference(path).child(teamID).child(id).child(ConstantNames.DATA_USERS_LIST).child(userID);
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

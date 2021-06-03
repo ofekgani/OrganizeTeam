@@ -1,0 +1,526 @@
+@startuml
+
+title __ORGANIZETEAM's Class Diagram__\n
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.CreateAccountActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.CreateMeetingActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.CreatePostActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.CreateRoleActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.CreateTaskActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.CreateTeamActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.MainActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.MeetingActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.MeetingListActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.ResponsesListActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.RoleInformationActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.RoleSelectionActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.SelectTeamActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.SettingsActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.SubmissionActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.SubmitAssignmentActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.SubmitsListActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.TaskListActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.TaskReplyActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.TeamPageActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.UserInformationActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Activities {
+    class com.myapp.organizeteam.Activities.UserSelectionActivity {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.JoinRequestCard {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.JoinToTeamFragment {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.MeetingsListAdapter {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.MyStepperAdapter {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.PostsListAdapter {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.RolesListAdapter {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.RolesListAdapterRel {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.RolesUsersListAdapterRel {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.TasksListAdapter {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.TeamListAdapter {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.UsersListAdapter {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.UsersListAdapterRel {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.ActivityTransition {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.ConstantNames {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.Date {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.Hour {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.InputManagement {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.Meeting {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.Mission {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.Post {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.Role {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.Submitter {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.Team {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.User {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.DataManagement {
+    class com.myapp.organizeteam.DataManagement.Authorization {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.DataManagement {
+    class com.myapp.organizeteam.DataManagement.DataExtraction {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.DataManagement {
+    interface com.myapp.organizeteam.DataManagement.DataListener {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.DataManagement {
+    class com.myapp.organizeteam.DataManagement.DataPass {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.DataManagement {
+    interface com.myapp.organizeteam.DataManagement.IRegister {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.DataManagement {
+    interface com.myapp.organizeteam.DataManagement.ISavable {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Dialogs {
+    class com.myapp.organizeteam.Dialogs.RequestJoinDialog {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Dialogs {
+    class com.myapp.organizeteam.Dialogs.TaskDialog {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.MeetingsFragment {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.ParticipantsFragment {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.PostsFragment {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.RollsListFragment {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.StepFiveRegisterFragment {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.StepFourRegisterFragment {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.StepOneRegisterFragment {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.StepThreeRegisterFragment {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.StepTwoRegisterFragment {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.TasksFragment {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.UsersListFragment {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.MyService {
+    interface com.myapp.organizeteam.MyService.APIService {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.MyService {
+    class com.myapp.organizeteam.MyService.Client {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.MyService {
+    class com.myapp.organizeteam.MyService.Data {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.MyService {
+    class com.myapp.organizeteam.MyService.MeetingAlarmReceiver {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.MyService {
+    class com.myapp.organizeteam.MyService.MyFirebaseMessagingService {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.MyService {
+    class com.myapp.organizeteam.MyService.Notification {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.MyService {
+    class com.myapp.organizeteam.MyService.Sender {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.MyService {
+    class com.myapp.organizeteam.MyService.TaskAlarmReceiver {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.MyService {
+    class com.myapp.organizeteam.MyService.Token {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Resources {
+    class com.myapp.organizeteam.Resources.FileManage {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Resources {
+    class com.myapp.organizeteam.Resources.Loading {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Resources {
+    class com.myapp.organizeteam.Resources.OpenMenu {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Resources {
+    class com.myapp.organizeteam.Resources.Stepper {
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Resources {
+    class com.myapp.organizeteam.Resources.Transformation {
+    }
+  }
+  
+
+  com.myapp.organizeteam.Activities.CreateAccountActivity .up.|> StepperLayout.StepperListener
+  com.myapp.organizeteam.Activities.CreateRoleActivity .up.|> AdapterView.OnItemSelectedListener
+  com.myapp.organizeteam.Activities.RoleSelectionActivity .up.|> RolesListAdapter.RoleSelectedListener
+  com.myapp.organizeteam.Activities.SelectTeamActivity .up.|> AdapterView.OnItemClickListener
+  com.myapp.organizeteam.Activities.SelectTeamActivity .up.|> RequestJoinDialog.DialogListener
+  com.myapp.organizeteam.Activities.TeamPageActivity .up.|> NavigationView.OnNavigationItemSelectedListener
+  com.myapp.organizeteam.Activities.TeamPageActivity .up.|> PostsListAdapter.AdapterListener
+  com.myapp.organizeteam.Activities.TeamPageActivity .up.|> UsersRequestsListAdapterRel.AdapterListener
+  com.myapp.organizeteam.Activities.UserSelectionActivity .up.|> UsersListAdapter.UserSelectedListener
+  com.myapp.organizeteam.Adapters.PostsListAdapter o-- com.myapp.organizeteam.Adapters.PostsListAdapter.AdapterListener : listener
+  com.myapp.organizeteam.Adapters.RolesListAdapter o-- com.myapp.organizeteam.Adapters.RolesListAdapter.RoleSelectedListener : listener
+  com.myapp.organizeteam.Adapters.RolesUsersListAdapterRel o-- com.myapp.organizeteam.Adapters.RolesUsersListAdapterRel.RecycleViewClickListener : listener
+  com.myapp.organizeteam.Adapters.UsersListAdapter o-- com.myapp.organizeteam.Adapters.UsersListAdapter.UserSelectedListener : listener
+  com.myapp.organizeteam.Adapters.UsersListAdapterRel o-- com.myapp.organizeteam.Adapters.UsersListAdapterRel.RecycleViewClickListener : listener
+  com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel o-- com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel.AdapterListener : listener
+  com.myapp.organizeteam.Core.Date .up.|> java.io.Serializable
+  com.myapp.organizeteam.Core.Hour .up.|> java.io.Serializable
+  com.myapp.organizeteam.Core.Meeting .up.|> Serializable
+  com.myapp.organizeteam.Core.Mission .up.|> Serializable
+  com.myapp.organizeteam.Core.Post .up.|> Serializable
+  com.myapp.organizeteam.Core.Role .up.|> java.io.Serializable
+  com.myapp.organizeteam.Core.Submitter .up.|> Serializable
+  com.myapp.organizeteam.Core.Team .up.|> java.io.Serializable
+  com.myapp.organizeteam.Core.User .up.|> java.io.Serializable
+  com.myapp.organizeteam.Dialogs.RequestJoinDialog o-- com.myapp.organizeteam.Dialogs.RequestJoinDialog.DialogListener : listener
+  com.myapp.organizeteam.Fragments.StepFiveRegisterFragment .up.|> Step
+  com.myapp.organizeteam.Fragments.StepFourRegisterFragment .up.|> Step
+  com.myapp.organizeteam.Fragments.StepOneRegisterFragment .up.|> Step
+  com.myapp.organizeteam.Fragments.StepThreeRegisterFragment .up.|> Step
+  com.myapp.organizeteam.Fragments.StepTwoRegisterFragment .up.|> Step
+  com.myapp.organizeteam.MyService.Data .up.|> java.io.Serializable
+  com.myapp.organizeteam.MyService.Token .up.|> java.io.Serializable
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

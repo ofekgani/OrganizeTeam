@@ -2,19 +2,17 @@ package com.myapp.organizeteam.Adapters;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 
 import com.myapp.organizeteam.Core.ConstantNames;
-import com.myapp.organizeteam.Core.User;
-import com.myapp.organizeteam.StepFiveRegisterFragment;
-import com.myapp.organizeteam.StepFourRegisterFragment;
-import com.myapp.organizeteam.StepOneRegisterFragment;
-import com.myapp.organizeteam.StepThreeRegisterFragment;
-import com.myapp.organizeteam.StepTwoRegisterFragment;
+import com.myapp.organizeteam.Fragments.StepFiveRegisterFragment;
+import com.myapp.organizeteam.Fragments.StepFourRegisterFragment;
+import com.myapp.organizeteam.Fragments.StepOneRegisterFragment;
+import com.myapp.organizeteam.Fragments.StepThreeRegisterFragment;
+import com.myapp.organizeteam.Fragments.StepTwoRegisterFragment;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.adapter.AbstractFragmentStepAdapter;
 import com.stepstone.stepper.viewmodel.StepViewModel;

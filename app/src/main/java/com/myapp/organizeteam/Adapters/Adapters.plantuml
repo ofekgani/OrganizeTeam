@@ -1,0 +1,279 @@
+@startuml
+
+title __ADAPTERS's Class Diagram__\n
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.JoinRequestCard {
+        ~ cardRequest : CardView
+        ~ dataExtraction : DataExtraction
+        ~ fileManage : FileManage
+        ~ fragmentManager : FragmentManager
+        ~ mv_teamLogo : ImageView
+        ~ transformation : ActivityTransition
+        ~ tv_teamName : TextView
+        ~ user : User
+        ~ userData : Map<String, Object>
+        + onCreateView()
+        - createDialogRequest()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.JoinToTeamFragment {
+        ~ btn_createTeam : Button
+        ~ btn_joinToTeam : Button
+        ~ dataExtraction : DataExtraction
+        ~ firebaseDatabase : FirebaseDatabase
+        ~ fragmentManager : FragmentManager
+        ~ transformation : ActivityTransition
+        ~ user : User
+        ~ userData : Map<String, Object>
+        + onCreateView()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.MeetingsListAdapter {
+        - mContext : Context
+        - mResource : int
+        + MeetingsListAdapter()
+        + getView()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.MyStepperAdapter {
+        ~ context : Context
+        ~ data : Map<String, Object>
+        + MyStepperAdapter()
+        + createStep()
+        + getCount()
+        + getViewModel()
+        + updateUserData()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.PostsListAdapter {
+        - mContext : Context
+        - mResource : int
+        + PostsListAdapter()
+        + getView()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    interface com.myapp.organizeteam.Adapters.PostsListAdapter.AdapterListener {
+        {abstract} + updateList()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.RolesListAdapter {
+        - mContext : Context
+        - mResource : int
+        + RolesListAdapter()
+        + getView()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    interface com.myapp.organizeteam.Adapters.RolesListAdapter.RoleSelectedListener {
+        {abstract} + roleSelected()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.RolesListAdapterRel {
+        - mExampleList : ArrayList<Role>
+        + RolesListAdapterRel()
+        + getItemCount()
+        + onBindViewHolder()
+        + onCreateViewHolder()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.RolesListAdapterRel.ExampleViewHolder {
+        ~ tv_description : TextView
+        ~ tv_name : TextView
+        + ExampleViewHolder()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.RolesUsersListAdapterRel {
+        - mContext : Context
+        - mExampleList : ArrayList<Role>
+        - mLayoutManager : LayoutManager
+        - rolesAdapter : Adapter
+        + RolesUsersListAdapterRel()
+        + getItemCount()
+        + onBindViewHolder()
+        + onCreateViewHolder()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.RolesUsersListAdapterRel.ExampleViewHolder {
+        ~ lv_users : RecyclerView
+        ~ tv_name : TextView
+        + ExampleViewHolder()
+        + onClick()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    interface com.myapp.organizeteam.Adapters.RolesUsersListAdapterRel.RecycleViewClickListener {
+        {abstract} + onClick()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.TasksListAdapter {
+        ~ dataExtraction : DataExtraction
+        ~ status : String
+        ~ userID : String
+        - mContext : Context
+        - mResource : int
+        + TasksListAdapter()
+        + TasksListAdapter()
+        + getView()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.TeamListAdapter {
+        ~ fileManage : FileManage
+        - mContext : Context
+        - mResource : int
+        + TeamListAdapter()
+        + getView()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.UsersListAdapter {
+        ~ fileManage : FileManage
+        - mContext : Context
+        - mResource : int
+        + UsersListAdapter()
+        + getView()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    interface com.myapp.organizeteam.Adapters.UsersListAdapter.UserSelectedListener {
+        {abstract} + userSelected()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.UsersListAdapterRel {
+        ~ fileManage : FileManage
+        - mExampleList : ArrayList<User>
+        + UsersListAdapterRel()
+        + getItemCount()
+        + onBindViewHolder()
+        + onCreateViewHolder()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.UsersListAdapterRel.ExampleViewHolder {
+        ~ checkBox : CheckBox
+        ~ mv_logo : ImageView
+        ~ tv_name : TextView
+        + ExampleViewHolder()
+        + onClick()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    interface com.myapp.organizeteam.Adapters.UsersListAdapterRel.RecycleViewClickListener {
+        {abstract} + onClick()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel {
+        ~ fileManage : FileManage
+        - dataExtraction : DataExtraction
+        - mExampleList : ArrayList<User>
+        - teamID : String
+        + UsersRequestsListAdapterRel()
+        + getItemCount()
+        + onBindViewHolder()
+        + onCreateViewHolder()
+        - acceptJoinRequest()
+        - removeJoinRequest()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    interface com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel.AdapterListener {
+        {abstract} + updateList()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Adapters {
+    class com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel.ExampleViewHolder {
+        ~ btn_confirm : ImageButton
+        ~ btn_dismiss : ImageButton
+        ~ mv_logo : ImageView
+        ~ tv_name : TextView
+        + ExampleViewHolder()
+    }
+  }
+  
+
+  com.myapp.organizeteam.Adapters.PostsListAdapter o-- com.myapp.organizeteam.Adapters.PostsListAdapter.AdapterListener : listener
+  com.myapp.organizeteam.Adapters.PostsListAdapter +--down- com.myapp.organizeteam.Adapters.PostsListAdapter.AdapterListener
+  com.myapp.organizeteam.Adapters.RolesListAdapter o--- com.myapp.organizeteam.Adapters.RolesListAdapter.RoleSelectedListener : listener
+  com.myapp.organizeteam.Adapters.RolesListAdapter +--down- com.myapp.organizeteam.Adapters.RolesListAdapter.RoleSelectedListener
+  com.myapp.organizeteam.Adapters.RolesListAdapterRel +--down- com.myapp.organizeteam.Adapters.RolesListAdapterRel.ExampleViewHolder
+  com.myapp.organizeteam.Adapters.RolesUsersListAdapterRel o-- com.myapp.organizeteam.Adapters.RolesUsersListAdapterRel.RecycleViewClickListener : listener
+  com.myapp.organizeteam.Adapters.RolesUsersListAdapterRel +-down- com.myapp.organizeteam.Adapters.RolesUsersListAdapterRel.ExampleViewHolder
+  com.myapp.organizeteam.Adapters.RolesUsersListAdapterRel +-down- com.myapp.organizeteam.Adapters.RolesUsersListAdapterRel.RecycleViewClickListener
+  com.myapp.organizeteam.Adapters.RolesUsersListAdapterRel.ExampleViewHolder .up.|> View.OnClickListener
+  com.myapp.organizeteam.Adapters.UsersListAdapter o-- com.myapp.organizeteam.Adapters.UsersListAdapter.UserSelectedListener : listener
+  com.myapp.organizeteam.Adapters.UsersListAdapter +--down- com.myapp.organizeteam.Adapters.UsersListAdapter.UserSelectedListener
+  com.myapp.organizeteam.Adapters.UsersListAdapterRel o-- com.myapp.organizeteam.Adapters.UsersListAdapterRel.RecycleViewClickListener : listener
+  com.myapp.organizeteam.Adapters.UsersListAdapterRel +---down- com.myapp.organizeteam.Adapters.UsersListAdapterRel.ExampleViewHolder
+  com.myapp.organizeteam.Adapters.UsersListAdapterRel +---down- com.myapp.organizeteam.Adapters.UsersListAdapterRel.RecycleViewClickListener
+  com.myapp.organizeteam.Adapters.UsersListAdapterRel.ExampleViewHolder .up.|> View.OnClickListener
+  com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel o-- com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel.AdapterListener : listener
+  com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel +---down- com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel.AdapterListener
+  com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel +---down- com.myapp.organizeteam.Adapters.UsersRequestsListAdapterRel.ExampleViewHolder
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

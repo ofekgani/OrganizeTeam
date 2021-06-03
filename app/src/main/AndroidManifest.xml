@@ -13,57 +13,57 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".RoleInformationActivity"
+        <activity android:name=".Activities.RoleInformationActivity"
             android:theme="@style/AppTheme"></activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name=".Activities.SettingsActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".TaskListActivity"
+            android:name=".Activities.TaskListActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".MeetingListActivity"
+            android:name=".Activities.MeetingListActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".UserInformationActivity"
+            android:name=".Activities.UserInformationActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".MeetingActivity"
+            android:name=".Activities.MeetingActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".CreatePostActivity" />
+        <activity android:name=".Activities.CreatePostActivity" />
         <activity
-            android:name=".ResponsesListActivity"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".TaskReplyActivity"
+            android:name=".Activities.ResponsesListActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".SubmissionActivity"
+            android:name=".Activities.TaskReplyActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".SubmitsListActivity"
+            android:name=".Activities.SubmissionActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".SubmitAssignmentActivity"
+            android:name=".Activities.SubmitsListActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".CreateTaskActivity"
+            android:name=".Activities.SubmitAssignmentActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".UserSelectionActivity"
+            android:name=".Activities.CreateTaskActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".CreateRoleActivity"
+            android:name=".Activities.UserSelectionActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".RoleSelectionActivity"
+            android:name=".Activities.CreateRoleActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".CreateMeetingActivity"
+            android:name=".Activities.RoleSelectionActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".CreateAccountActivity"
-            android:parentActivityName=".MainActivity"
+            android:name=".Activities.CreateMeetingActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Activities.CreateAccountActivity"
+            android:parentActivityName=".Activities.MainActivity"
             android:theme="@style/AppTheme" />
 
         <meta-data
@@ -78,19 +78,19 @@
             android:resource="@color/colorAccent" />
 
         <activity
-            android:name=".SelectTeamActivity"
-            android:parentActivityName=".CreateAccountActivity"
+            android:name=".Activities.SelectTeamActivity"
+            android:parentActivityName=".Activities.CreateAccountActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".TeamPageActivity"
+            android:name=".Activities.TeamPageActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name=".CreateTeamActivity"
-            android:parentActivityName=".CreateAccountActivity"
+            android:name=".Activities.CreateTeamActivity"
+            android:parentActivityName=".Activities.CreateAccountActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -1,0 +1,269 @@
+@startuml
+
+title __FRAGMENTS's Class Diagram__\n
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.MeetingsFragment {
+        ~ activityTransition : ActivityTransition
+        ~ adapter : MeetingsListAdapter
+        ~ bundle : Bundle
+        ~ dataExtraction : DataExtraction
+        ~ inflater : LayoutInflater
+        ~ lv_meetingList : ListView
+        ~ meetingsList : ArrayList<Meeting>
+        ~ rolesList : ArrayList<Role>
+        ~ team : Team
+        ~ user : User
+        + onActivityResult()
+        + onCreateView()
+        + updateList()
+        - createMeetingsList()
+        - setAdapter()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.ParticipantsFragment {
+        ~ args : Bundle
+        ~ bundle : Bundle
+        ~ inflater : LayoutInflater
+        ~ tab : TabLayout
+        + onCreateView()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.PostsFragment {
+        ~ adapter : PostsListAdapter
+        ~ bundle : Bundle
+        ~ dataExtraction : DataExtraction
+        ~ inflater : LayoutInflater
+        ~ lv_postList : ListView
+        ~ postsList : ArrayList<Post>
+        ~ rolesList : ArrayList<Role>
+        ~ team : Team
+        ~ user : User
+        + onActivityResult()
+        + onCreateView()
+        + updateList()
+        - createMeetingsList()
+        - setAdapter()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.RollsListFragment {
+        ~ args : Bundle
+        ~ inflater : LayoutInflater
+        ~ lv_roles : RecyclerView
+        ~ roles : ArrayList<Role>
+        ~ team : Team
+        - listener : RecycleViewClickListener
+        - mLayoutManager : LayoutManager
+        - rolesAdapter : Adapter
+        + onActivityResult()
+        + onCreateView()
+        - setAdapter()
+        - setOnClickListener()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.StepFiveRegisterFragment {
+        ~ authorization : Authorization
+        ~ dataExtraction : DataExtraction
+        ~ fileManage : FileManage
+        ~ input : InputManagement
+        ~ mStepperLayout : StepperLayout
+        ~ mv_userLogo : ImageView
+        ~ progressBar : Loading
+        ~ stepper : Stepper
+        ~ transformation : ActivityTransition
+        ~ tv_email : TextView
+        ~ tv_name : TextView
+        ~ tv_phone : TextView
+        ~ tv_prevStep : TextView
+        ~ user : User
+        ~ userData : Map<String, Object>
+        + onCreateView()
+        + onError()
+        + onSelected()
+        + verifyStep()
+        - menuAdapt()
+        - updateUserData()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.StepFourRegisterFragment {
+        ~ authorization : Authorization
+        ~ btn_next : Button
+        ~ ccp : CountryCodePicker
+        ~ codeVerification : String
+        ~ dataExtraction : DataExtraction
+        ~ ed_phone : EditText
+        ~ fileManage : FileManage
+        ~ input : InputManagement
+        ~ mStepperLayout : StepperLayout
+        ~ pb : ProgressBar
+        ~ progressBar : Loading
+        ~ stepper : Stepper
+        ~ telephonyManager : TelephonyManager
+        ~ tokenVerification : ForceResendingToken
+        ~ tv_prevStep : TextView
+        ~ tv_skipButton : TextView
+        - mCallbacks : OnVerificationStateChangedCallbacks
+        + onCreateView()
+        + onError()
+        + onSelected()
+        + verifyStep()
+        - createDialogVerification()
+        - getPhoneNumber()
+        - sendVerificationCodeToUser()
+        - setCountryNumber()
+        - verifyCode()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.StepOneRegisterFragment {
+        ~ authorization : Authorization
+        ~ btn_create : Button
+        ~ ed_confirmPassword : EditText
+        ~ ed_email : EditText
+        ~ ed_password : EditText
+        ~ input : InputManagement
+        ~ mStepperLayout : StepperLayout
+        ~ pb : ProgressBar
+        ~ progressBar : Loading
+        ~ stepper : Stepper
+        + onCreateView()
+        + onError()
+        + onSelected()
+        + verifyStep()
+        - saveUserInformation()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.StepThreeRegisterFragment {
+        ~ authorization : Authorization
+        ~ btn_next : Button
+        ~ dataExtraction : DataExtraction
+        ~ ed_name : EditText
+        ~ fileManage : FileManage
+        ~ imageUriResult : Uri
+        ~ input : InputManagement
+        ~ isImageUploaded : boolean
+        ~ isNameUploaded : boolean
+        ~ mStepperLayout : StepperLayout
+        ~ mv_userLogo : ImageView
+        ~ pb : ProgressBar
+        ~ progressBar : Loading
+        ~ stepper : Stepper
+        ~ user : User
+        ~ userData : Map<String, Object>
+        {static} - PERMISSION_CODE : int
+        + onActivityResult()
+        + onCreateView()
+        + onError()
+        + onRequestPermissionsResult()
+        + onSelected()
+        + verifyStep()
+        - getUserData()
+        - next()
+        - uploadPicture()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.StepTwoRegisterFragment {
+        ~ authorization : Authorization
+        ~ btn_verify : Button
+        ~ input : InputManagement
+        ~ mStepperLayout : StepperLayout
+        ~ mv_verify : ImageView
+        ~ pb : ProgressBar
+        ~ progressBar : Loading
+        ~ stepper : Stepper
+        ~ tv_statusVerification : TextView
+        ~ verified : boolean
+        + onCreateView()
+        + onError()
+        + onSelected()
+        + verifyStep()
+        - updateUI()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.TasksFragment {
+        ~ adapter : TasksListAdapter
+        ~ bundle : Bundle
+        ~ dataExtraction : DataExtraction
+        ~ inflater : LayoutInflater
+        ~ lv_taskList : ListView
+        ~ myContext : TeamPageActivity
+        ~ rolesList : ArrayList<Role>
+        ~ tasksList : ArrayList<Mission>
+        ~ team : Team
+        ~ user : User
+        + onActivityResult()
+        + onAttach()
+        + onCreateView()
+        - createTasksList()
+        - setAdapter()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Fragments {
+    class com.myapp.organizeteam.Fragments.UsersListFragment {
+        ~ args : Bundle
+        ~ fileManage : FileManage
+        ~ inflater : LayoutInflater
+        ~ lv_requests : RecyclerView
+        ~ lv_users : RecyclerView
+        ~ manager : User
+        ~ mv_managerLogo : ImageView
+        ~ requestsList : ArrayList<User>
+        ~ team : Team
+        ~ tv_managerName : TextView
+        ~ usersList : ArrayList<User>
+        - listener : RecycleViewClickListener
+        - mLayoutManager : LayoutManager
+        - requestsAdapter : Adapter
+        - usersAdapter : Adapter
+        + onCreateView()
+        + updateList()
+        - setAdapter()
+        - setOnClickListener()
+        - updateManagerUI()
+    }
+  }
+  
+
+  com.myapp.organizeteam.Fragments.StepFiveRegisterFragment .up.|> Step
+  com.myapp.organizeteam.Fragments.StepFourRegisterFragment .up.|> Step
+  com.myapp.organizeteam.Fragments.StepOneRegisterFragment .up.|> Step
+  com.myapp.organizeteam.Fragments.StepThreeRegisterFragment .up.|> Step
+  com.myapp.organizeteam.Fragments.StepTwoRegisterFragment .up.|> Step
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

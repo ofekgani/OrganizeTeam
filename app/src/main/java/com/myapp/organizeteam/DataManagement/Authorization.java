@@ -2,16 +2,12 @@ package com.myapp.organizeteam.DataManagement;
 
 import android.app.Activity;
 
-import android.widget.Toast;
-
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.myapp.organizeteam.Core.ConstantNames;
-import com.myapp.organizeteam.Core.Team;
 import com.myapp.organizeteam.Core.User;
-import com.myapp.organizeteam.MainActivity;
-import com.myapp.organizeteam.TeamPageActivity;
+import com.myapp.organizeteam.Activities.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -20,7 +16,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.myapp.organizeteam.Core.ActivityTransition;
 
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 

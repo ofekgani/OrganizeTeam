@@ -15,16 +15,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.myapp.organizeteam.Adapters.JoinRequestCard;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.User;
-import com.myapp.organizeteam.CreateTeamActivity;
+import com.myapp.organizeteam.Activities.CreateTeamActivity;
 import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.DataPass;
 import com.myapp.organizeteam.DataManagement.ISavable;
 import com.myapp.organizeteam.R;
-import com.myapp.organizeteam.SelectTeamActivity;
+import com.myapp.organizeteam.Activities.SelectTeamActivity;
 
 import java.util.Map;
 

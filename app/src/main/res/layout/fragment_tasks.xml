@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".TasksFragment">
+    tools:context=".Fragments.TasksFragment">
 
     <ListView
         android:id="@+id/lv_tasks"

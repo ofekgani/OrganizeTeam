@@ -42,20 +42,4 @@ public class OpenMenu extends AppCompatActivity {
     {
         drawerLayout.closeDrawer ( GravityCompat.START );
     }
-
-    public boolean isMenuOpen(DrawerLayout drawerLayout)
-    {
-        return drawerLayout.isDrawerOpen ( GravityCompat.START );
-    }
-
-    public void toggleMenu(DrawerLayout drawerLayout) {
-        if(isMenuOpen ( drawerLayout ))
-        {
-            closeMenu ( drawerLayout );
-        }
-        else
-        {
-            super.onBackPressed ();
-        }
-    }
 }

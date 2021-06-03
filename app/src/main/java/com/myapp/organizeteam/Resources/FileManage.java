@@ -103,10 +103,6 @@ public class FileManage extends AppCompatActivity {
         return requestCode == UCrop.REQUEST_CROP && resultCode == Activity.RESULT_OK;
     }
 
-    public boolean isImageCropped(int requestCode) {
-        return requestCode == UCrop.REQUEST_CROP;
-    }
-
     public Uri getCropOutput(@Nullable Intent data) {
         return UCrop.getOutput ( data );
     }

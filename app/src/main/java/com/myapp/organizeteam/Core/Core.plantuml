@@ -1,0 +1,345 @@
+@startuml
+
+title __CORE's Class Diagram__\n
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.ActivityTransition {
+        + CreateBundle()
+        + back()
+        + back()
+        + goTo()
+        + goToWithResult()
+        + setData()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.ConstantNames{
+        {static} + DATA_MEETING_STATUS : String
+        {static} + DATA_PUBLISH_TO : String
+        {static} + DATA_REQUEST_TO_JOIN : String
+        {static} + DATA_ROLE_MEETING_PERMISSION : String
+        {static} + DATA_ROLE_POST_PERMISSION : String
+        {static} + DATA_ROLE_TASK_PERMISSION : String
+        {static} + DATA_SUBMITTER_RESPONSES : String
+        {static} + DATA_TASK_CONFIRM : String
+        {static} + DATA_TASK_REPLIES : String
+        {static} + DATA_TASK_TITLE : String
+        {static} + DATA_TEAM_ID : String
+        {static} + DATA_USERS_LIST : String
+        {static} + DATA_USER_EMAIL : String
+        {static} + DATA_USER_ID : String
+        {static} + DATA_USER_LOGO : String
+        {static} + DATA_USER_MEETINGS : String
+        {static} + DATA_USER_NAME : String
+        {static} + DATA_USER_PHONE : String
+        {static} + DATA_USER_POSTS : String
+        {static} + DATA_USER_ROLES : String
+        {static} + DATA_USER_STATUS_ARRIVED : String
+        {static} + DATA_USER_STATUS_CONFIRM : String
+        {static} + DATA_USER_STATUS_MISSING : String
+        {static} + DATA_USER_STATUS_SUBMITTED : String
+        {static} + DATA_USER_STATUS_UNSUBMITTED : String
+        {static} + DATA_USER_TASKS : String
+        {static} + DATA_USER_TEAM : String
+        {static} + DATA_USER_TEAMS : String
+        {static} + HOST_TOKEN : String
+        {static} + MEETING : String
+        {static} + MEETINGS_HISTORY_PATH : String
+        {static} + MEETINGS_PATH : String
+        {static} + POST : String
+        {static} + POST_PATH : String
+        {static} + REQUESTS_LIST : String
+        {static} + ROLE : String
+        {static} + ROLES_LIST : String
+        {static} + ROLE_DESCRIPTION : String
+        {static} + ROLE_MEETING_PERMISSION : String
+        {static} + ROLE_NAME : String
+        {static} + ROLE_PATH : String
+        {static} + SUBMITTER : String
+        {static} + TASK : String
+        {static} + TASKS_HISTORY_PATH : String
+        {static} + TASK_PATH : String
+        {static} + TEAM : String
+        {static} + TEAMS_LIST : String
+        {static} + TEAM_HOST : String
+        {static} + TEAM_KEY_ID : String
+        {static} + TEAM_PATH : String
+        {static} + TOKEN : String
+        {static} + TOKEN_PATH : String
+        {static} + USER : String
+        {static} + USERS_LIST : String
+        {static} + USER_ACTIVITY_PATH : String
+        {static} + USER_KEY_ID : String
+        {static} + USER_LOGO : String
+        {static} + USER_NAME : String
+        {static} + USER_PATH : String
+        {static} + USER_PERMISSIONS : String
+        {static} + USER_PERMISSIONS_MEETING : String
+        {static} + USER_PERMISSIONS_POST : String
+        {static} + USER_PERMISSIONS_TASK : String
+        {static} + USER_ROLES : String
+        {static} + USER_STATUSES_PATH : String
+        {static} + USER_SUBMITTER : String
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.Date {
+        - day : int
+        - month : int
+        - year : int
+        + Date()
+        + Date()
+        + getDay()
+        + getMonth()
+        + getYear()
+        + setDay()
+        + setMonth()
+        + setYear()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.Hour {
+        - hour : int
+        - minute : int
+        + Hour()
+        + Hour()
+        + getHour()
+        + getMinute()
+        + setHour()
+        + setMinute()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.InputManagement {
+        + getInput()
+        + isInputEmpty()
+        + isInputValid()
+        + isInputValid()
+        + setError()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.Meeting {
+        {static} + ARRIVAL_CONFIRMATION : int
+        {static} + ARRIVED : int
+        {static} + FLAG_MEETING_BOOKED : int
+        {static} + FLAG_MEETING_STARTED : int
+        {static} + NO_ANSWER : int
+        - date : Date
+        - hour : Hour
+        - keyID : String
+        - meetingDescription : String
+        - meetingName : String
+        - status : int
+        - teamID : String
+        + Meeting()
+        + Meeting()
+        + getDate()
+        + getHour()
+        + getKeyID()
+        + getMeetingDescription()
+        + getMeetingName()
+        + getStatus()
+        + getTeamID()
+        + setDate()
+        + setHour()
+        + setKeyID()
+        + setMeetingDescription()
+        + setMeetingName()
+        + setStatus()
+        + setTeamID()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.Mission {
+        {static} + TASK_IS_ACTIVE : int
+        {static} + TIME_IS_UP : int
+        ~ status : int
+        - date : Date
+        - hour : Hour
+        - keyID : String
+        - requiredConfirm : boolean
+        - taskDescription : String
+        - taskName : String
+        - teamID : String
+        + Mission()
+        + Mission()
+        + getDate()
+        + getHour()
+        + getKeyID()
+        + getStatus()
+        + getTaskDescription()
+        + getTaskName()
+        + getTeamID()
+        + isRequiredConfirm()
+        + setDate()
+        + setHour()
+        + setKeyID()
+        + setRequiredConfirm()
+        + setStatus()
+        + setTaskDescription()
+        + setTaskName()
+        + setTeamID()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.Post {
+        - date : Date
+        - hour : Hour
+        - keyID : String
+        - postContent : String
+        - postName : String
+        - teamID : String
+        + Post()
+        + Post()
+        + getDate()
+        + getHour()
+        + getKeyID()
+        + getPostContent()
+        + getPostName()
+        + getTeamID()
+        + setDate()
+        + setHour()
+        + setKeyID()
+        + setPostContent()
+        + setPostName()
+        + setTeamID()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.Role {
+        - description : String
+        - keyID : String
+        - name : String
+        - teamID : String
+        - users : ArrayList<String>
+        + Role()
+        + Role()
+        + getDescription()
+        + getKeyID()
+        + getName()
+        + getTeamID()
+        + getUsers()
+        + setDescription()
+        + setKeyID()
+        + setName()
+        + setTeamID()
+        + setUsers()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.Submitter {
+        {static} + STATUS_CONFIRM : int
+        {static} + STATUS_UNCONFIRMED : int
+        {static} + STATUS_UNSUBMITTED : int
+        {static} + STATUS_WAITING : int
+        ~ confirmStatus : int
+        ~ content : String
+        ~ fileName : String
+        ~ fileUrl : String
+        ~ taskID : String
+        ~ title : String
+        ~ userID : String
+        + Submitter()
+        + Submitter()
+        + getConfirmStatus()
+        + getContent()
+        + getFileName()
+        + getFileUrl()
+        + getTaskID()
+        + getTitle()
+        + getUserID()
+        + setConfirm()
+        + setContent()
+        + setFileName()
+        + setFileUrl()
+        + setTaskID()
+        + setTitle()
+        + setUserID()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.Team {
+        - description : String
+        - hostID : String
+        - keyID : String
+        - logo : String
+        - name : String
+        + Team()
+        + Team()
+        + getDescription()
+        + getHost()
+        + getKeyID()
+        + getLogo()
+        + getName()
+        + setDescription()
+        + setHost()
+        + setKeyID()
+        + setLogo()
+        + setName()
+    }
+  }
+  
+
+  namespace com.myapp.organizeteam.Core {
+    class com.myapp.organizeteam.Core.User {
+        - email : String
+        - fullName : String
+        - keyID : String
+        - logo : String
+        - phone : String
+        + User()
+        + User()
+        + getEmail()
+        + getFullName()
+        + getKeyID()
+        + getLogo()
+        + getPhone()
+        + setEmail()
+        + setFullName()
+        + setKeyID()
+        + setLogo()
+        + setPhone()
+    }
+  }
+  
+
+  com.myapp.organizeteam.Core.Date .up.|> java.io.Serializable
+  com.myapp.organizeteam.Core.Hour .up.|> java.io.Serializable
+  com.myapp.organizeteam.Core.Meeting .up.|> Serializable
+  com.myapp.organizeteam.Core.Mission .up.|> Serializable
+  com.myapp.organizeteam.Core.Post .up.|> Serializable
+  com.myapp.organizeteam.Core.Role .up.|> java.io.Serializable
+  com.myapp.organizeteam.Core.Submitter .up.|> Serializable
+  com.myapp.organizeteam.Core.Team .up.|> java.io.Serializable
+  com.myapp.organizeteam.Core.User .up.|> java.io.Serializable
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

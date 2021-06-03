@@ -2,23 +2,17 @@ package com.myapp.organizeteam.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Date;
@@ -31,11 +25,10 @@ import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.DataManagement.DataListener;
 import com.myapp.organizeteam.DataManagement.ISavable;
 import com.myapp.organizeteam.R;
-import com.myapp.organizeteam.SubmitAssignmentActivity;
-import com.myapp.organizeteam.SubmitsListActivity;
+import com.myapp.organizeteam.Activities.SubmitAssignmentActivity;
+import com.myapp.organizeteam.Activities.SubmitsListActivity;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
