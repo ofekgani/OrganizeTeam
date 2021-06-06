@@ -1,6 +1,5 @@
 package com.myapp.organizeteam.Activities;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -8,23 +7,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.EditText;
 
 import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
+import com.myapp.organizeteam.Core.InputManagement;
 import com.myapp.organizeteam.Core.Role;
-import com.myapp.organizeteam.Core.User;
+import com.myapp.organizeteam.DataManagement.DataExtraction;
 import com.myapp.organizeteam.R;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class RoleInformationActivity extends AppCompatActivity {
+public class EditRoleActivity extends AppCompatActivity {
 
     ActivityTransition activityTransition;
+    InputManagement inputManagement;
+    DataExtraction dataExtraction;
 
-    TextView tv_description;
-
+    EditText ed_name, ed_description;
     Toolbar toolbar;
 
     Intent intent;
@@ -33,11 +34,14 @@ public class RoleInformationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_role_information);
+        setContentView(R.layout.activity_edit_role);
 
         activityTransition = new ActivityTransition();
+        dataExtraction = new DataExtraction();
+        inputManagement = new InputManagement();
 
-        tv_description = findViewById(R.id.tv_roleDescription);
+        ed_name =findViewById(R.id.ed_name);
+        ed_description =findViewById(R.id.ed_description);
         toolbar = findViewById(R.id.appBarLayout);
 
         setSupportActionBar(toolbar);
@@ -47,8 +51,22 @@ public class RoleInformationActivity extends AppCompatActivity {
         intent = getIntent();
         role = (Role) intent.getSerializableExtra(ConstantNames.ROLE);
 
-        getSupportActionBar().setTitle(""+role.getName());
-        tv_description.setText(""+role.getDescription());
+        ed_name.setText(""+role.getName());
+        ed_description.setText(""+role.getDescription());
+    }
+
+    public void oc_confirm(View view) {
+        if(inputManagement.isInputEmpty(ed_name)) return;
+
+        role.setName(inputManagement.getInput(ed_name));
+        role.setDescription(inputManagement.getInput(ed_description));
+
+        dataExtraction.setNewData(ConstantNames.ROLE_PATH,role.getTeamID(),role.getKeyID(),ConstantNames.DATA_ROLE_NAME,role.getName());
+        dataExtraction.setNewData(ConstantNames.ROLE_PATH,role.getTeamID(),role.getKeyID(),ConstantNames.DATA_ROLE_DESCRIPTION,role.getDescription());
+
+        Map<String, Object> save = new HashMap<>();
+        save.put(ConstantNames.ROLE,role);
+        activityTransition.back(EditRoleActivity.this,save);
     }
 
     @Override
@@ -61,26 +79,5 @@ public class RoleInformationActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void oc_editRole(View view) {
-        Map<String, Object> save = new HashMap<>();
-        save.put(ConstantNames.ROLE,role);
-        activityTransition.goToWithResult(RoleInformationActivity.this,EditRoleActivity.class,111,save,null);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(data != null)
-        {
-            if(resultCode == RESULT_OK && requestCode == 111)
-            {
-                role = (Role) data.getSerializableExtra(ConstantNames.ROLE);
-                getSupportActionBar().setTitle(""+role.getName());
-                tv_description.setText(""+role.getDescription());
-            }
-        }
     }
 }

@@ -48,6 +48,8 @@ public class ConstantNames {
     public static final String DATA_ROLE_MEETING_PERMISSION  = "meetingPermission";
     public static final String DATA_ROLE_TASK_PERMISSION = "tasksPermission";
     public static final String DATA_ROLE_POST_PERMISSION = "postsPermission";
+    public static final String DATA_ROLE_NAME = "name";
+    public static final String DATA_ROLE_DESCRIPTION = "description";
 
     //Submitter
     public static final String DATA_SUBMITTER_RESPONSES = "responses";

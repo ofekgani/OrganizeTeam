@@ -115,7 +115,6 @@ public class MeetingActivity extends AppCompatActivity{
     }
 
     private void setConfirmationButton() {
-        btn_arrivalConfirmation.setVisibility(View.GONE);
         dataExtraction.getSubmitter(ConstantNames.MEETINGS_PATH,team.getKeyID(), meeting.getKeyID(), user.getKeyID(), new ISavable() {
             @Override
             public void onDataRead(Object save) {
@@ -145,6 +144,7 @@ public class MeetingActivity extends AppCompatActivity{
 
         if(Authorization.isManager)
         {
+            btn_arrivalConfirmation.setVisibility(View.GONE);
             btn_enableMeeting.setVisibility(View.VISIBLE);
             btn_confirmArrivals.setVisibility(View.VISIBLE);
 

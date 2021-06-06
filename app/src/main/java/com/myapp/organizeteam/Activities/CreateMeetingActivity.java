@@ -59,7 +59,6 @@ public class CreateMeetingActivity extends AppCompatActivity{
     ActivityTransition activityTransition;
 
     EditText ed_meetingName,ed_meetingDescription,ed_meetingDate, ed_meetingHour;
-    CheckBox cb_ArrivalConfirmation;
 
     Intent intent;
     Team team;
@@ -90,7 +89,6 @@ public class CreateMeetingActivity extends AppCompatActivity{
         ed_meetingDescription = findViewById(R.id.ed_roleDescription);
         ed_meetingName = findViewById(R.id.ed_roleName);
         ed_meetingHour = findViewById(R.id.ed_meetingHour);
-        cb_ArrivalConfirmation = findViewById(R.id.cb_arrivalRequired);
 
         intent = getIntent();
         team = (Team) intent.getSerializableExtra(ConstantNames.TEAM);
@@ -278,16 +276,7 @@ public class CreateMeetingActivity extends AppCompatActivity{
                     for(String id : usersID)
                     {
                         meetingDatabase.child(id).child(ConstantNames.DATA_USER_MEETINGS).push().setValue(meetingID);
-                        Submitter submitter;
-                        if(cb_ArrivalConfirmation.isChecked())
-                        {
-                            submitter = new Submitter(null,null,null,null,Meeting.NO_ANSWER,meetingID,id);
-                        }
-                        else
-                        {
-                            submitter = new Submitter(null,null,null,null,Meeting.ARRIVAL_CONFIRMATION,meetingID,id);
-                        }
-
+                        Submitter submitter = new Submitter(null,null,null,null,Meeting.NO_ANSWER,meetingID,id);
                         usersDatabase.child(id).setValue(submitter);
                     }
                     setAlarm(calendar,meeting);

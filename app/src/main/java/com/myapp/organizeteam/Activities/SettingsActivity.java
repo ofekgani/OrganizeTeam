@@ -3,6 +3,7 @@ package com.myapp.organizeteam.Activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.Manifest;
 import android.content.Intent;
@@ -37,6 +38,8 @@ public class SettingsActivity extends AppCompatActivity {
     EditText ed_name;
     ImageView mv_logo;
 
+    Toolbar toolbar;
+
     Intent intent;
     User user;
 
@@ -57,6 +60,8 @@ public class SettingsActivity extends AppCompatActivity {
         ed_name = findViewById(R.id.ed_name);
         mv_logo = findViewById(R.id.mv_userLogo);
 
+        toolbar = findViewById(R.id.appBarLayout);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 

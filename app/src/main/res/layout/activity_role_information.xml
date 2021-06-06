@@ -46,4 +46,45 @@
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout2"
         app:layout_constraintVertical_bias="0.0" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_roleDescription"
+        app:layout_constraintVertical_bias="1.0">
+
+        <Button
+            android:id="@+id/btn_editRole"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout1"
+            android:layout_marginTop="16dp"
+            android:background="@color/primaryTextColor"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Edit role"
+            android:textAllCaps="false"
+            android:textColor="@color/secondaryTextColor"
+            app:strokeColor="@color/primaryColor"
+            app:strokeWidth="2dp"
+            android:onClick="oc_editRole"></Button>
+
+        <Button
+            android:id="@+id/btn_editParticipants"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout1"
+            android:layout_marginTop="16dp"
+            android:background="@color/primaryTextColor"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Edit participants"
+            android:textAllCaps="false"
+            android:textColor="@color/secondaryTextColor"
+            app:strokeColor="@color/primaryColor"
+            app:strokeWidth="2dp"></Button>
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
