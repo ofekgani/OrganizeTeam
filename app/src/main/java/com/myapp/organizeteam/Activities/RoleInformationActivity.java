@@ -14,14 +14,18 @@ import com.myapp.organizeteam.Core.ActivityTransition;
 import com.myapp.organizeteam.Core.ConstantNames;
 import com.myapp.organizeteam.Core.Role;
 import com.myapp.organizeteam.Core.User;
+import com.myapp.organizeteam.DataManagement.DataExtraction;
+import com.myapp.organizeteam.DataManagement.ISavable;
 import com.myapp.organizeteam.R;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class RoleInformationActivity extends AppCompatActivity {
 
     ActivityTransition activityTransition;
+    DataExtraction dataExtraction;
 
     TextView tv_description;
 
@@ -36,6 +40,7 @@ public class RoleInformationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_role_information);
 
         activityTransition = new ActivityTransition();
+        dataExtraction = new DataExtraction();
 
         tv_description = findViewById(R.id.tv_roleDescription);
         toolbar = findViewById(R.id.appBarLayout);

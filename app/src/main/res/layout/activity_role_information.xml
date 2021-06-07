@@ -72,19 +72,6 @@
             app:strokeWidth="2dp"
             android:onClick="oc_editRole"></Button>
 
-        <Button
-            android:id="@+id/btn_editParticipants"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/layout1"
-            android:layout_marginTop="16dp"
-            android:background="@color/primaryTextColor"
-            android:fontFamily="@font/roboto_bold"
-            android:text="Edit participants"
-            android:textAllCaps="false"
-            android:textColor="@color/secondaryTextColor"
-            app:strokeColor="@color/primaryColor"
-            app:strokeWidth="2dp"></Button>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
