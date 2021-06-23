@@ -124,6 +124,7 @@ public class StepFiveRegisterFragment extends Fragment implements Step {
                                     saves.put(ConstantNames.USER,user);
                                     saves.put(ConstantNames.TEAM_HOST,host);
                                     saves.put(ConstantNames.TEAM,team);
+                                    if(getActivity() == null) return;
                                     activityTransition.goTo(getActivity(), TeamPageActivity.class,true, saves,null);
                                 }
                             });

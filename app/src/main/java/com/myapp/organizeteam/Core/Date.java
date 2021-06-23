@@ -1,7 +1,5 @@
 package com.myapp.organizeteam.Core;
 
-import com.myapp.organizeteam.MyService.Data;
-
 public class Date implements java.io.Serializable{
 
     private int year;
